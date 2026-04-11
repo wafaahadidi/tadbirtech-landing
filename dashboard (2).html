@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TadbirTech — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+.sidebar{background:#0D1F3C;display:flex;flex-direction:column;}
+.sb-logo{padding:20px 20px 16px;border-bottom:0.5px solid rgba(255,255,255,.08);}
+.sb-logo-text{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.sb-logo-text span{color:#1a8fd1;}
+.sb-user{padding:14px 16px;border-bottom:0.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:#1a8fd1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;color:#fff;}
+.sb-user-role{font-size:10px;color:rgba(255,255,255,.4);}
+.sb-nav{padding:12px 10px;flex:1;}
+.sb-section{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:12px 0 6px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,.06);}
+.sb-item.active{background:rgba(26,143,209,.2);border:0.5px solid rgba(26,143,209,.3);}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;}
+.sb-item-text{font-size:13px;color:rgba(255,255,255,.65);font-weight:500;}
+.sb-item.active .sb-item-text{color:#fff;}
+.sb-badge{margin-left:auto;font-size:10px;background:#1a8fd1;color:#fff;padding:1px 6px;border-radius:8px;}
+.sb-badge.red{background:#E24B4A;}
+.sb-bottom{padding:12px 10px;border-top:0.5px solid rgba(255,255,255,.08);}
+.main{display:flex;flex-direction:column;}
+.topbar{background:#fff;border-bottom:0.5px solid #DDE6EF;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-size:15px;font-weight:700;color:#0D1F3C;}
+.topbar-sub{font-size:11px;color:#5B7594;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{background:#1a8fd1;color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.tb-notif{width:32px;height:32px;border-radius:8px;border:0.5px solid #DDE6EF;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;}
+.content{padding:20px 24px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px;}
+.kpi{background:#fff;border:0.5px solid #DDE6EF;border-radius:12px;padding:14px 16px;}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.kpi-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.kpi-trend{font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;}
+.kpi-trend.up{background:#EAF3DE;color:#27500A;}
+.kpi-trend.down{background:#FCEBEB;color:#791F1F;}
+.kpi-val{font-size:22px;font-weight:800;color:#0D1F3C;margin-bottom:2px;}
+.kpi-label{font-size:11px;color:#5B7594;}
+.mid-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:20px;}
+.card{background:#fff;border:0.5px solid #DDE6EF;border-radius:12px;padding:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-size:13px;font-weight:700;color:#0D1F3C;}
+.card-action{font-size:11px;color:#1a8fd1;cursor:pointer;font-weight:500;}
+.chart-wrap{position:relative;height:160px;}
+.activity-list{display:flex;flex-direction:column;gap:10px;}
+.act-item{display:flex;align-items:center;gap:10px;}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.act-text{flex:1;font-size:12px;color:#0D1F3C;line-height:1.4;}
+.act-time{font-size:11px;color:#5B7594;white-space:nowrap;}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:11px;font-weight:600;color:#5B7594;text-align:left;padding:0 0 10px;border-bottom:0.5px solid #DDE6EF;}
+td{font-size:12px;color:#0D1F3C;padding:10px 0;border-bottom:0.5px solid #F4F7FB;}
+.status-badge{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600;}
+.status-paid{background:#EAF3DE;color:#27500A;}
+.status-pending{background:#FAEEDA;color:#633806;}
+.status-overdue{background:#FCEBEB;color:#791F1F;}
+.stock-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #F4F7FB;}
+.stock-name{font-size:12px;font-weight:500;color:#0D1F3C;}
+.stock-qty{font-size:11px;color:#5B7594;}
+.stock-bar-wrap{width:80px;height:5px;background:#F4F7FB;border-radius:3px;overflow:hidden;}
+.stock-bar{height:100%;border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-text">Tadbir<span>Tech</span></div></div>
+    <div class="sb-user">
+      <div class="sb-avatar">WH</div>
+      <div><div class="sb-user-name">Wafaa Hadidi</div><div class="sb-user-role">Administrator</div></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a href="dashboard.html" class="sb-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a8fd1" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="sb-item-text">Dashboard</span>
+      </a>
+      <div class="sb-section">Modules</div>
+      <a href="accounting.html" class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
+        <span class="sb-item-text">Accounting</span>
+        <span class="sb-badge">3</span>
+      </a>
+      <a href="hr.html" class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <span class="sb-item-text">HR & payroll</span>
+      </a>
+      <a href="inventory.html" class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        <span class="sb-item-text">Inventory</span>
+        <span class="sb-badge red">2</span>
+      </a>
+      <div class="sb-section">Account</div>
+      <a href="#" class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>
+        <span class="sb-item-text">Settings</span>
+      </a>
+    </div>
+    <div class="sb-bottom">
+      <a href="login.html" class="sb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span class="sb-item-text" style="color:rgba(255,255,255,.4);">Logout</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div><div class="topbar-title">Good morning, Wafaa 👋</div><div class="topbar-sub">Saturday, April 11, 2026</div></div>
+      <div class="topbar-right">
+        <div class="tb-notif"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B7594" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+        <button class="tb-btn">+ New invoice</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#E6F1FB;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><span class="kpi-trend up">+18%</span></div>
+          <div class="kpi-val">$48,250</div><div class="kpi-label">Total revenue</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#FAEEDA;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span class="kpi-trend down">3 overdue</span></div>
+          <div class="kpi-val">12</div><div class="kpi-label">Open invoices</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#EAF3DE;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><span class="kpi-trend up">+2</span></div>
+          <div class="kpi-val">24</div><div class="kpi-label">Employees</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><div class="kpi-icon" style="background:#FCEBEB;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A32D2D" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div><span class="kpi-trend down">2 low</span></div>
+          <div class="kpi-val">86</div><div class="kpi-label">Products in stock</div>
+        </div>
+      </div>
+
+      <div class="mid-grid">
+        <div class="card">
+          <div class="card-header" style="flex-wrap:wrap;gap:10px;">
+            <div class="card-title" id="chartTitle">Revenue overview — Q1 2026</div>
+            <div style="display:flex;gap:6px;">
+              <button onclick="setFilter(this,'month')" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;border:0.5px solid #DDE6EF;background:#fff;color:#5B7594;cursor:pointer;">This month</button>
+              <button onclick="setFilter(this,'quarter')" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;border:0.5px solid #DDE6EF;background:#1a8fd1;color:#fff;cursor:pointer;">Q1 2026</button>
+              <button onclick="setFilter(this,'half')" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;border:0.5px solid #DDE6EF;background:#fff;color:#5B7594;cursor:pointer;">H1 2026</button>
+              <button onclick="setFilter(this,'year')" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;border:0.5px solid #DDE6EF;background:#fff;color:#5B7594;cursor:pointer;">Full year</button>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+          <div style="display:flex;gap:16px;margin-top:10px;">
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#5B7594;"><div style="width:10px;height:10px;border-radius:2px;background:#1a8fd1;"></div>Revenue</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#5B7594;"><div style="width:10px;height:10px;border-radius:2px;background:#B5D4F4;"></div>Expenses</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;padding-top:14px;border-top:0.5px solid #F4F7FB;">
+            <div style="text-align:center;"><div style="font-size:16px;font-weight:800;color:#0D1F3C;" id="sumRevenue">01K</div><div style="font-size:10px;color:#5B7594;margin-top:2px;">Total revenue</div><div style="font-size:10px;font-weight:600;color:#27500A;margin-top:2px;" id="sumRevTrend">+18% vs last period</div></div>
+            <div style="text-align:center;"><div style="font-size:16px;font-weight:800;color:#0D1F3C;" id="sumExpenses">6K</div><div style="font-size:10px;color:#5B7594;margin-top:2px;">Total expenses</div><div style="font-size:10px;font-weight:600;color:#A32D2D;margin-top:2px;" id="sumExpTrend">+8% vs last period</div></div>
+            <div style="text-align:center;"><div style="font-size:16px;font-weight:800;color:#0D1F3C;" id="sumProfit">5K</div><div style="font-size:10px;color:#5B7594;margin-top:2px;">Net profit</div><div style="font-size:10px;font-weight:600;color:#27500A;margin-top:2px;" id="sumProfTrend">+24% vs last period</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent activity</div><div class="card-action">View all →</div></div>
+          <div class="activity-list">
+            <div class="act-item"><div class="act-dot" style="background:#1a8fd1;"></div><div class="act-text">Invoice #INV-042 paid by Société Générale</div><div class="act-time">2h ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:#3B6D11;"></div><div class="act-text">New employee Karim Benali added to HR</div><div class="act-time">4h ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:#E24B4A;"></div><div class="act-text">Low stock alert: Laptop Dell XPS (3 left)</div><div class="act-time">5h ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:#BA7517;"></div><div class="act-text">Invoice #INV-041 overdue</div><div class="act-time">1d ago</div></div>
+            <div class="act-item"><div class="act-dot" style="background:#1a8fd1;"></div><div class="act-text">Payroll processed for March 2026</div><div class="act-time">2d ago</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Latest invoices</div><div class="card-action">View all →</div></div>
+          <table><thead><tr><th>Client</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Société Générale</td><td>$4,200</td><td><span class="status-badge status-paid">Paid</span></td></tr>
+            <tr><td>Mobilis Algeria</td><td>$2,800</td><td><span class="status-badge status-pending">Pending</span></td></tr>
+            <tr><td>Air Algérie</td><td>$6,500</td><td><span class="status-badge status-overdue">Overdue</span></td></tr>
+            <tr><td>Cevital Group</td><td>$1,950</td><td><span class="status-badge status-paid">Paid</span></td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Stock alerts</div><div class="card-action">View inventory →</div></div>
+          <div class="stock-item"><div><div class="stock-name">Laptop Dell XPS</div><div class="stock-qty">3 remaining</div></div><div class="stock-bar-wrap"><div class="stock-bar" style="width:15%;background:#E24B4A;"></div></div></div>
+          <div class="stock-item"><div><div class="stock-name">Office Chair Pro</div><div class="stock-qty">8 remaining</div></div><div class="stock-bar-wrap"><div class="stock-bar" style="width:30%;background:#EF9F27;"></div></div></div>
+          <div class="stock-item"><div><div class="stock-name">Monitor LG 27"</div><div class="stock-qty">22 remaining</div></div><div class="stock-bar-wrap"><div class="stock-bar" style="width:65%;background:#1a8fd1;"></div></div></div>
+          <div class="stock-item"><div><div class="stock-name">Keyboard Logitech</div><div class="stock-qty">45 remaining</div></div><div class="stock-bar-wrap"><div class="stock-bar" style="width:90%;background:#3B6D11;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const filterData={month:{labels:['Week 1','Week 2','Week 3','Week 4'],revenue:[10500,12800,11200,13750],expenses:[5800,7200,6100,7500],title:'Revenue overview — April 2026',rev:'8K',exp:'7K',profit:'1K',revT:'+18%',expT:'+6%',profT:'+28%'},quarter:{labels:['Jan','Feb','Mar'],revenue:[32000,28000,41000],expenses:[18000,16000,22000],title:'Revenue overview — Q1 2026',rev:'01K',exp:'6K',profit:'5K',revT:'+18%',expT:'+8%',profT:'+24%'},half:{labels:['Jan','Feb','Mar','Apr','May','Jun'],revenue:[32000,28000,41000,38000,45000,48250],expenses:[18000,16000,22000,20000,24000,26000],title:'Revenue overview — H1 2026',rev:'32K',exp:'26K',profit:'06K',revT:'+22%',expT:'+10%',profT:'+31%'},year:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],revenue:[32000,28000,41000,38000,45000,48250,0,0,0,0,0,0],expenses:[18000,16000,22000,20000,24000,26000,0,0,0,0,0,0],title:'Revenue overview — 2026',rev:'32K',exp:'26K',profit:'06K',revT:'+22%',expT:'+10%',profT:'+31%'}};
+const revenueChart=new Chart(document.getElementById('revenueChart'),{type:'bar',data:{labels:filterData.quarter.labels,datasets:[{label:'Revenue',data:filterData.quarter.revenue,backgroundColor:'#1a8fd1',borderRadius:4,barThickness:20},{label:'Expenses',data:filterData.quarter.expenses,backgroundColor:'#B5D4F4',borderRadius:4,barThickness:20}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString()}}},scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#5B7594'}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},color:'#5B7594',callback:v=>'$'+v/1000+'k'}}},animation:{duration:400}}});
+function setFilter(btn,key){const d=filterData[key];revenueChart.data.labels=d.labels;revenueChart.data.datasets[0].data=d.revenue;revenueChart.data.datasets[1].data=d.expenses;revenueChart.update();document.getElementById('chartTitle').textContent=d.title;document.getElementById('sumRevenue').textContent=d.rev;document.getElementById('sumExpenses').textContent=d.exp;document.getElementById('sumProfit').textContent=d.profit;document.getElementById('sumRevTrend').textContent=d.revT+' vs last period';document.getElementById('sumExpTrend').textContent=d.expT+' vs last period';document.getElementById('sumProfTrend').textContent=d.profT+' vs last period';document.querySelectorAll('[onclick^="setFilter"]').forEach(b=>{b.style.background='#fff';b.style.color='#5B7594';b.style.borderColor='#DDE6EF';});btn.style.background='#1a8fd1';btn.style.color='#fff';btn.style.borderColor='#1a8fd1';}
+</script>
+</body>
+</html>
