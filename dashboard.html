@@ -70,6 +70,19 @@ td{font-size:12px;color:#0D1F3C;padding:10px 0;border-bottom:0.5px solid #F4F7FB
 .stock-qty{font-size:11px;color:#5B7594;}
 .stock-bar-wrap{width:80px;height:5px;background:#F4F7FB;border-radius:3px;overflow:hidden;}
 .stock-bar{height:100%;border-radius:3px;}
+
+.currency-wrap{position:relative}
+.currency-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:0.5px solid #DDE6EF;border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#0D1F3C;cursor:pointer;font-family:inherit;transition:all .2s}
+.currency-btn:hover{border-color:#1a8fd1;color:#1a8fd1}
+.currency-flag{font-size:14px}
+.currency-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:0.5px solid #DDE6EF;border-radius:10px;box-shadow:0 8px 24px rgba(13,31,60,.12);z-index:999;min-width:180px;padding:6px;display:none}
+.currency-dropdown.open{display:block}
+.currency-option{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all .15s;font-size:13px;font-weight:500;color:#0D1F3C}
+.currency-option:hover{background:#F4F7FB}
+.currency-option.selected{background:#E8F5FD;color:#1a8fd1}
+.currency-option .flag{font-size:16px}
+.currency-option .code{font-weight:700;min-width:36px}
+.currency-option .name{font-size:11px;color:#5B7594;margin-top:1px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -88,11 +101,31 @@ td{font-size:12px;color:#0D1F3C;padding:10px 0;border-bottom:0.5px solid #F4F7FB
         <span class="sb-item-text">Dashboard</span>
       </a>
       <div class="sb-section">Modules</div>
-      <a href="chart-of-accounts.html" class="sb-item">
+      <!-- ACCOUNTING DROPDOWN -->
+      <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
         <span class="sb-item-text">Accounting</span>
-        <span class="sb-badge">3</span>
-      </a>
+        <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-submenu" style="display:none;padding-left:16px;margin-bottom:4px">
+        <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
+        </a>
+        <a href="invoices.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Invoices</span>
+          <span class="sb-badge">3</span>
+        </a>
+        <a href="journal-entries.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Journal Entries</span>
+        </a>
+        <a href="reports.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Reports</span>
+        </a>
+      </div>
       <a href="hr.html" class="sb-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         <span class="sb-item-text">HR & payroll</span>
@@ -120,6 +153,21 @@ td{font-size:12px;color:#0D1F3C;padding:10px 0;border-bottom:0.5px solid #F4F7FB
     <div class="topbar">
       <div><div class="topbar-title">Good morning, Wafaa 👋</div><div class="topbar-sub">Saturday, April 11, 2026</div></div>
       <div class="topbar-right">
+      <div class="currency-wrap" id="currencyWrap">
+        <button class="currency-btn" onclick="toggleCurrencyMenu()" id="currencyBtn">
+          <span class="currency-flag" id="currencyFlag">🇩🇿</span>
+          <span id="currencyCode">DZD</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="currency-dropdown" id="currencyMenu">
+          <div class="currency-option selected" onclick="setCurrency('DZD','🇩🇿','Dinar algérien',this)"><span class="flag">🇩🇿</span><div><div class="code">DZD</div><div class="name">Dinar algérien</div></div></div>
+          <div class="currency-option" onclick="setCurrency('MAD','🇲🇦','Dirham marocain',this)"><span class="flag">🇲🇦</span><div><div class="code">MAD</div><div class="name">Dirham marocain</div></div></div>
+          <div class="currency-option" onclick="setCurrency('TND','🇹🇳','Dinar tunisien',this)"><span class="flag">🇹🇳</span><div><div class="code">TND</div><div class="name">Dinar tunisien</div></div></div>
+          <div class="currency-option" onclick="setCurrency('EGP','🇪🇬','Livre égyptienne',this)"><span class="flag">🇪🇬</span><div><div class="code">EGP</div><div class="name">Livre égyptienne</div></div></div>
+          <div class="currency-option" onclick="setCurrency('USD','🇺🇸','US Dollar',this)"><span class="flag">🇺🇸</span><div><div class="code">USD</div><div class="name">US Dollar</div></div></div>
+          <div class="currency-option" onclick="setCurrency('EUR','🇪🇺','Euro',this)"><span class="flag">🇪🇺</span><div><div class="code">EUR</div><div class="name">Euro</div></div></div>
+        </div>
+      </div>
         <div class="tb-notif"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B7594" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
         <button class="tb-btn">+ New invoice</button>
       </div>
@@ -240,6 +288,63 @@ function handleLogout(){
 document.addEventListener('keydown', e=>{
   if(e.key==='F5') return;
 });
+</script>
+
+
+<script>
+function toggleDropdown(el) {
+  const submenu = el.nextElementSibling;
+  const chevron = el.querySelector('.sb-chevron');
+  const isOpen = submenu.style.display !== 'none';
+  submenu.style.display = isOpen ? 'none' : 'block';
+  if(chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  el.style.background = isOpen ? '' : 'rgba(26,143,209,.15)';
+}
+// Auto-open if on accounting page
+const path = window.location.pathname;
+if(path.includes('chart-of-accounts') || path.includes('invoices') || path.includes('journal') || path.includes('reports')) {
+  const toggle = document.querySelector('.sb-dropdown-toggle');
+  if(toggle) toggleDropdown(toggle);
+}
+</script>
+
+
+<script>
+// ── CURRENCY SYSTEM ──
+function toggleCurrencyMenu(){
+  document.getElementById('currencyMenu').classList.toggle('open');
+}
+function setCurrency(code, flag, name, el){
+  localStorage.setItem('tt_currency', JSON.stringify({code, flag}));
+  document.getElementById('currencyCode').textContent = code;
+  document.getElementById('currencyFlag').textContent = flag;
+  document.querySelectorAll('.currency-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('currencyMenu').classList.remove('open');
+  updateCurrencyDisplay(code);
+}
+function updateCurrencyDisplay(code){
+  document.querySelectorAll('[data-currency]').forEach(el=>{
+    el.textContent = code;
+  });
+}
+function initCurrency(){
+  const saved = localStorage.getItem('tt_currency');
+  if(saved){
+    const {code, flag} = JSON.parse(saved);
+    document.getElementById('currencyCode').textContent = code;
+    document.getElementById('currencyFlag').textContent = flag;
+    document.querySelectorAll('.currency-option').forEach(o=>{
+      if(o.textContent.includes(code)) o.classList.add('selected');
+      else o.classList.remove('selected');
+    });
+  }
+}
+document.addEventListener('click', e=>{
+  const wrap = document.getElementById('currencyWrap');
+  if(wrap && !wrap.contains(e.target)) document.getElementById('currencyMenu').classList.remove('open');
+});
+window.addEventListener('load', initCurrency);
 </script>
 
 </body>
