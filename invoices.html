@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TadbirTech - Sales & Invoices</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.sb-logo{padding:0;border-bottom:0.5px solid rgba(255,255,255,.08)}
+.sb-logo div{width:100%;height:64px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.sb-logo img{width:200px;height:auto;margin:0}
+.sb-user{padding:12px 14px;border-bottom:0.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:#1a8fd1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-name{font-size:12px;font-weight:600;color:#fff}
+.sb-role{font-size:10px;color:rgba(255,255,255,.4)}
+.sb-nav{padding:10px 10px;flex:1;overflow-y:auto}
+.sb-sec{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:10px 0 4px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;text-decoration:none;transition:all .2s}
+.sb-item:hover{background:rgba(255,255,255,.06)}
+.sb-item.active{background:rgba(26,143,209,.2);border:0.5px solid rgba(26,143,209,.3)}
+.sb-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.sb-item.active svg{opacity:1}
+.sb-item-text{font-size:13px;color:rgba(255,255,255,.65);font-weight:500}
+.sb-item.active .sb-item-text{color:#fff}
+.sb-badge{margin-left:auto;font-size:10px;background:#1a8fd1;color:#fff;padding:1px 6px;border-radius:8px}
+.sb-badge.red{background:#E24B4A}
+.sb-foot{padding:10px;border-top:0.5px solid rgba(255,255,255,.08)}
+.sb-logout{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.4);padding:8px 10px;border-radius:8px;cursor:pointer;border:none;background:none;width:100%;transition:all .2s;font-family:inherit}
+.sb-logout:hover{background:rgba(220,38,38,.1);color:#f87171}
+
+.main{display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:0.5px solid #DDE6EF;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-left h2{font-size:15px;font-weight:700;color:#0D1F3C}
+.tb-left p{font-size:11px;color:#5B7594}
+.tb-right{display:flex;align-items:center;gap:10px}
+.btn-primary,.btn-secondary,.btn-soft,.btn-danger{border:none;border-radius:8px;font-family:inherit;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:#1a8fd1;color:#fff;padding:8px 16px;font-size:12px;display:flex;align-items:center;gap:6px}
+.btn-primary:hover{background:#1476b0;transform:translateY(-1px)}
+.btn-secondary{background:#fff;color:#0D1F3C;padding:8px 14px;font-size:12px;border:0.5px solid #DDE6EF}
+.btn-secondary:hover{border-color:#1a8fd1;color:#1a8fd1}
+.btn-soft{background:#E8F5FD;color:#1a8fd1;padding:7px 12px;font-size:12px}
+.btn-soft:hover{background:#D7EEFB}
+.btn-danger{background:#FEF2F2;color:#DC2626;padding:7px 12px;font-size:12px;border:0.5px solid #FECACA}
+.btn-danger:hover{background:#FDE2E2}
+
+.content{padding:20px 24px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{background:#fff;border:0.5px solid #DDE6EF;border-radius:8px;padding:16px}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.stat-note{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px}
+.stat-note.good{background:#EAF8EF;color:#117A43}
+.stat-note.warn{background:#FFF4D6;color:#9A6700}
+.stat-note.bad{background:#FDE8E8;color:#B42318}
+.stat-value{font-size:24px;font-weight:800;color:#0D1F3C;margin-bottom:4px}
+.stat-label{font-size:11px;color:#5B7594}
+
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,.9fr);gap:16px;align-items:start}
+.surface{background:#fff;border:0.5px solid #DDE6EF;border-radius:8px}
+.surface-head{padding:14px 16px;border-bottom:0.5px solid #DDE6EF;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.surface-title{font-size:14px;font-weight:700}
+.surface-sub{font-size:11px;color:#5B7594}
+.surface-body{padding:16px}
+
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#5B7594}
+.search-input,.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:0.5px solid #DDE6EF;border-radius:8px;font-size:13px;font-family:inherit;outline:none;color:#0D1F3C;background:#fff}
+.search-input{padding-left:36px}
+.field input:focus,.field select:focus,.field textarea:focus,.search-input:focus{border-color:#1a8fd1;box-shadow:0 0 0 3px rgba(26,143,209,.08)}
+.field textarea{min-height:76px;resize:vertical}
+.filter-select{min-width:140px}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:700;color:#5B7594;text-transform:uppercase;letter-spacing:.08em;padding:10px 16px;text-align:left;border-bottom:0.5px solid #DDE6EF;background:#FAFBFC}
+td{font-size:13px;padding:14px 16px;border-bottom:0.5px solid #F4F7FB;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFCFE}
+.inv-number{font-weight:700;color:#0D1F3C}
+.inv-meta{font-size:11px;color:#5B7594;margin-top:3px}
+.money{font-weight:700;color:#0D1F3C}
+.money-sub{font-size:11px;color:#5B7594;margin-top:3px}
+.status{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.status-issued{background:#E8F5FD;color:#1a8fd1}
+.status-paid{background:#EAF8EF;color:#117A43}
+.status-partial{background:#FFF4D6;color:#9A6700}
+.status-overdue{background:#FDE8E8;color:#B42318}
+.status-draft{background:#EEF2F6;color:#4B5565}
+.status-cancelled{background:#F3F4F6;color:#6B7280}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-inline{border:0.5px solid #DDE6EF;background:#fff;color:#0D1F3C;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s}
+.btn-inline:hover{border-color:#1a8fd1;color:#1a8fd1}
+
+.summary-stack{display:grid;gap:16px}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini-stat{border:0.5px solid #E6EDF5;border-radius:8px;padding:14px;background:#FAFCFE}
+.mini-stat .k{font-size:12px;color:#5B7594;margin-bottom:6px}
+.mini-stat .v{font-size:18px;font-weight:800;color:#0D1F3C}
+.mini-stat .d{font-size:11px;color:#5B7594;margin-top:4px}
+.list{display:grid;gap:12px}
+.list-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:0.5px solid #F4F7FB}
+.list-item:last-child{border-bottom:none;padding-bottom:0}
+.list-main{min-width:0}
+.list-title{font-size:13px;font-weight:700;color:#0D1F3C}
+.list-sub{font-size:11px;color:#5B7594;margin-top:4px}
+.list-value{font-size:12px;font-weight:700;color:#0D1F3C;text-align:right}
+.helper{padding:14px;border-radius:8px;background:#F8FBFF;border:0.5px solid #E1EEFB}
+.helper-title{font-size:13px;font-weight:700;margin-bottom:6px}
+.helper-copy{font-size:12px;line-height:1.5;color:#5B7594}
+
+.empty{padding:44px 20px;text-align:center;color:#5B7594}
+.empty svg{display:block;margin:0 auto 12px;opacity:.4}
+
+.overlay{position:fixed;inset:0;background:rgba(13,31,60,.52);display:none;align-items:center;justify-content:center;padding:18px;z-index:250;backdrop-filter:blur(4px)}
+.overlay.show{display:flex}
+.modal{width:min(980px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border-radius:8px;box-shadow:0 24px 60px rgba(13,31,60,.2)}
+.modal.narrow{width:min(560px,100%)}
+.modal-head{padding:18px 20px;border-bottom:0.5px solid #DDE6EF;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.modal-title{font-size:16px;font-weight:800}
+.modal-sub{font-size:12px;color:#5B7594;margin-top:4px}
+.modal-body{padding:20px}
+.modal-foot{padding:16px 20px;border-top:0.5px solid #DDE6EF;display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.section-title{font-size:12px;font-weight:800;color:#0D1F3C;margin-bottom:12px}
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.span-2{grid-column:span 2}
+.field.span-3{grid-column:span 3}
+.field label{font-size:12px;font-weight:700;color:#0D1F3C}
+.static-field{min-height:42px;display:flex;align-items:center;padding:10px 12px;border:0.5px solid #DDE6EF;border-radius:8px;background:#F8FBFE;font-size:13px;font-weight:700;color:#0D1F3C}
+.field-meta{font-size:11px;color:#5B7594}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:0.5px solid #E6EDF5;border-radius:8px;background:#FAFCFE;margin-bottom:18px}
+.toggle-copy{font-size:12px;color:#5B7594}
+.line-items{border:0.5px solid #DDE6EF;border-radius:8px;overflow:hidden}
+.line-header,.line-row{display:grid;grid-template-columns:2fr .75fr .95fr .8fr .8fr .95fr auto;gap:0;border-bottom:0.5px solid #EEF2F6}
+.line-header{background:#FAFBFC}
+.line-header div{padding:10px 12px;font-size:10px;font-weight:800;color:#5B7594;text-transform:uppercase;letter-spacing:.08em}
+.line-row:last-child{border-bottom:none}
+.line-row > div{padding:10px 12px}
+.line-row input,.line-row select{width:100%;padding:9px 10px;border:0.5px solid #DDE6EF;border-radius:8px;font-size:12px;font-family:inherit}
+.line-row .line-total{font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:flex-end;color:#0D1F3C}
+.icon-btn{width:34px;height:34px;border-radius:8px;border:0.5px solid #FECACA;background:#FEF2F2;color:#DC2626;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:auto}
+.icon-btn:hover{background:#FDE2E2}
+.line-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px}
+.totals{margin-top:18px;margin-left:auto;width:min(340px,100%);display:grid;gap:10px}
+.total-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#5B7594}
+.total-row strong{color:#0D1F3C;font-size:14px}
+.total-row.final{padding-top:10px;border-top:0.5px solid #E6EDF5}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.detail-card{padding:14px;border:0.5px solid #E6EDF5;border-radius:8px;background:#FAFCFE}
+.detail-label{font-size:11px;color:#5B7594;margin-bottom:5px}
+.detail-value{font-size:14px;font-weight:800;color:#0D1F3C}
+.subtable{border:0.5px solid #E6EDF5;border-radius:8px;overflow:hidden}
+.subtable-head{padding:12px 14px;border-bottom:0.5px solid #E6EDF5;font-size:12px;font-weight:800}
+.subtable-empty{padding:18px 14px;font-size:12px;color:#5B7594}
+.toast{position:fixed;right:24px;bottom:24px;background:#0D1F3C;color:#fff;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 12px 28px rgba(13,31,60,.18);transform:translateY(70px);opacity:0;transition:all .3s;z-index:300}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:#117A43}
+.toast.error{background:#B42318}
+.loading{display:flex;align-items:center;gap:10px;font-size:12px;color:#5B7594}
+.loading-dot{width:10px;height:10px;border-radius:50%;background:#1a8fd1;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1);opacity:1}}
+
+@media (max-width: 1180px){
+  .layout{grid-template-columns:1fr}
+}
+@media (max-width: 900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .form-grid,.detail-grid{grid-template-columns:1fr}
+  .field.span-2,.field.span-3{grid-column:auto}
+  .line-header{display:none}
+  .line-row{grid-template-columns:1fr;gap:8px;padding:12px}
+  .line-row > div{padding:0}
+  .line-actions{flex-direction:column;align-items:stretch}
+}
+@media (max-width: 620px){
+  .content{padding:16px}
+  .topbar{padding:0 16px}
+  .stats-row,.mini-grid{grid-template-columns:1fr}
+  .surface-head{align-items:flex-start}
+  th:nth-child(4),td:nth-child(4),th:nth-child(5),td:nth-child(5){display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div><img src="TADBIRTECH (5).png" alt="TadbirTech"></div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-av">T</div>
+      <div><div class="sb-name" id="sb-name">Team</div><div class="sb-role">Administrator</div></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Main</div>
+      <a class="sb-item" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="sb-item-text">Dashboard</span>
+      </a>
+      <div class="sb-sec">Modules</div>
+      <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer;background:rgba(26,143,209,.15)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
+        <span class="sb-item-text" style="color:#fff">Accounting</span>
+        <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-submenu" style="padding-left:16px;margin-bottom:4px">
+        <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
+        </a>
+        <a href="invoices.html" class="sb-item active" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Invoices</span>
+        </a>
+        <a href="journal-entries.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Journal Entries</span>
+        </a>
+        <a href="reports.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Reports</span>
+        </a>
+      </div>
+      <a class="sb-item" href="inventory.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        <span class="sb-item-text">Inventory</span>
+      </a>
+      <a class="sb-item" href="settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>
+        <span class="sb-item-text">Settings</span>
+      </a>
+    </nav>
+    <div class="sb-foot">
+      <button class="sb-logout" onclick="handleLogout()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <h2>Sales & Invoices</h2>
+        <p id="company-label">Track sales, collect cash, and keep the books aligned.</p>
+      </div>
+      <div class="tb-right">
+        <button class="btn-secondary" onclick="refreshAll()">Refresh</button>
+        <button class="btn-primary" onclick="openInvoiceModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New invoice
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="loading-block" class="loading" style="margin-bottom:16px;display:none">
+        <div class="loading-dot"></div>
+        <span>Loading sales data...</span>
+      </div>
+
+      <section class="stats-row">
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#E8F5FD">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a8fd1" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+            <span class="stat-note good" id="stat-sales-note">This month</span>
+          </div>
+          <div class="stat-value" id="stat-sales">0 DA</div>
+          <div class="stat-label">Invoiced sales</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#EAF8EF">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#117A43" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <span class="stat-note good" id="stat-collected-note">Collections</span>
+          </div>
+          <div class="stat-value" id="stat-collected">0 DA</div>
+          <div class="stat-label">Collected this month</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#FFF4D6">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9A6700" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <span class="stat-note warn" id="stat-open-note">Follow-up</span>
+          </div>
+          <div class="stat-value" id="stat-open">0</div>
+          <div class="stat-label">Open invoices</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#FDE8E8">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B42318" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <span class="stat-note bad" id="stat-overdue-note">Needs action</span>
+          </div>
+          <div class="stat-value" id="stat-overdue">0 DA</div>
+          <div class="stat-label">Overdue receivables</div>
+        </div>
+      </section>
+
+      <section class="layout">
+        <div class="surface">
+          <div class="surface-head">
+            <div>
+              <div class="surface-title">Invoice pipeline</div>
+              <div class="surface-sub">Create, follow, and collect sales without touching journal entries.</div>
+            </div>
+            <div class="filters" style="width:min(100%,720px)">
+              <div class="search-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="search-input" class="search-input" placeholder="Search invoice or customer" oninput="renderInvoices()">
+              </div>
+              <select id="status-filter" class="search-input filter-select" onchange="renderInvoices()">
+                <option value="all">All statuses</option>
+                <option value="issued">Issued</option>
+                <option value="partial">Partial</option>
+                <option value="paid">Paid</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </div>
+          </div>
+          <div class="surface-body" style="padding:0">
+            <table>
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Customer</th>
+                  <th>Issue</th>
+                  <th>Due</th>
+                  <th>Total</th>
+                  <th>Balance</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoice-rows">
+                <tr><td colspan="8" class="empty">No invoices yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="summary-stack">
+          <div class="surface">
+            <div class="surface-head">
+              <div>
+                <div class="surface-title">Receivables focus</div>
+                <div class="surface-sub">What needs attention right now.</div>
+              </div>
+            </div>
+            <div class="surface-body">
+              <div class="mini-grid">
+                <div class="mini-stat">
+                  <div class="k">Outstanding</div>
+                  <div class="v" id="mini-outstanding">0 DA</div>
+                  <div class="d" id="mini-outstanding-note">Across all unpaid invoices</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="k">Active customers</div>
+                  <div class="v" id="mini-customers">0</div>
+                  <div class="d">Customers with sales activity</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="k">Average invoice</div>
+                  <div class="v" id="mini-average">0 DA</div>
+                  <div class="d">Based on posted sales</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="k">Cash pressure</div>
+                  <div class="v" id="mini-overdue-count">0</div>
+                  <div class="d">Invoices already overdue</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="surface">
+            <div class="surface-head">
+              <div>
+                <div class="surface-title">Recent collections</div>
+                <div class="surface-sub">Latest payments recorded from customers.</div>
+              </div>
+            </div>
+            <div class="surface-body">
+              <div id="payments-list" class="list">
+                <div class="subtable-empty">No collections recorded yet.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="helper">
+            <div class="helper-title">How this module behaves</div>
+            <div class="helper-copy">
+              A new invoice creates the sale. A payment records the collection. The accounting entries stay automatic in the background so the workflow stays clean for day-to-day use.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="overlay" id="invoice-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Create invoice</div>
+        <div class="modal-sub">Capture the sale once. TadbirTech handles the accounting entry in the background.</div>
+      </div>
+      <button class="btn-secondary" onclick="closeInvoiceModal()">Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-title">Invoice setup</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="inv-number">Invoice number</label>
+          <input id="inv-number" placeholder="INV-2026-001">
+        </div>
+        <div class="field">
+          <label for="inv-issue-date">Issue date</label>
+          <input id="inv-issue-date" type="date">
+        </div>
+        <div class="field">
+          <label for="inv-due-date">Due date</label>
+          <input id="inv-due-date" type="date">
+        </div>
+        <div class="field span-2">
+          <label for="inv-customer">Customer</label>
+          <select id="inv-customer"></select>
+        </div>
+        <div class="field">
+          <label>Company currency</label>
+          <div class="static-field" id="inv-currency-display">DZD</div>
+          <div class="field-meta">Managed once from Settings.</div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="section-title" style="margin-bottom:4px">Need a new customer?</div>
+          <div class="toggle-copy">Create the customer here and continue the invoice in one flow.</div>
+        </div>
+        <button class="btn-soft" id="toggle-customer-btn" onclick="toggleNewCustomer()">Add new customer</button>
+      </div>
+
+      <div id="new-customer-fields" style="display:none">
+        <div class="form-grid">
+          <div class="field">
+            <label for="cust-name">Customer name</label>
+            <input id="cust-name" placeholder="Benyahia Distribution">
+          </div>
+          <div class="field">
+            <label for="cust-email">Email</label>
+            <input id="cust-email" type="email" placeholder="contact@customer.dz">
+          </div>
+          <div class="field">
+            <label for="cust-phone">Phone</label>
+            <input id="cust-phone" placeholder="+213 ...">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Line items</div>
+      <div class="line-items">
+        <div class="line-header">
+          <div>Description</div>
+          <div>Qty</div>
+          <div>Unit price</div>
+          <div>Tax %</div>
+          <div>Discount</div>
+          <div>Total</div>
+          <div></div>
+        </div>
+        <div id="line-items-body"></div>
+        <div class="line-actions">
+          <button class="btn-secondary" onclick="addLineItem()">Add line</button>
+          <div class="surface-sub">Keep it simple: write the item, amount, and tax rate if needed.</div>
+        </div>
+      </div>
+
+      <div class="totals">
+        <div class="total-row"><span>Subtotal</span><strong id="sum-subtotal">0 DA</strong></div>
+        <div class="total-row"><span>Tax</span><strong id="sum-tax">0 DA</strong></div>
+        <div class="total-row"><span>Discount</span><strong id="sum-discount">0 DA</strong></div>
+        <div class="total-row final"><span>Total invoice</span><strong id="sum-total">0 DA</strong></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeInvoiceModal()">Cancel</button>
+      <button class="btn-primary" id="save-invoice-btn" onclick="saveInvoice()">Create invoice</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="payment-overlay">
+  <div class="modal narrow">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Record customer payment</div>
+        <div class="modal-sub" id="payment-sub">Apply a collection against the selected invoice.</div>
+      </div>
+      <button class="btn-secondary" onclick="closePaymentModal()">Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-card" style="margin-bottom:18px">
+        <div class="detail-label">Invoice to collect</div>
+        <div class="detail-value" id="payment-invoice-name">-</div>
+        <div class="money-sub" id="payment-invoice-balance">Outstanding: 0 DA</div>
+      </div>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr">
+        <div class="field">
+          <label for="pay-amount">Amount</label>
+          <input id="pay-amount" type="number" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label for="pay-date">Payment date</label>
+          <input id="pay-date" type="date">
+        </div>
+        <div class="field">
+          <label for="pay-method">Method</label>
+          <select id="pay-method">
+            <option value="cash">Cash</option>
+            <option value="bank_transfer">Bank transfer</option>
+            <option value="cheque">Cheque</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pay-reference">Reference</label>
+          <input id="pay-reference" placeholder="Receipt or transfer ref">
+        </div>
+        <div class="field span-2">
+          <label for="pay-notes">Notes</label>
+          <textarea id="pay-notes" placeholder="Optional internal note"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closePaymentModal()">Cancel</button>
+      <button class="btn-primary" id="save-payment-btn" onclick="savePayment()">Record payment</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="detail-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="detail-title">Invoice details</div>
+        <div class="modal-sub" id="detail-sub">Review the commercial and payment trail of this sale.</div>
+      </div>
+      <button class="btn-secondary" onclick="closeDetailModal()">Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-card"><div class="detail-label">Customer</div><div class="detail-value" id="detail-customer">-</div></div>
+        <div class="detail-card"><div class="detail-label">Status</div><div class="detail-value" id="detail-status">-</div></div>
+        <div class="detail-card"><div class="detail-label">Total</div><div class="detail-value" id="detail-total">-</div></div>
+        <div class="detail-card"><div class="detail-label">Balance</div><div class="detail-value" id="detail-balance">-</div></div>
+      </div>
+
+      <div class="subtable" style="margin-bottom:18px">
+        <div class="subtable-head">Invoice lines</div>
+        <div id="detail-lines"></div>
+      </div>
+
+      <div class="subtable">
+        <div class="subtable-head">Recorded payments</div>
+        <div id="detail-payments"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://gqmpqpnboenmshuuopnp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const state = {
+  session: null,
+  currentCompanyId: null,
+  currentCompanyName: 'Your company',
+  invoices: [],
+  customers: [],
+  payments: [],
+  selectedInvoiceForPayment: null,
+  invoiceLines: []
+};
+
+function toggleDropdown(el){
+  const submenu = el.nextElementSibling;
+  const chevron = el.querySelector('.sb-chevron');
+  const isOpen = submenu.style.display !== 'none' && submenu.style.display !== '';
+  submenu.style.display = isOpen ? 'none' : 'block';
+  if(chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  el.style.background = isOpen ? '' : 'rgba(26,143,209,.15)';
+}
+
+function showLoading(show){
+  document.getElementById('loading-block').style.display = show ? 'flex' : 'none';
+}
+
+function showToast(message, type=''){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast ' + type + ' show';
+  window.clearTimeout(showToast._timer);
+  showToast._timer = window.setTimeout(()=>{ toast.className = 'toast'; }, 3200);
+}
+
+function preferredCurrency(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('tt_currency') || '{}');
+    return saved.code || 'DZD';
+  }catch(_e){
+    return 'DZD';
+  }
+}
+
+function updateInvoiceCurrencyDisplay(){
+  const currency = preferredCurrency();
+  const display = document.getElementById('inv-currency-display');
+  if(display) display.textContent = currency;
+  return currency;
+}
+
+function currencySymbol(code){
+  return {DZD:'DA', MAD:'DH', TND:'DT', EUR:'EUR', USD:'USD'}[code] || code || 'DZD';
+}
+
+function formatMoney(amount, currency='DZD'){
+  const value = Number(amount || 0);
+  return new Intl.NumberFormat('fr-DZ', {maximumFractionDigits: 0}).format(value) + ' ' + currencySymbol(currency);
+}
+
+function formatDate(value){
+  if(!value) return '-';
+  const d = new Date(value);
+  if(Number.isNaN(d.getTime())) return value;
+  return new Intl.DateTimeFormat('en-GB', {day:'2-digit', month:'short', year:'numeric'}).format(d);
+}
+
+function todayIso(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function addDays(dateStr, days){
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0,10);
+}
+
+function normalizeStatus(invoice){
+  const raw = String(invoice.status || 'issued').toLowerCase();
+  const balance = Number(invoice.balance_due || 0);
+  if(raw === 'cancelled') return 'cancelled';
+  if(balance <= 0 || raw === 'paid') return 'paid';
+  if(balance > 0 && Number(invoice.paid_total || 0) > 0) return isOverdue(invoice) ? 'overdue' : 'partial';
+  if(raw === 'draft') return 'draft';
+  if(isOverdue(invoice)) return 'overdue';
+  return raw === 'partial' ? 'partial' : 'issued';
+}
+
+function statusClass(status){
+  return {
+    issued:'status-issued',
+    paid:'status-paid',
+    partial:'status-partial',
+    overdue:'status-overdue',
+    draft:'status-draft',
+    cancelled:'status-cancelled'
+  }[status] || 'status-issued';
+}
+
+function titleCaseStatus(status){
+  return {issued:'Issued', paid:'Paid', partial:'Partial', overdue:'Overdue', draft:'Draft', cancelled:'Cancelled'}[status] || 'Issued';
+}
+
+function isOverdue(invoice){
+  return Boolean(invoice.due_date && new Date(invoice.due_date) < new Date(todayIso()) && Number(invoice.balance_due || 0) > 0);
+}
+
+async function init(){
+  showLoading(true);
+  const { data: { session } } = await sb.auth.getSession();
+  if(!session){
+    window.location.href = 'login (1).html';
+    return;
+  }
+  state.session = session;
+  hydrateUser(session);
+  await resolveCompany();
+  bindModalClosers();
+  await refreshAll();
+  showLoading(false);
+}
+
+function hydrateUser(session){
+  const firstName = session.user.user_metadata?.first_name || session.user.email.split('@')[0];
+  const lastName = session.user.user_metadata?.last_name || '';
+  const fullName = lastName ? firstName + ' ' + lastName : firstName;
+  document.getElementById('sb-name').textContent = fullName;
+  document.getElementById('sb-av').textContent = (firstName.charAt(0) + (lastName.charAt(0) || '')).toUpperCase();
+}
+
+async function resolveCompany(){
+  const { data, error } = await sb
+    .from('company_members')
+    .select('company_id')
+    .eq('user_id', state.session.user.id)
+    .limit(1);
+
+  if(error || !data || !data.length){
+    showToast('No company membership found for this account.', 'error');
+    throw error || new Error('No company membership found');
+  }
+
+  state.currentCompanyId = data[0].company_id;
+
+  const { data: company } = await sb
+    .from('companies')
+    .select('name')
+    .eq('id', state.currentCompanyId)
+    .maybeSingle();
+
+  state.currentCompanyName = company?.name || 'Your company';
+  document.getElementById('company-label').textContent = state.currentCompanyName + ' - Sales, collections, and invoice follow-up.';
+}
+
+async function refreshAll(){
+  showLoading(true);
+  await Promise.all([loadCustomers(), loadInvoices(), loadPayments()]);
+  renderInvoices();
+  renderStats();
+  renderRecentPayments();
+  showLoading(false);
+}
+
+async function loadCustomers(){
+  const { data, error } = await sb
+    .from('customers')
+    .select('*')
+    .eq('company_id', state.currentCompanyId)
+    .order('name');
+  if(error){
+    showToast('Could not load customers: ' + error.message, 'error');
+    return;
+  }
+  state.customers = data || [];
+}
+
+async function loadInvoices(){
+  const { data, error } = await sb
+    .from('invoices')
+    .select('*')
+    .eq('company_id', state.currentCompanyId)
+    .order('issue_date', { ascending: false })
+    .order('created_at', { ascending: false });
+  if(error){
+    showToast('Could not load invoices: ' + error.message, 'error');
+    return;
+  }
+  state.invoices = data || [];
+}
+
+async function loadPayments(){
+  const { data, error } = await sb
+    .from('payments')
+    .select('*')
+    .eq('company_id', state.currentCompanyId)
+    .order('payment_date', { ascending: false })
+    .order('created_at', { ascending: false });
+  if(error){
+    showToast('Could not load payments: ' + error.message, 'error');
+    return;
+  }
+  state.payments = data || [];
+}
+
+function renderStats(){
+  const month = todayIso().slice(0,7);
+  const liveInvoices = state.invoices.filter(i => normalizeStatus(i) !== 'cancelled');
+  const salesThisMonth = liveInvoices
+    .filter(i => String(i.issue_date || '').slice(0,7) === month)
+    .reduce((sum, i) => sum + Number(i.total || 0), 0);
+  const collectedThisMonth = state.payments
+    .filter(p => String(p.payment_date || '').slice(0,7) === month)
+    .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+  const openInvoices = liveInvoices.filter(i => Number(i.balance_due || 0) > 0);
+  const overdueInvoices = openInvoices.filter(isOverdue);
+  const outstanding = openInvoices.reduce((sum, i) => sum + Number(i.balance_due || 0), 0);
+  const averageInvoice = liveInvoices.length ? liveInvoices.reduce((sum, i) => sum + Number(i.total || 0), 0) / liveInvoices.length : 0;
+  const customerCount = new Set(liveInvoices.filter(i => i.customer_id).map(i => i.customer_id)).size;
+
+  document.getElementById('stat-sales').textContent = formatMoney(salesThisMonth, preferredCurrency());
+  document.getElementById('stat-collected').textContent = formatMoney(collectedThisMonth, preferredCurrency());
+  document.getElementById('stat-open').textContent = String(openInvoices.length);
+  document.getElementById('stat-overdue').textContent = formatMoney(overdueInvoices.reduce((sum, i) => sum + Number(i.balance_due || 0), 0), preferredCurrency());
+  document.getElementById('mini-outstanding').textContent = formatMoney(outstanding, preferredCurrency());
+  document.getElementById('mini-customers').textContent = String(customerCount);
+  document.getElementById('mini-average').textContent = formatMoney(averageInvoice, preferredCurrency());
+  document.getElementById('mini-overdue-count').textContent = String(overdueInvoices.length);
+}
+
+function renderInvoices(){
+  const tbody = document.getElementById('invoice-rows');
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const statusFilter = document.getElementById('status-filter').value;
+  const rows = state.invoices.filter(invoice => {
+    const status = normalizeStatus(invoice);
+    const customerName = invoice.customer_name || customerNameById(invoice.customer_id);
+    const matchesQuery = !q
+      || String(invoice.invoice_number || '').toLowerCase().includes(q)
+      || String(customerName || '').toLowerCase().includes(q);
+    const matchesStatus = statusFilter === 'all' || status === statusFilter;
+    return matchesQuery && matchesStatus;
+  });
+
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="8" class="empty"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>No invoices match this view yet.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(invoice => {
+    const status = normalizeStatus(invoice);
+    const customer = escapeHtml(invoice.customer_name || customerNameById(invoice.customer_id) || 'Unknown customer');
+    const balance = Number(invoice.balance_due || 0);
+    const canCollect = status !== 'paid' && status !== 'cancelled' && balance > 0;
+    return `
+      <tr>
+        <td>
+          <div class="inv-number">${escapeHtml(invoice.invoice_number || 'Draft invoice')}</div>
+          <div class="inv-meta">${escapeHtml(state.currentCompanyName)}</div>
+        </td>
+        <td>
+          <div style="font-weight:700">${customer}</div>
+          <div class="inv-meta">${invoice.currency || 'DZD'}</div>
+        </td>
+        <td>${formatDate(invoice.issue_date)}</td>
+        <td>${formatDate(invoice.due_date)}</td>
+        <td>
+          <div class="money">${formatMoney(invoice.total, invoice.currency)}</div>
+          <div class="money-sub">Collected ${formatMoney(invoice.paid_total, invoice.currency)}</div>
+        </td>
+        <td>
+          <div class="money">${formatMoney(balance, invoice.currency)}</div>
+          <div class="money-sub">${balance > 0 ? 'Still to collect' : 'Fully settled'}</div>
+        </td>
+        <td><span class="status ${statusClass(status)}">${titleCaseStatus(status)}</span></td>
+        <td>
+          <div class="actions">
+            <button class="btn-inline" onclick="openDetailModal('${invoice.id}')">View</button>
+            <button class="btn-inline" ${canCollect ? '' : 'disabled style="opacity:.45;cursor:not-allowed"'} onclick="${canCollect ? `openPaymentModal('${invoice.id}')` : 'return false'}">Collect</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderRecentPayments(){
+  const host = document.getElementById('payments-list');
+  if(!state.payments.length){
+    host.innerHTML = '<div class="subtable-empty">No collections recorded yet.</div>';
+    return;
+  }
+  host.innerHTML = state.payments.slice(0,6).map(payment => {
+    const invoice = state.invoices.find(i => i.id === payment.invoice_id);
+    const customer = invoice?.customer_name || customerNameById(invoice?.customer_id) || 'Customer';
+    return `
+      <div class="list-item">
+        <div class="list-main">
+          <div class="list-title">${escapeHtml(customer)}</div>
+          <div class="list-sub">${escapeHtml(invoice?.invoice_number || 'Invoice')} - ${formatDate(payment.payment_date)}</div>
+        </div>
+        <div class="list-value">
+          ${formatMoney(payment.amount, payment.currency)}
+          <div class="list-sub">${escapeHtml(payment.method || 'collection')}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function customerNameById(id){
+  return state.customers.find(c => c.id === id)?.name || '';
+}
+
+function openInvoiceModal(){
+  state.invoiceLines = [];
+  document.getElementById('inv-number').value = '';
+  document.getElementById('inv-issue-date').value = todayIso();
+  document.getElementById('inv-due-date').value = addDays(todayIso(), 15);
+  updateInvoiceCurrencyDisplay();
+  populateCustomerSelect();
+  toggleNewCustomer(false);
+  addLineItem();
+  recalcInvoiceTotals();
+  document.getElementById('invoice-overlay').classList.add('show');
+  suggestInvoiceNumber();
+}
+
+function closeInvoiceModal(){
+  document.getElementById('invoice-overlay').classList.remove('show');
+}
+
+function populateCustomerSelect(){
+  const select = document.getElementById('inv-customer');
+  const options = ['<option value="">Select customer</option>']
+    .concat(state.customers.map(customer => `<option value="${customer.id}">${escapeHtml(customer.name)}</option>`));
+  select.innerHTML = options.join('');
+}
+
+function toggleNewCustomer(force){
+  const wrap = document.getElementById('new-customer-fields');
+  const btn = document.getElementById('toggle-customer-btn');
+  const shouldShow = typeof force === 'boolean' ? force : wrap.style.display === 'none';
+  wrap.style.display = shouldShow ? 'block' : 'none';
+  btn.textContent = shouldShow ? 'Use existing customer' : 'Add new customer';
+  if(shouldShow){
+    document.getElementById('inv-customer').value = '';
+  }else{
+    ['cust-name','cust-email','cust-phone'].forEach(id => document.getElementById(id).value = '');
+  }
+}
+
+function addLineItem(data={}){
+  state.invoiceLines.push({
+    description: data.description || '',
+    quantity: Number(data.quantity || 1),
+    unit_price: Number(data.unit_price || 0),
+    tax_rate: Number(data.tax_rate || 0),
+    discount: Number(data.discount || 0)
+  });
+  renderLineItems();
+}
+
+function removeLineItem(index){
+  state.invoiceLines.splice(index, 1);
+  if(!state.invoiceLines.length){
+    addLineItem();
+    return;
+  }
+  renderLineItems();
+}
+
+function renderLineItems(){
+  const host = document.getElementById('line-items-body');
+  host.innerHTML = state.invoiceLines.map((line, index) => {
+    const total = lineTotal(line);
+    return `
+      <div class="line-row">
+        <div><input placeholder="Product or service" value="${escapeAttr(line.description)}" oninput="updateLine(${index}, 'description', this.value)"></div>
+        <div><input type="number" min="0" step="0.01" value="${line.quantity}" oninput="updateLine(${index}, 'quantity', this.value)"></div>
+        <div><input type="number" min="0" step="0.01" value="${line.unit_price}" oninput="updateLine(${index}, 'unit_price', this.value)"></div>
+        <div><input type="number" min="0" step="0.01" value="${line.tax_rate}" oninput="updateLine(${index}, 'tax_rate', this.value)"></div>
+        <div><input type="number" min="0" step="0.01" value="${line.discount}" oninput="updateLine(${index}, 'discount', this.value)"></div>
+        <div class="line-total">${formatMoney(total, preferredCurrency())}</div>
+        <div><button class="icon-btn" onclick="removeLineItem(${index})" title="Remove line"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+      </div>
+    `;
+  }).join('');
+  recalcInvoiceTotals();
+}
+
+function updateLine(index, key, value){
+  if(!state.invoiceLines[index]) return;
+  if(key === 'description'){
+    state.invoiceLines[index][key] = value;
+  }else{
+    state.invoiceLines[index][key] = Number(value || 0);
+  }
+  renderLineItems();
+}
+
+function lineBase(line){
+  return Number(line.quantity || 0) * Number(line.unit_price || 0);
+}
+
+function lineTax(line){
+  return lineBase(line) * (Number(line.tax_rate || 0) / 100);
+}
+
+function lineTotal(line){
+  return Math.max(lineBase(line) + lineTax(line) - Number(line.discount || 0), 0);
+}
+
+function invoiceTotals(){
+  const subtotal = state.invoiceLines.reduce((sum, line) => sum + lineBase(line), 0);
+  const tax = state.invoiceLines.reduce((sum, line) => sum + lineTax(line), 0);
+  const discount = state.invoiceLines.reduce((sum, line) => sum + Number(line.discount || 0), 0);
+  const total = Math.max(subtotal + tax - discount, 0);
+  return { subtotal, tax, discount, total };
+}
+
+function recalcInvoiceTotals(){
+  const currency = updateInvoiceCurrencyDisplay();
+  const totals = invoiceTotals();
+  document.getElementById('sum-subtotal').textContent = formatMoney(totals.subtotal, currency);
+  document.getElementById('sum-tax').textContent = formatMoney(totals.tax, currency);
+  document.getElementById('sum-discount').textContent = formatMoney(totals.discount, currency);
+  document.getElementById('sum-total').textContent = formatMoney(totals.total, currency);
+}
+
+async function suggestInvoiceNumber(){
+  const year = new Date().getFullYear();
+  const { data } = await sb
+    .from('invoices')
+    .select('invoice_number')
+    .eq('company_id', state.currentCompanyId)
+    .not('invoice_number', 'is', null)
+    .order('created_at', { ascending: false })
+    .limit(10);
+  let next = 1;
+  for(const row of (data || [])){
+    const match = String(row.invoice_number || '').match(/(\d+)(?!.*\d)/);
+    if(match){
+      next = Math.max(next, Number(match[1]) + 1);
+      break;
+    }
+  }
+  document.getElementById('inv-number').value = `INV-${year}-${String(next).padStart(3, '0')}`;
+}
+
+async function saveInvoice(){
+  const invoiceNumber = document.getElementById('inv-number').value.trim();
+  const issueDate = document.getElementById('inv-issue-date').value;
+  const dueDate = document.getElementById('inv-due-date').value;
+  const currency = updateInvoiceCurrencyDisplay();
+  const usingNewCustomer = document.getElementById('new-customer-fields').style.display !== 'none';
+
+  if(!invoiceNumber || !issueDate || !dueDate){
+    showToast('Complete the invoice header first.', 'error');
+    return;
+  }
+  if(dueDate < issueDate){
+    showToast('Due date should not be earlier than issue date.', 'error');
+    return;
+  }
+
+  const lines = state.invoiceLines
+    .map(line => ({
+      description: String(line.description || '').trim(),
+      quantity: Number(line.quantity || 0),
+      unit_price: Number(line.unit_price || 0),
+      tax_rate: Number(line.tax_rate || 0),
+      discount: Number(line.discount || 0),
+      line_total: lineTotal(line)
+    }))
+    .filter(line => line.description && line.quantity > 0 && line.unit_price >= 0);
+
+  if(!lines.length){
+    showToast('Add at least one valid invoice line.', 'error');
+    return;
+  }
+
+  let customerId = document.getElementById('inv-customer').value;
+  let customerName = '';
+
+  const saveBtn = document.getElementById('save-invoice-btn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Creating...';
+
+  try{
+    if(usingNewCustomer){
+      customerName = document.getElementById('cust-name').value.trim();
+      if(!customerName){
+        throw new Error('Add the new customer name first.');
+      }
+      const newCustomerPayload = {
+        company_id: state.currentCompanyId,
+        name: customerName,
+        email: document.getElementById('cust-email').value.trim() || null,
+        phone: document.getElementById('cust-phone').value.trim() || null,
+        tax_id: null,
+        address: null,
+        city: null,
+        country: 'Algeria',
+        balance: 0,
+        is_active: true
+      };
+      const { data: insertedCustomer, error: customerError } = await sb
+        .from('customers')
+        .insert(newCustomerPayload)
+        .select()
+        .single();
+      if(customerError) throw customerError;
+      customerId = insertedCustomer.id;
+      customerName = insertedCustomer.name;
+      state.customers.unshift(insertedCustomer);
+    }else{
+      const customer = state.customers.find(item => item.id === customerId);
+      if(!customer){
+        throw new Error('Choose an existing customer or create a new one.');
+      }
+      customerName = customer.name;
+    }
+
+    const duplicate = state.invoices.some(inv => inv.invoice_number === invoiceNumber);
+    if(duplicate){
+      throw new Error('This invoice number already exists.');
+    }
+
+    const totals = invoiceTotals();
+    const invoicePayload = {
+      company_id: state.currentCompanyId,
+      customer_id: customerId,
+      customer_name: customerName,
+      invoice_number: invoiceNumber,
+      status: 'issued',
+      issue_date: issueDate,
+      due_date: dueDate,
+      currency,
+      subtotal: totals.subtotal,
+      tax_total: totals.tax,
+      discount_total: totals.discount,
+      total: totals.total,
+      paid_total: 0,
+      balance_due: totals.total
+    };
+
+    const { data: insertedInvoice, error: invoiceError } = await sb
+      .from('invoices')
+      .insert(invoicePayload)
+      .select()
+      .single();
+    if(invoiceError) throw invoiceError;
+
+    const itemPayload = lines.map(line => ({
+      invoice_id: insertedInvoice.id,
+      product_id: null,
+      description: line.description,
+      quantity: line.quantity,
+      unit_price: line.unit_price,
+      tax_rate: line.tax_rate,
+      discount: line.discount,
+      line_total: line.line_total
+    }));
+
+    const { error: itemsError } = await sb.from('invoice_items').insert(itemPayload);
+    if(itemsError) throw itemsError;
+
+    const { error: rpcError } = await sb.rpc('create_invoice_journal_entry', { p_invoice_id: insertedInvoice.id });
+    if(rpcError) throw rpcError;
+
+    closeInvoiceModal();
+    await refreshAll();
+    showToast('Invoice created and posted successfully.', 'success');
+  }catch(error){
+    showToast(error.message || 'Could not create invoice.', 'error');
+  }finally{
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Create invoice';
+  }
+}
+
+function openPaymentModal(invoiceId){
+  const invoice = state.invoices.find(item => item.id === invoiceId);
+  if(!invoice) return;
+  state.selectedInvoiceForPayment = invoice;
+  document.getElementById('payment-invoice-name').textContent = invoice.invoice_number + ' - ' + (invoice.customer_name || customerNameById(invoice.customer_id) || 'Customer');
+  document.getElementById('payment-invoice-balance').textContent = 'Outstanding: ' + formatMoney(invoice.balance_due, invoice.currency);
+  document.getElementById('pay-amount').value = Number(invoice.balance_due || 0).toFixed(0);
+  document.getElementById('pay-date').value = todayIso();
+  document.getElementById('pay-method').value = 'cash';
+  document.getElementById('pay-reference').value = '';
+  document.getElementById('pay-notes').value = '';
+  document.getElementById('payment-overlay').classList.add('show');
+}
+
+function closePaymentModal(){
+  state.selectedInvoiceForPayment = null;
+  document.getElementById('payment-overlay').classList.remove('show');
+}
+
+async function savePayment(){
+  const invoice = state.selectedInvoiceForPayment;
+  if(!invoice) return;
+
+  const amount = Number(document.getElementById('pay-amount').value || 0);
+  const paymentDate = document.getElementById('pay-date').value;
+  const method = document.getElementById('pay-method').value;
+  const reference = document.getElementById('pay-reference').value.trim();
+  const notes = document.getElementById('pay-notes').value.trim();
+
+  if(amount <= 0){
+    showToast('Payment amount must be greater than zero.', 'error');
+    return;
+  }
+  if(amount > Number(invoice.balance_due || 0)){
+    showToast('Payment cannot exceed the remaining balance.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('save-payment-btn');
+  btn.disabled = true;
+  btn.textContent = 'Recording...';
+
+  try{
+    const paymentPayload = {
+      company_id: state.currentCompanyId,
+      invoice_id: invoice.id,
+      amount,
+      currency: invoice.currency || 'DZD',
+      payment_date: paymentDate,
+      method,
+      reference: reference || null,
+      notes: notes || null
+    };
+
+    const { data: insertedPayment, error: paymentError } = await sb
+      .from('payments')
+      .insert(paymentPayload)
+      .select()
+      .single();
+    if(paymentError) throw paymentError;
+
+    const { error: rpcError } = await sb.rpc('create_payment_journal_entry', { p_payment_id: insertedPayment.id });
+    if(rpcError) throw rpcError;
+
+    closePaymentModal();
+    await refreshAll();
+    showToast('Payment recorded successfully.', 'success');
+  }catch(error){
+    showToast(error.message || 'Could not record payment.', 'error');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Record payment';
+  }
+}
+
+async function openDetailModal(invoiceId){
+  const invoice = state.invoices.find(item => item.id === invoiceId);
+  if(!invoice) return;
+  document.getElementById('detail-title').textContent = invoice.invoice_number || 'Invoice details';
+  document.getElementById('detail-sub').textContent = 'Issued ' + formatDate(invoice.issue_date) + ' - due ' + formatDate(invoice.due_date);
+  document.getElementById('detail-customer').textContent = invoice.customer_name || customerNameById(invoice.customer_id) || 'Unknown customer';
+  document.getElementById('detail-status').textContent = titleCaseStatus(normalizeStatus(invoice));
+  document.getElementById('detail-total').textContent = formatMoney(invoice.total, invoice.currency);
+  document.getElementById('detail-balance').textContent = formatMoney(invoice.balance_due, invoice.currency);
+
+  const [{ data: items }, { data: payments }] = await Promise.all([
+    sb.from('invoice_items').select('*').eq('invoice_id', invoiceId).order('created_at', { ascending: true }),
+    sb.from('payments').select('*').eq('invoice_id', invoiceId).order('payment_date', { ascending: false })
+  ]);
+
+  const detailLines = document.getElementById('detail-lines');
+  if(!items || !items.length){
+    detailLines.innerHTML = '<div class="subtable-empty">No line items found for this invoice.</div>';
+  }else{
+    detailLines.innerHTML = `
+      <table>
+        <thead><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Total</th></tr></thead>
+        <tbody>
+          ${items.map(item => `
+            <tr>
+              <td>${escapeHtml(item.description || 'Line item')}</td>
+              <td>${Number(item.quantity || 0)}</td>
+              <td>${formatMoney(item.unit_price, invoice.currency)}</td>
+              <td>${formatMoney(item.line_total, invoice.currency)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  const detailPayments = document.getElementById('detail-payments');
+  if(!payments || !payments.length){
+    detailPayments.innerHTML = '<div class="subtable-empty">No payments linked to this invoice yet.</div>';
+  }else{
+    detailPayments.innerHTML = `
+      <table>
+        <thead><tr><th>Date</th><th>Method</th><th>Reference</th><th>Amount</th></tr></thead>
+        <tbody>
+          ${payments.map(payment => `
+            <tr>
+              <td>${formatDate(payment.payment_date)}</td>
+              <td>${escapeHtml(payment.method || 'collection')}</td>
+              <td>${escapeHtml(payment.reference || '-')}</td>
+              <td>${formatMoney(payment.amount, payment.currency)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  document.getElementById('detail-overlay').classList.add('show');
+}
+
+function closeDetailModal(){
+  document.getElementById('detail-overlay').classList.remove('show');
+}
+
+function bindModalClosers(){
+  ['invoice-overlay','payment-overlay','detail-overlay'].forEach(id => {
+    document.getElementById(id).addEventListener('click', event => {
+      if(event.target !== event.currentTarget) return;
+      if(id === 'invoice-overlay') closeInvoiceModal();
+      if(id === 'payment-overlay') closePaymentModal();
+      if(id === 'detail-overlay') closeDetailModal();
+    });
+  });
+}
+
+async function handleLogout(){
+  await sb.auth.signOut();
+  window.location.href = 'login (1).html';
+}
+
+function escapeHtml(value){
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function escapeAttr(value){
+  return escapeHtml(value).replaceAll('`', '&#96;');
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
