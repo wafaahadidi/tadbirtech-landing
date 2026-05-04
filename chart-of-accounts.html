@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TadbirTech — Chart of Accounts</title>
+<title>TadbirTech â€” Chart of Accounts</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -137,7 +137,8 @@ tr:hover td{background:#F8FAFC}
 }
 
 .currency-wrap{display:none !important}
-.currency-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:0.5px solid #DDE6EF;border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#0D1F3C;cursor:pointer;font-family:inherit;transition:all .2s}
+.currency-btn,.currency-dropdown,.currency-option,#currencyFlag,#currencyCode{display:none !important}
+.currency-btn{align-items:center;gap:6px;padding:6px 12px;border:0.5px solid #DDE6EF;border-radius:8px;background:#fff;font-size:12px;font-weight:600;color:#0D1F3C;cursor:pointer;font-family:inherit;transition:all .2s}
 .currency-btn:hover{border-color:#1a8fd1;color:#1a8fd1}
 .currency-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:0.5px solid #DDE6EF;border-radius:10px;box-shadow:0 8px 24px rgba(13,31,60,.12);z-index:999;min-width:180px;padding:6px;display:none}
 .currency-dropdown.open{display:block}
@@ -220,7 +221,7 @@ tr:hover td{background:#F8FAFC}
   <div class="sb-foot">
     <button class="sb-logout" onclick="handleLogout()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Sign out / Déconnexion
+      Sign out / DÃ©connexion
     </button>
   </div>
 </aside>
@@ -229,24 +230,10 @@ tr:hover td{background:#F8FAFC}
 <div class="main">
   <div class="topbar">
     <div class="tb-left">
-      <h2>Chart of Accounts — Plan Comptable</h2>
-      <p>Manage your accounts structure / Gérez la structure de vos comptes</p>
+      <h2>Chart of Accounts â€” Plan Comptable</h2>
+      <p>Manage your accounts structure / GÃ©rez la structure de vos comptes</p>
     </div>
     <div class="tb-right">
-        <button class="currency-btn" onclick="toggleCurrencyMenu()" id="currencyBtn">
-          <span style="font-size:14px" id="currencyFlag">🇩🇿</span>
-          <span id="currencyCode">DZD</span>
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="currency-dropdown" id="currencyMenu">
-          <div class="currency-option selected" onclick="setCurrency('DZD','🇩🇿','Dinar algérien',this)"><span class="flag">🇩🇿</span><div><div class="code">DZD</div><div class="name">Dinar algérien</div></div></div>
-          <div class="currency-option" onclick="setCurrency('MAD','🇲🇦','Dirham marocain',this)"><span class="flag">🇲🇦</span><div><div class="code">MAD</div><div class="name">Dirham marocain</div></div></div>
-          <div class="currency-option" onclick="setCurrency('TND','🇹🇳','Dinar tunisien',this)"><span class="flag">🇹🇳</span><div><div class="code">TND</div><div class="name">Dinar tunisien</div></div></div>
-          <div class="currency-option" onclick="setCurrency('EGP','🇪🇬','Livre égyptienne',this)"><span class="flag">🇪🇬</span><div><div class="code">EGP</div><div class="name">Livre égyptienne</div></div></div>
-          <div class="currency-option" onclick="setCurrency('USD','🇺🇸','US Dollar',this)"><span class="flag">🇺🇸</span><div><div class="code">USD</div><div class="name">US Dollar</div></div></div>
-          <div class="currency-option" onclick="setCurrency('EUR','🇪🇺','Euro',this)"><span class="flag">🇪🇺</span><div><div class="code">EUR</div><div class="name">Euro</div></div></div>
-        </div>
-      </div>
       <button class="btn-primary" onclick="openModal()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Account
@@ -258,11 +245,11 @@ tr:hover td{background:#F8FAFC}
 
     <!-- STATS -->
     <div class="stats-row" id="stats-row">
-      <div class="stat"><div class="stat-val" id="st-total">—</div><div class="stat-lbl">Total Accounts</div></div>
-      <div class="stat blue"><div class="stat-val" id="st-asset">—</div><div class="stat-lbl">Assets</div></div>
-      <div class="stat red"><div class="stat-val" id="st-liability">—</div><div class="stat-lbl">Liabilities</div></div>
-      <div class="stat green"><div class="stat-val" id="st-revenue">—</div><div class="stat-lbl">Revenue</div></div>
-      <div class="stat amber"><div class="stat-val" id="st-expense">—</div><div class="stat-lbl">Expenses</div></div>
+      <div class="stat"><div class="stat-val" id="st-total">â€”</div><div class="stat-lbl">Total Accounts</div></div>
+      <div class="stat blue"><div class="stat-val" id="st-asset">â€”</div><div class="stat-lbl">Assets</div></div>
+      <div class="stat red"><div class="stat-val" id="st-liability">â€”</div><div class="stat-lbl">Liabilities</div></div>
+      <div class="stat green"><div class="stat-val" id="st-revenue">â€”</div><div class="stat-lbl">Revenue</div></div>
+      <div class="stat amber"><div class="stat-val" id="st-expense">â€”</div><div class="stat-lbl">Expenses</div></div>
     </div>
 
     <!-- FILTERS -->
@@ -445,8 +432,8 @@ function renderTable(){
       <td class="${a.balance>=0?'balance-pos':'balance-neg'}">${Number(a.balance||0).toLocaleString('fr-DZ')} DZD</td>
       <td><span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:${a.is_active?'#D1FAE5':'#F3F4F6'};color:${a.is_active?'#065F46':'#6B7280'}">${a.is_active?'Active':'Inactive'}</span></td>
       <td><div class="actions">
-        <button class="btn-edit" onclick="openEdit('${a.id}')">✏️ Edit</button>
-        <button class="btn-del" onclick="openDelete('${a.id}','${a.name}')">🗑 Delete</button>
+        <button class="btn-edit" onclick="openEdit('${a.id}')">âœï¸ Edit</button>
+        <button class="btn-del" onclick="openDelete('${a.id}','${a.name}')">ðŸ—‘ Delete</button>
       </div></td>
     </tr>
   `).join('');
@@ -559,35 +546,13 @@ function toggleDropdown(el) {
 </script>
 
 <script>
-function toggleCurrencyMenu(){
-  document.getElementById('currencyMenu').classList.toggle('open');
-}
-function setCurrency(code,flag,name,el){
-  localStorage.setItem('tt_currency',JSON.stringify({code,flag}));
-  document.getElementById('currencyCode').textContent=code;
-  document.getElementById('currencyFlag').textContent=flag;
-  document.querySelectorAll('.currency-option').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('currencyMenu').classList.remove('open');
-  // update all currency labels in table
+function initCurrency(){
+  let code = 'DZD';
+  try{
+    code = JSON.parse(localStorage.getItem('tt_currency') || '{}').code || 'DZD';
+  }catch(_e){}
   document.querySelectorAll('.cur-lbl').forEach(el=>el.textContent=code);
 }
-function initCurrency(){
-  const saved=localStorage.getItem('tt_currency');
-  if(saved){
-    const{code,flag}=JSON.parse(saved);
-    document.getElementById('currencyCode').textContent=code;
-    document.getElementById('currencyFlag').textContent=flag;
-    document.querySelectorAll('.currency-option').forEach(o=>{
-      o.classList.toggle('selected',o.querySelector('.code')?.textContent===code);
-    });
-    document.querySelectorAll('.cur-lbl').forEach(el=>el.textContent=code);
-  }
-}
-document.addEventListener('click',e=>{
-  const wrap=document.getElementById('currencyWrap');
-  if(wrap&&!wrap.contains(e.target))document.getElementById('currencyMenu').classList.remove('open');
-});
 window.addEventListener('load',initCurrency);
 </script>
 
