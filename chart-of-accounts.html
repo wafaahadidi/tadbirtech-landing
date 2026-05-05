@@ -516,16 +516,7 @@ async function saveAccount(){
   if(editingId){
     ({error}=await sb.from('accounts').update(payload).eq('id',editingId));
   } else {
-    ({error}=await sb.rpc('create_account_for_current_user',{
-      p_company_id: currentCompanyId,
-      p_code: code,
-      p_name: name,
-      p_type: type,
-      p_balance: balance,
-      p_is_active: is_active,
-      p_description: description,
-      p_currency: currency
-    }));
+    ({error}=await sb.from('accounts').insert(payload));
   }
   btn.disabled=false; btn.textContent=editingId?'Update Account':'Save Account';
   if(error){ showToast('Error: '+error.message,'error'); return; }
