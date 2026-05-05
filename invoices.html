@@ -595,6 +595,7 @@ tr:hover td{background:#FAFCFE}
 const SUPABASE_URL = 'https://gqmpqpnboenmshuuopnp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const DEMO_COMPANY_ID = 'ad0623bc-4c7b-449f-8657-1abc10ddee97';
 
 const state = {
   session: null,
@@ -758,6 +759,9 @@ async function resolveCompany(){
 
     if(accountCompanyId){
       state.currentCompanyId = accountCompanyId;
+      localStorage.setItem('tt_company_id', state.currentCompanyId);
+    } else if(DEMO_COMPANY_ID){
+      state.currentCompanyId = DEMO_COMPANY_ID;
       localStorage.setItem('tt_company_id', state.currentCompanyId);
     } else {
       const { data: companyData, error: companyError } = await sb
