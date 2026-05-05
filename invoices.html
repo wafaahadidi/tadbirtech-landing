@@ -724,18 +724,46 @@ function hydrateUser(session){
 }
 
 async function resolveCompany(){
+  const rawStoredCompanyId = localStorage.getItem('tt_company_id');
+  const storedCompanyId =
+    rawStoredCompanyId && rawStoredCompanyId !== 'null' && rawStoredCompanyId !== 'undefined'
+      ? rawStoredCompanyId
+      : null;
   const { data, error } = await sb
     .from('company_members')
     .select('company_id')
     .eq('user_id', state.session.user.id)
     .limit(1);
 
-  if(error || !data || !data.length){
-    showToast('No company membership found for this account.', 'error');
-    throw error || new Error('No company membership found');
-  }
+  if(!error && data && data.length){
+    state.currentCompanyId = data[0].company_id;
+    localStorage.setItem('tt_company_id', state.currentCompanyId);
+  } else if(storedCompanyId){
+    state.currentCompanyId = storedCompanyId;
+  } else {
+    const { data: accountData, error: accountError } = await sb
+      .from('accounts')
+      .select('company_id')
+      .limit(1);
 
-  state.currentCompanyId = data[0].company_id;
+    if(!accountError && accountData && accountData.length){
+      state.currentCompanyId = accountData[0].company_id;
+      localStorage.setItem('tt_company_id', state.currentCompanyId);
+    } else {
+      const { data: companyData, error: companyError } = await sb
+        .from('companies')
+        .select('id')
+        .limit(1);
+
+      if(!companyError && companyData && companyData.length){
+        state.currentCompanyId = companyData[0].id;
+        localStorage.setItem('tt_company_id', state.currentCompanyId);
+      } else {
+        showToast('No company found for this account yet.', 'error');
+        throw error || accountError || companyError || new Error('No company found');
+      }
+    }
+  }
 
   const { data: company } = await sb
     .from('companies')
@@ -747,8 +775,16 @@ async function resolveCompany(){
   document.getElementById('company-label').textContent = state.currentCompanyName + ' - Sales, collections, and invoice follow-up.';
 }
 
+async function ensureCompanyId(){
+  if(state.currentCompanyId) return state.currentCompanyId;
+  await resolveCompany();
+  if(state.currentCompanyId) return state.currentCompanyId;
+  throw new Error('No company selected for this session yet.');
+}
+
 async function refreshAll(){
   showLoading(true);
+  await ensureCompanyId();
   await Promise.all([loadCustomers(), loadInvoices(), loadPayments()]);
   renderInvoices();
   renderStats();
@@ -1023,11 +1059,12 @@ function recalcInvoiceTotals(){
 }
 
 async function suggestInvoiceNumber(){
+  const companyId = await ensureCompanyId();
   const year = new Date().getFullYear();
   const { data } = await sb
     .from('invoices')
     .select('invoice_number')
-    .eq('company_id', state.currentCompanyId)
+    .eq('company_id', companyId)
     .not('invoice_number', 'is', null)
     .order('created_at', { ascending: false })
     .limit(10);
@@ -1082,13 +1119,14 @@ async function saveInvoice(){
   saveBtn.textContent = 'Creating...';
 
   try{
+    const companyId = await ensureCompanyId();
     if(usingNewCustomer){
       customerName = document.getElementById('cust-name').value.trim();
       if(!customerName){
         throw new Error('Add the new customer name first.');
       }
       const newCustomerPayload = {
-        company_id: state.currentCompanyId,
+        company_id: companyId,
         name: customerName,
         email: document.getElementById('cust-email').value.trim() || null,
         phone: document.getElementById('cust-phone').value.trim() || null,
@@ -1123,7 +1161,7 @@ async function saveInvoice(){
 
     const totals = invoiceTotals();
     const invoicePayload = {
-      company_id: state.currentCompanyId,
+      company_id: companyId,
       customer_id: customerId,
       customer_name: customerName,
       invoice_number: invoiceNumber,
