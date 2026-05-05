@@ -735,8 +735,13 @@ async function resolveCompany(){
     .eq('user_id', state.session.user.id)
     .limit(1);
 
-  if(!error && data && data.length){
-    state.currentCompanyId = data[0].company_id;
+  const membershipCompanyId =
+    !error && data && data.length && data[0] && data[0].company_id
+      ? data[0].company_id
+      : null;
+
+  if(membershipCompanyId){
+    state.currentCompanyId = membershipCompanyId;
     localStorage.setItem('tt_company_id', state.currentCompanyId);
   } else if(storedCompanyId){
     state.currentCompanyId = storedCompanyId;
@@ -746,8 +751,13 @@ async function resolveCompany(){
       .select('company_id')
       .limit(1);
 
-    if(!accountError && accountData && accountData.length){
-      state.currentCompanyId = accountData[0].company_id;
+    const accountCompanyId =
+      !accountError && accountData && accountData.length && accountData[0] && accountData[0].company_id
+        ? accountData[0].company_id
+        : null;
+
+    if(accountCompanyId){
+      state.currentCompanyId = accountCompanyId;
       localStorage.setItem('tt_company_id', state.currentCompanyId);
     } else {
       const { data: companyData, error: companyError } = await sb
@@ -763,6 +773,12 @@ async function resolveCompany(){
         throw error || accountError || companyError || new Error('No company found');
       }
     }
+  }
+
+  if(!state.currentCompanyId){
+    localStorage.removeItem('tt_company_id');
+    showToast('No company found for this account yet.', 'error');
+    throw new Error('No company found');
   }
 
   const { data: company } = await sb
