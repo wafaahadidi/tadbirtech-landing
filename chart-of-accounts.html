@@ -376,18 +376,37 @@ function hydrateUser(session){
 }
 
 async function resolveCompany(session){
+  const storedCompanyId = localStorage.getItem('tt_company_id');
   const { data, error } = await sb
     .from('company_members')
     .select('company_id')
     .eq('user_id', session.user.id)
     .limit(1);
 
-  if(error || !data || !data.length){
-    showToast('No company membership found for this account.','error');
-    throw error || new Error('No company membership found');
+  if(!error && data && data.length){
+    currentCompanyId = data[0].company_id;
+    localStorage.setItem('tt_company_id', currentCompanyId);
+    return;
   }
 
-  currentCompanyId = data[0].company_id;
+  if(storedCompanyId){
+    currentCompanyId = storedCompanyId;
+    return;
+  }
+
+  const { data: accountData, error: accountError } = await sb
+    .from('accounts')
+    .select('company_id')
+    .limit(1);
+
+  if(!accountError && accountData && accountData.length){
+    currentCompanyId = accountData[0].company_id;
+    localStorage.setItem('tt_company_id', currentCompanyId);
+    return;
+  }
+
+  showToast('No company found yet. Please open Settings once or sign in again.','error');
+  throw error || accountError || new Error('No company found');
 }
 
 async function handleLogout(){ await sb.auth.signOut(); window.location.href='login (1).html'; }
