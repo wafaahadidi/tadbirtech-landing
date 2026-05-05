@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TadbirTech â€” Chart of Accounts</title>
+<title>TadbirTech - Chart of Accounts</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -230,8 +230,8 @@ tr:hover td{background:#F8FAFC}
 <div class="main">
   <div class="topbar">
     <div class="tb-left">
-      <h2>Chart of Accounts â€” Plan Comptable</h2>
-      <p>Manage your accounts structure / GÃ©rez la structure de vos comptes</p>
+      <h2>Chart of Accounts - Plan Comptable</h2>
+      <p>Manage your accounts structure / Gere la structure de vos comptes</p>
     </div>
     <div class="tb-right">
       <button class="btn-primary" onclick="openModal()">
@@ -245,11 +245,11 @@ tr:hover td{background:#F8FAFC}
 
     <!-- STATS -->
     <div class="stats-row" id="stats-row">
-      <div class="stat"><div class="stat-val" id="st-total">â€”</div><div class="stat-lbl">Total Accounts</div></div>
-      <div class="stat blue"><div class="stat-val" id="st-asset">â€”</div><div class="stat-lbl">Assets</div></div>
-      <div class="stat red"><div class="stat-val" id="st-liability">â€”</div><div class="stat-lbl">Liabilities</div></div>
-      <div class="stat green"><div class="stat-val" id="st-revenue">â€”</div><div class="stat-lbl">Revenue</div></div>
-      <div class="stat amber"><div class="stat-val" id="st-expense">â€”</div><div class="stat-lbl">Expenses</div></div>
+      <div class="stat"><div class="stat-val" id="st-total">--</div><div class="stat-lbl">Total Accounts</div></div>
+      <div class="stat blue"><div class="stat-val" id="st-asset">--</div><div class="stat-lbl">Assets</div></div>
+      <div class="stat red"><div class="stat-val" id="st-liability">--</div><div class="stat-lbl">Liabilities</div></div>
+      <div class="stat green"><div class="stat-val" id="st-revenue">--</div><div class="stat-lbl">Revenue</div></div>
+      <div class="stat amber"><div class="stat-val" id="st-expense">--</div><div class="stat-lbl">Expenses</div></div>
     </div>
 
     <!-- FILTERS -->
@@ -378,22 +378,51 @@ let allAccounts = [];
 let editingId = null;
 let deletingId = null;
 let activeType = 'all';
+let currentCompanyId = null;
 
 // Auth
-sb.auth.getSession().then(({data:{session}})=>{
-  if(session){
-    const n = session.user.user_metadata?.first_name || session.user.email.split('@')[0];
-    document.getElementById('sb-name').textContent = n;
-    document.getElementById('sb-av').textContent = n.charAt(0).toUpperCase();
-  }
-});
+function hydrateUser(session){
+  const n = session.user.user_metadata?.first_name || session.user.email.split('@')[0];
+  document.getElementById('sb-name').textContent = n;
+  document.getElementById('sb-av').textContent = n.charAt(0).toUpperCase();
+}
 
-async function handleLogout(){ await sb.auth.signOut(); window.location.href='login.html'; }
+async function resolveCompany(session){
+  const { data, error } = await sb
+    .from('company_members')
+    .select('company_id')
+    .eq('user_id', session.user.id)
+    .limit(1);
+
+  if(error || !data || !data.length){
+    showToast('No company membership found for this account.','error');
+    throw error || new Error('No company membership found');
+  }
+
+  currentCompanyId = data[0].company_id;
+}
+
+async function handleLogout(){ await sb.auth.signOut(); window.location.href='login (1).html'; }
 
 // LOAD
 async function loadAccounts(){
-  const {data,error} = await sb.from('accounts').select('*').order('code');
-  if(error){ showToast('Error loading accounts: '+error.message,'error'); return; }
+  if(!currentCompanyId){
+    showToast('No company selected.','error');
+    document.getElementById('count-lbl').textContent = 'Error';
+    document.getElementById('accounts-table').innerHTML = `<tr><td colspan="6" class="empty">No company selected.</td></tr>`;
+    return;
+  }
+  const {data,error} = await sb
+    .from('accounts')
+    .select('*')
+    .eq('company_id', currentCompanyId)
+    .order('code');
+  if(error){
+    showToast('Error loading accounts: '+error.message,'error');
+    document.getElementById('count-lbl').textContent = 'Error';
+    document.getElementById('accounts-table').innerHTML = `<tr><td colspan="6" class="empty">Unable to load accounts.</td></tr>`;
+    return;
+  }
   allAccounts = data || [];
   updateStats();
   renderTable();
@@ -432,8 +461,8 @@ function renderTable(){
       <td class="${a.balance>=0?'balance-pos':'balance-neg'}">${Number(a.balance||0).toLocaleString('fr-DZ')} DZD</td>
       <td><span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:${a.is_active?'#D1FAE5':'#F3F4F6'};color:${a.is_active?'#065F46':'#6B7280'}">${a.is_active?'Active':'Inactive'}</span></td>
       <td><div class="actions">
-        <button class="btn-edit" onclick="openEdit('${a.id}')">âœï¸ Edit</button>
-        <button class="btn-del" onclick="openDelete('${a.id}','${a.name}')">ðŸ—‘ Delete</button>
+        <button class="btn-edit" onclick="openEdit('${a.id}')">Edit</button>
+        <button class="btn-del" onclick="openDelete('${a.id}','${a.name}')">Delete</button>
       </div></td>
     </tr>
   `).join('');
@@ -487,14 +516,28 @@ async function saveAccount(){
   const is_active=document.getElementById('f-active').value==='true';
   const description=document.getElementById('f-desc').value.trim();
   if(!code||!name||!type){ showToast('Please fill all required fields','error'); return; }
+  if(!currentCompanyId){ showToast('No company selected. Please sign in again.','error'); return; }
   const btn=document.getElementById('btn-save');
   btn.disabled=true; btn.textContent='Saving...';
-  const payload={code,name,type,balance,is_active,description};
+  let currency='DZD';
+  try{
+    currency = JSON.parse(localStorage.getItem('tt_currency') || '{}').code || 'DZD';
+  }catch(_e){}
+  const payload={code,name,type,balance,is_active,description,company_id:currentCompanyId,currency};
   let error;
   if(editingId){
     ({error}=await sb.from('accounts').update(payload).eq('id',editingId));
   } else {
-    ({error}=await sb.from('accounts').insert(payload));
+    ({error}=await sb.rpc('create_account_for_current_user',{
+      p_company_id: currentCompanyId,
+      p_code: code,
+      p_name: name,
+      p_type: type,
+      p_balance: balance,
+      p_is_active: is_active,
+      p_description: description,
+      p_currency: currency
+    }));
   }
   btn.disabled=false; btn.textContent=editingId?'Update Account':'Save Account';
   if(error){ showToast('Error: '+error.message,'error'); return; }
@@ -531,7 +574,24 @@ document.getElementById('modal-overlay').addEventListener('click',e=>{ if(e.targ
 document.getElementById('del-overlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeDelete(); });
 
 // INIT
-loadAccounts();
+async function initPage(){
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    if(!session){
+      window.location.href = 'login (1).html';
+      return;
+    }
+    hydrateUser(session);
+    await resolveCompany(session);
+    await loadAccounts();
+  }catch(error){
+    showToast(error?.message || 'Unable to initialize this page.','error');
+    document.getElementById('count-lbl').textContent = 'Error';
+    document.getElementById('accounts-table').innerHTML = `<tr><td colspan="6" class="empty">Unable to initialize this page.</td></tr>`;
+  }
+}
+
+initPage();
 </script>
 
 <script>
