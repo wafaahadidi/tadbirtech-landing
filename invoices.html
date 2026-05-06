@@ -1219,10 +1219,16 @@ async function saveInvoice(){
     if(itemsError) throw itemsError;
 
     const { error: rpcError } = await sb.rpc('create_invoice_journal_entry', { p_invoice_id: insertedInvoice.id });
-    if(rpcError) throw rpcError;
 
     closeInvoiceModal();
     await refreshAll();
+
+    if(rpcError){
+      console.warn('Invoice posting failed, invoice was still created.', rpcError);
+      showToast('Invoice created. Accounting posting needs a small follow-up.', 'success');
+      return;
+    }
+
     showToast('Invoice created and posted successfully.', 'success');
   }catch(error){
     showToast(error.message || 'Could not create invoice.', 'error');
