@@ -1025,13 +1025,13 @@ function renderLineItems(){
   host.innerHTML = state.invoiceLines.map((line, index) => {
     const total = lineTotal(line);
     return `
-      <div class="line-row">
+      <div class="line-row" data-line-index="${index}">
         <div><input placeholder="Product or service" value="${escapeAttr(line.description)}" oninput="updateLine(${index}, 'description', this.value)"></div>
         <div><input type="number" min="0" step="0.01" value="${line.quantity}" oninput="updateLine(${index}, 'quantity', this.value)"></div>
         <div><input type="number" min="0" step="0.01" value="${line.unit_price}" oninput="updateLine(${index}, 'unit_price', this.value)"></div>
         <div><input type="number" min="0" step="0.01" value="${line.tax_rate}" oninput="updateLine(${index}, 'tax_rate', this.value)"></div>
         <div><input type="number" min="0" step="0.01" value="${line.discount}" oninput="updateLine(${index}, 'discount', this.value)"></div>
-        <div class="line-total">${formatMoney(total, preferredCurrency())}</div>
+        <div class="line-total" data-line-total="${index}">${formatMoney(total, preferredCurrency())}</div>
         <div><button class="icon-btn" onclick="removeLineItem(${index})" title="Remove line"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
       </div>
     `;
@@ -1046,7 +1046,11 @@ function updateLine(index, key, value){
   }else{
     state.invoiceLines[index][key] = Number(value || 0);
   }
-  renderLineItems();
+  const totalCell = document.querySelector(`[data-line-total="${index}"]`);
+  if(totalCell){
+    totalCell.textContent = formatMoney(lineTotal(state.invoiceLines[index]), preferredCurrency());
+  }
+  recalcInvoiceTotals();
 }
 
 function lineBase(line){
@@ -1218,18 +1222,9 @@ async function saveInvoice(){
     const { error: itemsError } = await sb.from('invoice_items').insert(itemPayload);
     if(itemsError) throw itemsError;
 
-    const { error: rpcError } = await sb.rpc('create_invoice_journal_entry', { p_invoice_id: insertedInvoice.id });
-
     closeInvoiceModal();
     await refreshAll();
-
-    if(rpcError){
-      console.warn('Invoice posting failed, invoice was still created.', rpcError);
-      showToast('Invoice created. Accounting posting needs a small follow-up.', 'success');
-      return;
-    }
-
-    showToast('Invoice created and posted successfully.', 'success');
+    showToast('Invoice created successfully.', 'success');
   }catch(error){
     showToast(error.message || 'Could not create invoice.', 'error');
   }finally{
