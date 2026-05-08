@@ -585,6 +585,11 @@ tr:hover td{background:#FAFCFE}
         <div id="detail-payments"></div>
       </div>
     </div>
+    <div class="modal-foot">
+      <button class="btn-primary" id="detail-print-btn" onclick="openOfficialInvoice(this.dataset.invoiceId)">Official copy</button>
+      <button class="btn-danger" id="detail-delete-btn" onclick="deleteInvoice(this.dataset.invoiceId)">Delete invoice</button>
+      <button class="btn-secondary" onclick="closeDetailModal()">Close</button>
+    </div>
   </div>
 </div>
 
@@ -601,6 +606,7 @@ const state = {
   session: null,
   currentCompanyId: null,
   currentCompanyName: 'Your company',
+  currentCompany: null,
   invoices: [],
   customers: [],
   payments: [],
@@ -787,10 +793,11 @@ async function resolveCompany(){
 
   const { data: company } = await sb
     .from('companies')
-    .select('name')
+    .select('*')
     .eq('id', state.currentCompanyId)
     .maybeSingle();
 
+  state.currentCompany = company || null;
   state.currentCompanyName = company?.name || 'Your company';
   document.getElementById('company-label').textContent = state.currentCompanyName + ' - Sales, collections, and invoice follow-up.';
 }
@@ -926,7 +933,9 @@ function renderInvoices(){
         <td>
           <div class="actions">
             <button class="btn-inline" onclick="openDetailModal('${invoice.id}')">View</button>
+            <button class="btn-inline" onclick="openOfficialInvoice('${invoice.id}')">Official copy</button>
             <button class="btn-inline" ${canCollect ? '' : 'disabled style="opacity:.45;cursor:not-allowed"'} onclick="${canCollect ? `openPaymentModal('${invoice.id}')` : 'return false'}">Collect</button>
+            <button class="btn-inline" style="border-color:#FECACA;color:#B42318;background:#FEF2F2" onclick="deleteInvoice('${invoice.id}')">Delete</button>
           </div>
         </td>
       </tr>
@@ -1323,6 +1332,8 @@ async function savePayment(){
 async function openDetailModal(invoiceId){
   const invoice = state.invoices.find(item => item.id === invoiceId);
   if(!invoice) return;
+  document.getElementById('detail-delete-btn').dataset.invoiceId = invoiceId;
+  document.getElementById('detail-print-btn').dataset.invoiceId = invoiceId;
   document.getElementById('detail-title').textContent = invoice.invoice_number || 'Invoice details';
   document.getElementById('detail-sub').textContent = 'Issued ' + formatDate(invoice.issue_date) + ' - due ' + formatDate(invoice.due_date);
   document.getElementById('detail-customer').textContent = invoice.customer_name || customerNameById(invoice.customer_id) || 'Unknown customer';
@@ -1378,6 +1389,303 @@ async function openDetailModal(invoiceId){
   }
 
   document.getElementById('detail-overlay').classList.add('show');
+}
+
+function companyProfile(){
+  const company = state.currentCompany || {};
+  const addressBits = [company.address, company.city, company.country].filter(Boolean);
+  return {
+    name: company.legal_name || company.name || state.currentCompanyName || 'Your company',
+    brandName: company.name || state.currentCompanyName || 'Your company',
+    email: company.email || '',
+    phone: company.phone || '',
+    taxId: company.tax_id || '',
+    address: addressBits.join(', '),
+    currency: company.currency || preferredCurrency()
+  };
+}
+
+async function fetchInvoiceDocument(invoiceId){
+  const invoice = state.invoices.find(item => item.id === invoiceId);
+  if(!invoice){
+    throw new Error('Invoice not found.');
+  }
+
+  const [{ data: items, error: itemsError }, { data: payments, error: paymentsError }] = await Promise.all([
+    sb.from('invoice_items').select('*').eq('invoice_id', invoiceId).order('created_at', { ascending: true }),
+    sb.from('payments').select('*').eq('invoice_id', invoiceId).order('payment_date', { ascending: true })
+  ]);
+
+  if(itemsError) throw itemsError;
+  if(paymentsError) throw paymentsError;
+
+  return {
+    invoice,
+    items: items || [],
+    payments: payments || []
+  };
+}
+
+function buildOfficialInvoiceHtml(documentData){
+  const { invoice, items, payments } = documentData;
+  const company = companyProfile();
+  const customerName = invoice.customer_name || customerNameById(invoice.customer_id) || 'Customer';
+  const status = titleCaseStatus(normalizeStatus(invoice));
+  const currency = invoice.currency || company.currency || preferredCurrency();
+  const addressLine = company.address ? `<div>${escapeHtml(company.address)}</div>` : '';
+  const phoneLine = company.phone ? `<div>Phone: ${escapeHtml(company.phone)}</div>` : '';
+  const emailLine = company.email ? `<div>Email: ${escapeHtml(company.email)}</div>` : '';
+  const taxLine = company.taxId ? `<div>Tax ID: ${escapeHtml(company.taxId)}</div>` : '';
+  const paymentsSection = payments.length ? `
+    <section class="doc-section">
+      <div class="section-title">Payments recorded</div>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Method</th>
+            <th>Reference</th>
+            <th class="right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${payments.map(payment => `
+            <tr>
+              <td>${escapeHtml(formatDate(payment.payment_date))}</td>
+              <td>${escapeHtml(payment.method || '-')}</td>
+              <td>${escapeHtml(payment.reference || '-')}</td>
+              <td class="right">${escapeHtml(formatMoney(payment.amount, payment.currency || currency))}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </section>
+  ` : '';
+
+  return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${escapeHtml(invoice.invoice_number || 'Invoice')} - Official invoice</title>
+    <style>
+      *{box-sizing:border-box}
+      body{margin:0;font-family:Arial,sans-serif;background:#EEF3F8;color:#10213D}
+      .toolbar{position:sticky;top:0;z-index:10;display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;background:#10213D}
+      .toolbar button{border:none;border-radius:8px;padding:11px 16px;font-size:14px;font-weight:700;cursor:pointer}
+      .toolbar .primary{background:#1a8fd1;color:#fff}
+      .toolbar .secondary{background:#fff;color:#10213D}
+      .page{width:210mm;min-height:297mm;margin:24px auto;padding:22mm 18mm;background:#fff;box-shadow:0 18px 44px rgba(16,33,61,.14)}
+      .doc-header{display:flex;justify-content:space-between;gap:24px;padding-bottom:18px;border-bottom:2px solid #DCE6F2}
+      .brand{max-width:58%}
+      .brand-name{font-size:30px;font-weight:800;letter-spacing:-0.02em;color:#0D1F3C}
+      .brand-sub{margin-top:6px;font-size:13px;line-height:1.7;color:#556B86}
+      .doc-title-wrap{text-align:right}
+      .doc-kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1a8fd1}
+      .doc-title{margin-top:8px;font-size:32px;font-weight:800;color:#0D1F3C}
+      .doc-number{margin-top:8px;font-size:15px;font-weight:700;color:#556B86}
+      .meta-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:22px}
+      .card{border:1px solid #DCE6F2;border-radius:10px;padding:16px 18px;background:#FBFDFF}
+      .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6C7F97}
+      .value{margin-top:8px;font-size:15px;font-weight:700;color:#10213D}
+      .value-sub{margin-top:6px;font-size:13px;line-height:1.6;color:#556B86}
+      .mini-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .doc-section{margin-top:22px}
+      .section-title{margin-bottom:10px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0D1F3C}
+      .doc-table{width:100%;border-collapse:collapse;border:1px solid #DCE6F2;border-radius:10px;overflow:hidden}
+      .doc-table th{padding:12px 14px;background:#F5F8FC;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6C7F97;text-align:left}
+      .doc-table td{padding:13px 14px;border-top:1px solid #E8EEF6;font-size:14px;color:#10213D;vertical-align:top}
+      .doc-table tbody tr:nth-child(even){background:#FBFDFF}
+      .right{text-align:right}
+      .summary{margin-top:18px;margin-left:auto;width:320px}
+      .summary-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #E8EEF6;font-size:14px;color:#556B86}
+      .summary-row strong{font-size:15px;color:#0D1F3C}
+      .summary-row.total{padding-top:14px;border-bottom:none;font-size:18px}
+      .summary-row.total strong{font-size:22px}
+      .note-box{margin-top:24px;padding:14px 16px;border:1px solid #DCE6F2;border-radius:10px;background:#FBFDFF;font-size:13px;line-height:1.7;color:#556B86}
+      .signature-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:38px}
+      .signature-card{padding-top:18px;border-top:1px solid #BAC9DA}
+      .signature-title{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6C7F97}
+      .signature-line{margin-top:46px;font-size:13px;color:#556B86}
+      .footer-note{margin-top:28px;font-size:12px;text-align:center;color:#6C7F97}
+      @media print{
+        body{background:#fff}
+        .toolbar{display:none}
+        .page{margin:0;box-shadow:none;width:auto;min-height:auto;padding:12mm}
+      }
+      @page{size:A4;margin:12mm}
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <button class="secondary" onclick="window.close()">Close</button>
+      <button class="primary" onclick="window.print()">Print / Save PDF</button>
+    </div>
+    <div class="page">
+      <header class="doc-header">
+        <div class="brand">
+          <div class="brand-name">${escapeHtml(company.brandName)}</div>
+          <div class="brand-sub">
+            ${escapeHtml(company.name)}
+            ${addressLine}
+            ${phoneLine}
+            ${emailLine}
+            ${taxLine}
+          </div>
+        </div>
+        <div class="doc-title-wrap">
+          <div class="doc-kicker">Official document</div>
+          <div class="doc-title">Invoice</div>
+          <div class="doc-number">${escapeHtml(invoice.invoice_number || 'Draft')}</div>
+        </div>
+      </header>
+
+      <section class="meta-grid">
+        <div class="card">
+          <div class="label">Bill to</div>
+          <div class="value">${escapeHtml(customerName)}</div>
+          <div class="value-sub">
+            ${escapeHtml(invoice.customer_name || '')}
+          </div>
+        </div>
+        <div class="card">
+          <div class="mini-meta">
+            <div>
+              <div class="label">Issue date</div>
+              <div class="value">${escapeHtml(formatDate(invoice.issue_date))}</div>
+            </div>
+            <div>
+              <div class="label">Due date</div>
+              <div class="value">${escapeHtml(formatDate(invoice.due_date))}</div>
+            </div>
+            <div>
+              <div class="label">Status</div>
+              <div class="value">${escapeHtml(status)}</div>
+            </div>
+            <div>
+              <div class="label">Currency</div>
+              <div class="value">${escapeHtml(currency)}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="doc-section">
+        <div class="section-title">Invoice lines</div>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="right">Qty</th>
+              <th class="right">Unit price</th>
+              <th class="right">Tax</th>
+              <th class="right">Discount</th>
+              <th class="right">Line total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map(item => `
+              <tr>
+                <td>${escapeHtml(item.description || 'Line item')}</td>
+                <td class="right">${escapeHtml(String(Number(item.quantity || 0)))}</td>
+                <td class="right">${escapeHtml(formatMoney(item.unit_price, currency))}</td>
+                <td class="right">${escapeHtml(String(Number(item.tax_rate || 0)))}%</td>
+                <td class="right">${escapeHtml(formatMoney(item.discount || 0, currency))}</td>
+                <td class="right">${escapeHtml(formatMoney(item.line_total || 0, currency))}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </section>
+
+      <div class="summary">
+        <div class="summary-row"><span>Subtotal</span><strong>${escapeHtml(formatMoney(invoice.subtotal || 0, currency))}</strong></div>
+        <div class="summary-row"><span>Tax</span><strong>${escapeHtml(formatMoney(invoice.tax_total || 0, currency))}</strong></div>
+        <div class="summary-row"><span>Discount</span><strong>${escapeHtml(formatMoney(invoice.discount_total || 0, currency))}</strong></div>
+        <div class="summary-row"><span>Paid</span><strong>${escapeHtml(formatMoney(invoice.paid_total || 0, currency))}</strong></div>
+        <div class="summary-row"><span>Balance due</span><strong>${escapeHtml(formatMoney(invoice.balance_due || 0, currency))}</strong></div>
+        <div class="summary-row total"><span>Total invoice</span><strong>${escapeHtml(formatMoney(invoice.total || 0, currency))}</strong></div>
+      </div>
+
+      ${paymentsSection}
+
+      <div class="note-box">
+        Please review this invoice and sign the copy upon receipt if your process requires a signed commercial document. This document can be printed as-is or saved as PDF before sending to the customer.
+      </div>
+
+      <section class="signature-grid">
+        <div class="signature-card">
+          <div class="signature-title">Customer signature</div>
+          <div class="signature-line">Name, signature, and company stamp</div>
+        </div>
+        <div class="signature-card">
+          <div class="signature-title">Authorized by ${escapeHtml(company.brandName)}</div>
+          <div class="signature-line">Signature, stamp, and issue confirmation</div>
+        </div>
+      </section>
+
+      <div class="footer-note">
+        Generated from TadbirTech sales module on ${escapeHtml(formatDate(todayIso()))}.
+      </div>
+    </div>
+  </body>
+  </html>`;
+}
+
+async function openOfficialInvoice(invoiceId){
+  try{
+    const documentData = await fetchInvoiceDocument(invoiceId);
+    const printWindow = window.open('', '_blank', 'noopener,noreferrer,width=1100,height=900');
+    if(!printWindow){
+      showToast('Please allow pop-ups to open the official invoice copy.', 'error');
+      return;
+    }
+    printWindow.document.open();
+    printWindow.document.write(buildOfficialInvoiceHtml(documentData));
+    printWindow.document.close();
+    printWindow.focus();
+  }catch(error){
+    showToast(error.message || 'Could not prepare the official invoice copy.', 'error');
+  }
+}
+
+async function deleteInvoice(invoiceId){
+  const invoice = state.invoices.find(item => item.id === invoiceId);
+  if(!invoiceId || !invoice) return;
+
+  const paymentCount = state.payments.filter(item => item.invoice_id === invoiceId).length;
+  const invoiceLabel = invoice.invoice_number || 'this invoice';
+  const warning = paymentCount
+    ? `Delete ${invoiceLabel}? This will also remove ${paymentCount} recorded payment(s) linked to it.`
+    : `Delete ${invoiceLabel}?`;
+
+  if(!window.confirm(warning)) return;
+
+  try{
+    const { error: paymentsError } = await sb
+      .from('payments')
+      .delete()
+      .eq('invoice_id', invoiceId);
+    if(paymentsError) throw paymentsError;
+
+    const { error: itemsError } = await sb
+      .from('invoice_items')
+      .delete()
+      .eq('invoice_id', invoiceId);
+    if(itemsError) throw itemsError;
+
+    const { error: invoiceError } = await sb
+      .from('invoices')
+      .delete()
+      .eq('id', invoiceId);
+    if(invoiceError) throw invoiceError;
+
+    closeDetailModal();
+    await refreshAll();
+    showToast('Invoice deleted successfully.', 'success');
+  }catch(error){
+    showToast(error.message || 'Could not delete invoice.', 'error');
+  }
 }
 
 function closeDetailModal(){
