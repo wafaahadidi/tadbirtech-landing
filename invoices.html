@@ -586,6 +586,7 @@ tr:hover td{background:#FAFCFE}
       </div>
     </div>
     <div class="modal-foot">
+      <button class="btn-soft" id="detail-collect-btn" onclick="openDetailPayment(this.dataset.invoiceId)">Collect</button>
       <button class="btn-primary" id="detail-print-btn" onclick="openOfficialInvoice(this.dataset.invoiceId)">Official copy</button>
       <button class="btn-danger" id="detail-delete-btn" onclick="deleteInvoice(this.dataset.invoiceId)">Delete invoice</button>
       <button class="btn-secondary" onclick="closeDetailModal()">Close</button>
@@ -933,8 +934,6 @@ function renderInvoices(){
         <td>
           <div class="actions">
             <button class="btn-inline" onclick="openDetailModal('${invoice.id}')">View</button>
-            <button class="btn-inline" onclick="openOfficialInvoice('${invoice.id}')">Official copy</button>
-            <button class="btn-inline" ${canCollect ? '' : 'disabled style="opacity:.45;cursor:not-allowed"'} onclick="${canCollect ? `openPaymentModal('${invoice.id}')` : 'return false'}">Collect</button>
             <button class="btn-inline" style="border-color:#FECACA;color:#B42318;background:#FEF2F2" onclick="deleteInvoice('${invoice.id}')">Delete</button>
           </div>
         </td>
@@ -1334,12 +1333,18 @@ async function openDetailModal(invoiceId){
   if(!invoice) return;
   document.getElementById('detail-delete-btn').dataset.invoiceId = invoiceId;
   document.getElementById('detail-print-btn').dataset.invoiceId = invoiceId;
+  document.getElementById('detail-collect-btn').dataset.invoiceId = invoiceId;
   document.getElementById('detail-title').textContent = invoice.invoice_number || 'Invoice details';
   document.getElementById('detail-sub').textContent = 'Issued ' + formatDate(invoice.issue_date) + ' - due ' + formatDate(invoice.due_date);
   document.getElementById('detail-customer').textContent = invoice.customer_name || customerNameById(invoice.customer_id) || 'Unknown customer';
   document.getElementById('detail-status').textContent = titleCaseStatus(normalizeStatus(invoice));
   document.getElementById('detail-total').textContent = formatMoney(invoice.total, invoice.currency);
   document.getElementById('detail-balance').textContent = formatMoney(invoice.balance_due, invoice.currency);
+  const canCollect = normalizeStatus(invoice) !== 'paid' && normalizeStatus(invoice) !== 'cancelled' && Number(invoice.balance_due || 0) > 0;
+  const collectBtn = document.getElementById('detail-collect-btn');
+  collectBtn.disabled = !canCollect;
+  collectBtn.style.opacity = canCollect ? '1' : '.45';
+  collectBtn.style.cursor = canCollect ? 'pointer' : 'not-allowed';
 
   const [{ data: items }, { data: payments }] = await Promise.all([
     sb.from('invoice_items').select('*').eq('invoice_id', invoiceId).order('created_at', { ascending: true }),
@@ -1633,20 +1638,34 @@ function buildOfficialInvoiceHtml(documentData){
 }
 
 async function openOfficialInvoice(invoiceId){
+  const printWindow = window.open('', '_blank', 'width=1100,height=900');
+  if(!printWindow){
+    showToast('Please allow pop-ups to open the official invoice copy.', 'error');
+    return;
+  }
+
+  printWindow.document.open();
+  printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Preparing invoice</title><style>body{margin:0;font-family:Arial,sans-serif;background:#EEF3F8;color:#10213D;display:flex;align-items:center;justify-content:center;min-height:100vh} .box{padding:24px 28px;border-radius:12px;background:#fff;box-shadow:0 18px 44px rgba(16,33,61,.12);font-size:16px;font-weight:700}</style></head><body><div class="box">Preparing official invoice...</div></body></html>`);
+  printWindow.document.close();
+
   try{
     const documentData = await fetchInvoiceDocument(invoiceId);
-    const printWindow = window.open('', '_blank', 'noopener,noreferrer,width=1100,height=900');
-    if(!printWindow){
-      showToast('Please allow pop-ups to open the official invoice copy.', 'error');
-      return;
-    }
     printWindow.document.open();
     printWindow.document.write(buildOfficialInvoiceHtml(documentData));
     printWindow.document.close();
     printWindow.focus();
   }catch(error){
+    printWindow.document.open();
+    printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice unavailable</title><style>body{margin:0;font-family:Arial,sans-serif;background:#EEF3F8;color:#10213D;display:flex;align-items:center;justify-content:center;min-height:100vh} .box{max-width:520px;padding:24px 28px;border-radius:12px;background:#fff;box-shadow:0 18px 44px rgba(16,33,61,.12)} h1{margin:0 0 10px;font-size:24px} p{margin:0;color:#556B86;line-height:1.6}</style></head><body><div class="box"><h1>Could not prepare this invoice</h1><p>${escapeHtml(error.message || 'Unknown error')}</p></div></body></html>`);
+    printWindow.document.close();
     showToast(error.message || 'Could not prepare the official invoice copy.', 'error');
   }
+}
+
+function openDetailPayment(invoiceId){
+  if(!invoiceId) return;
+  closeDetailModal();
+  openPaymentModal(invoiceId);
 }
 
 async function deleteInvoice(invoiceId){
