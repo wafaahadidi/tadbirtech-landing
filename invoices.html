@@ -1294,8 +1294,20 @@ async function savePayment(){
       .single();
     if(paymentError) throw paymentError;
 
-    const { error: rpcError } = await sb.rpc('create_payment_journal_entry', { p_payment_id: insertedPayment.id });
-    if(rpcError) throw rpcError;
+    const nextPaidTotal = Number(invoice.paid_total || 0) + amount;
+    const nextBalanceDue = Math.max(Number(invoice.balance_due || 0) - amount, 0);
+    const nextStatus = nextBalanceDue === 0 ? 'paid' : 'partial';
+
+    const { error: invoiceUpdateError } = await sb
+      .from('invoices')
+      .update({
+        paid_total: nextPaidTotal,
+        balance_due: nextBalanceDue,
+        status: nextStatus
+      })
+      .eq('id', invoice.id);
+
+    if(invoiceUpdateError) throw invoiceUpdateError;
 
     closePaymentModal();
     await refreshAll();
