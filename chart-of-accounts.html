@@ -361,6 +361,7 @@ const sb = window.supabase.createClient(
   'https://gqmpqpnboenmshuuopnp.supabase.co',
   'sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U'
 );
+const DEMO_COMPANY_ID = 'ad0623bc-4c7b-449f-8657-1abc10ddee97';
 
 let allAccounts = [];
 let editingId = null;
@@ -376,15 +377,24 @@ function hydrateUser(session){
 }
 
 async function resolveCompany(session){
-  const storedCompanyId = localStorage.getItem('tt_company_id');
+  const rawStoredCompanyId = localStorage.getItem('tt_company_id');
+  const storedCompanyId =
+    rawStoredCompanyId && rawStoredCompanyId !== 'null' && rawStoredCompanyId !== 'undefined'
+      ? rawStoredCompanyId
+      : null;
   const { data, error } = await sb
     .from('company_members')
     .select('company_id')
     .eq('user_id', session.user.id)
     .limit(1);
 
-  if(!error && data && data.length){
-    currentCompanyId = data[0].company_id;
+  const membershipCompanyId =
+    !error && data && data.length && data[0] && data[0].company_id
+      ? data[0].company_id
+      : null;
+
+  if(membershipCompanyId){
+    currentCompanyId = membershipCompanyId;
     localStorage.setItem('tt_company_id', currentCompanyId);
     return;
   }
@@ -399,14 +409,36 @@ async function resolveCompany(session){
     .select('company_id')
     .limit(1);
 
-  if(!accountError && accountData && accountData.length){
-    currentCompanyId = accountData[0].company_id;
+  const accountCompanyId =
+    !accountError && accountData && accountData.length && accountData[0] && accountData[0].company_id
+      ? accountData[0].company_id
+      : null;
+
+  if(accountCompanyId){
+    currentCompanyId = accountCompanyId;
+    localStorage.setItem('tt_company_id', currentCompanyId);
+    return;
+  }
+
+  if(DEMO_COMPANY_ID){
+    currentCompanyId = DEMO_COMPANY_ID;
+    localStorage.setItem('tt_company_id', currentCompanyId);
+    return;
+  }
+
+  const { data: companyData, error: companyError } = await sb
+    .from('companies')
+    .select('id')
+    .limit(1);
+
+  if(!companyError && companyData && companyData.length){
+    currentCompanyId = companyData[0].id;
     localStorage.setItem('tt_company_id', currentCompanyId);
     return;
   }
 
   showToast('No company found yet. Please open Settings once or sign in again.','error');
-  throw error || accountError || new Error('No company found');
+  throw error || accountError || companyError || new Error('No company found');
 }
 
 async function handleLogout(){ await sb.auth.signOut(); window.location.href='login (1).html'; }
@@ -484,6 +516,28 @@ function setType(t,el){
 
 function filterAccounts(){ renderTable(); }
 
+function suggestNextAccountCode(){
+  const numbers = allAccounts
+    .map(account => {
+      const match = String(account.code || '').match(/\d+/);
+      return match ? Number(match[0]) : null;
+    })
+    .filter(value => Number.isFinite(value));
+
+  if(!numbers.length) return '1000';
+  const max = Math.max(...numbers);
+  const next = Math.ceil((max + 10) / 10) * 10;
+  return String(next);
+}
+
+function localDuplicateCode(code){
+  const normalized = String(code || '').trim().toLowerCase();
+  return allAccounts.find(account =>
+    String(account.code || '').trim().toLowerCase() === normalized &&
+    account.id !== editingId
+  ) || null;
+}
+
 // MODAL
 function openModal(){
   editingId=null;
@@ -491,6 +545,7 @@ function openModal(){
   document.getElementById('modal-sub').textContent='Fill in the account details below';
   document.getElementById('btn-save').textContent='Save Account';
   ['f-code','f-name','f-balance','f-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-code').value=suggestNextAccountCode();
   document.getElementById('f-type').value='';
   document.getElementById('f-active').value='true';
   document.getElementById('modal-overlay').classList.add('show');
@@ -524,6 +579,11 @@ async function saveAccount(){
   const description=document.getElementById('f-desc').value.trim();
   if(!code||!name||!type){ showToast('Please fill all required fields','error'); return; }
   if(!currentCompanyId){ showToast('No company selected. Please sign in again.','error'); return; }
+  const localDuplicate = localDuplicateCode(code);
+  if(localDuplicate){
+    showToast(`Account code ${code} is already used by "${localDuplicate.name}". Please choose another code.`,'error');
+    return;
+  }
   const btn=document.getElementById('btn-save');
   btn.disabled=true; btn.textContent='Saving...';
   let currency='DZD';
@@ -532,13 +592,41 @@ async function saveAccount(){
   }catch(_e){}
   const payload={code,name,type,balance,is_active,description,company_id:currentCompanyId,currency};
   let error;
+
+  if(!editingId){
+    const { data: existingCodeRows, error: existingCodeError } = await sb
+      .from('accounts')
+      .select('id,name,code')
+      .eq('code', code)
+      .limit(1);
+
+    if(existingCodeError){
+      btn.disabled=false; btn.textContent='Save Account';
+      showToast('Could not verify the account code right now. Please try again.','error');
+      return;
+    }
+
+    if(existingCodeRows && existingCodeRows.length){
+      btn.disabled=false; btn.textContent='Save Account';
+      showToast(`Account code ${code} already exists. Please choose another code.`,'error');
+      return;
+    }
+  }
+
   if(editingId){
     ({error}=await sb.from('accounts').update(payload).eq('id',editingId));
   } else {
     ({error}=await sb.from('accounts').insert(payload));
   }
   btn.disabled=false; btn.textContent=editingId?'Update Account':'Save Account';
-  if(error){ showToast('Error: '+error.message,'error'); return; }
+  if(error){
+    if(error.code==='23505' || String(error.message || '').includes('accounts_code_key')){
+      showToast(`Account code ${code} already exists. Please choose another code.`,'error');
+      return;
+    }
+    showToast('Error: '+error.message,'error');
+    return;
+  }
   closeModal();
   showToast(editingId?'Account updated successfully!':'Account added successfully!','success');
   await loadAccounts();
