@@ -208,22 +208,29 @@ tr:hover td{background:#FAFCFE}
       </a>
       <div class="sb-sec">Modules</div>
       <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer;background:rgba(26,143,209,.15)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
-        <span class="sb-item-text" style="color:#fff">Accounting</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+        <span class="sb-item-text" style="color:#fff">Transactions</span>
         <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="sb-submenu" style="padding-left:16px;margin-bottom:4px">
-        <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-          <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
-        </a>
         <a href="invoices.html" class="sb-item" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           <span class="sb-item-text" style="font-size:12px">Invoices</span>
         </a>
         <a href="expenses.html" class="sb-item active" style="padding:7px 10px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
           <span class="sb-item-text" style="font-size:12px">Expenses</span>
+        </a>
+      </div>
+      <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
+        <span class="sb-item-text">Accounting</span>
+        <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-submenu" style="display:none;padding-left:16px;margin-bottom:4px">
+        <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
         </a>
         <a href="journal-entries.html" class="sb-item" style="padding:7px 10px">
           <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -520,12 +527,12 @@ tr:hover td{background:#FAFCFE}
       <div class="line-items">
         <div class="line-header" style="grid-template-columns:1fr 1fr 1fr">
           <div>Subtotal</div>
-          <div>Tax</div>
+          <div>Tax %</div>
           <div>Discount</div>
         </div>
         <div class="line-row" style="grid-template-columns:1fr 1fr 1fr">
           <div><input id="exp-subtotal" type="number" min="0" step="0.01" value="0" oninput="recalcExpenseTotals()"></div>
-          <div><input id="exp-tax" type="number" min="0" step="0.01" value="0" oninput="recalcExpenseTotals()"></div>
+          <div><input id="exp-tax" type="number" min="0" step="0.01" value="0" oninput="recalcExpenseTotals()" placeholder="19"></div>
           <div><input id="exp-discount" type="number" min="0" step="0.01" value="0" oninput="recalcExpenseTotals()"></div>
         </div>
       </div>
@@ -1068,10 +1075,11 @@ function toggleNewSupplier(force){
 
 function expenseTotals(){
   const subtotal = Number(document.getElementById('exp-subtotal').value || 0);
-  const tax = Number(document.getElementById('exp-tax').value || 0);
+  const taxRate = Number(document.getElementById('exp-tax').value || 0);
+  const tax = subtotal * (taxRate / 100);
   const discount = Number(document.getElementById('exp-discount').value || 0);
   const total = Math.max(subtotal + tax - discount, 0);
-  return { subtotal, tax, discount, total };
+  return { subtotal, taxRate, tax, discount, total };
 }
 
 function recalcExpenseTotals(){
