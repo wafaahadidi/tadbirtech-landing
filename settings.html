@@ -165,11 +165,33 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
         <span class="sb-item-text">Dashboard</span>
       </a>
       <div class="sb-section">Modules</div>
-      <a href="accounting.html" class="sb-item">
+      <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
         <span class="sb-item-text">Accounting</span>
-        <span class="sb-badge">3</span>
-      </a>
+        <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-submenu" style="display:none;padding-left:16px;margin-bottom:4px">
+        <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
+        </a>
+        <a href="invoices.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Invoices</span>
+        </a>
+        <a href="expenses.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Expenses</span>
+        </a>
+        <a href="journal-entries.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Journal Entries</span>
+        </a>
+        <a href="reports.html" class="sb-item" style="padding:7px 10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span class="sb-item-text" style="font-size:12px">Reports</span>
+        </a>
+      </div>
       <a href="hr.html" class="sb-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         <span class="sb-item-text">HR & payroll</span>
@@ -528,6 +550,15 @@ function saveCurrency(){
   const c=CURRENCIES.find(x=>x.code===selectedCode);
   localStorage.setItem('tt_currency',JSON.stringify({code:c.code,flag:c.flag,sym:c.sym,mult:c.mult}));
   showToast('Currency set to '+c.code+' â€” all pages updated!');
+}
+
+function toggleDropdown(el){
+  const menu = el.nextElementSibling;
+  if(!menu || !menu.classList.contains('sb-submenu')) return;
+  const isOpen = menu.style.display !== 'none';
+  menu.style.display = isOpen ? 'none' : 'block';
+  const chevron = el.querySelector('.sb-chevron');
+  if(chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
 
 function showSection(id,el){
