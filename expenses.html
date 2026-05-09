@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -431,8 +431,8 @@ tr:hover td{background:#FAFCFE}
   <div class="modal">
     <div class="modal-head">
       <div>
-        <div class="modal-title">Record expense</div>
-        <div class="modal-sub">Capture a supplier bill once, then register the payment whenever the cash actually goes out.</div>
+        <div class="modal-title" id="expense-modal-title">Record expense</div>
+        <div class="modal-sub" id="expense-modal-sub">Capture a supplier bill once, then register the payment whenever the cash actually goes out.</div>
       </div>
       <button class="btn-secondary" onclick="closeExpenseModal()">Close</button>
     </div>
@@ -628,6 +628,7 @@ tr:hover td{background:#FAFCFE}
     </div>
     <div class="modal-foot">
       <button class="btn-soft" id="detail-pay-btn" onclick="openDetailPayment(this.dataset.expenseId)">Record payment</button>
+      <button class="btn-soft" id="detail-edit-btn" onclick="editExpenseFromDetail(this.dataset.expenseId)">Edit expense</button>
       <button class="btn-danger" id="detail-delete-btn" onclick="deleteExpense(this.dataset.expenseId)">Delete expense</button>
       <button class="btn-secondary" onclick="closeDetailModal()">Close</button>
     </div>
@@ -651,7 +652,8 @@ const state = {
   expenses: [],
   suppliers: [],
   expensePayments: [],
-  selectedExpenseForPayment: null
+  selectedExpenseForPayment: null,
+  editingExpenseId: null
 };
 
 function toggleDropdown(el){
@@ -729,13 +731,7 @@ function resolveExpenseTotal(expense){
 }
 
 function resolveExpenseBalance(expense){
-  return Math.max(
-    Number(
-      expense.balance_due ??
-      (resolveExpenseTotal(expense) - Number(expense.paid_total || 0))
-    ) || 0,
-    0
-  );
+  return Math.max(resolveExpenseTotal(expense) - Number(expense.paid_total || 0), 0);
 }
 
 function normalizeStatus(expense){
@@ -1028,7 +1024,20 @@ function supplierNameById(id){
   return state.suppliers.find(s => s.id === id)?.name || '';
 }
 
-function openExpenseModal(){
+function setExpenseModalMode(){
+  const editing = Boolean(state.editingExpenseId);
+  const title = document.getElementById('expense-modal-title');
+  const sub = document.getElementById('expense-modal-sub');
+  const saveBtn = document.getElementById('save-expense-btn');
+  if(title) title.textContent = editing ? 'Edit expense' : 'Record expense';
+  if(sub) sub.textContent = editing
+    ? 'Update the supplier bill while keeping already recorded payments aligned.'
+    : 'Capture a supplier bill once, then register the payment whenever the cash actually goes out.';
+  if(saveBtn) saveBtn.textContent = editing ? 'Save changes' : 'Record expense';
+}
+
+function resetExpenseModal(){
+  state.editingExpenseId = null;
   document.getElementById('exp-number').value = '';
   document.getElementById('exp-date').value = todayIso();
   document.getElementById('exp-due-date').value = addDays(todayIso(), 15);
@@ -1044,12 +1053,63 @@ function openExpenseModal(){
   populateSupplierSelect();
   toggleNewSupplier(false);
   recalcExpenseTotals();
+  setExpenseModalMode();
+}
+
+function fillExpenseForm(expense){
+  document.getElementById('exp-number').value = expense.expense_number || '';
+  document.getElementById('exp-date').value = expense.expense_date || todayIso();
+  document.getElementById('exp-due-date').value = expense.due_date || addDays(todayIso(), 15);
+  document.getElementById('exp-category').value = expense.category || 'purchase';
+  document.getElementById('exp-reference').value = expense.reference || '';
+  document.getElementById('exp-method').value = expense.payment_method || 'bank_transfer';
+  document.getElementById('exp-description').value = expense.description || '';
+  document.getElementById('exp-notes').value = expense.notes || '';
+  document.getElementById('exp-subtotal').value = Number(expense.subtotal || 0);
+  document.getElementById('exp-tax').value = Number(expense.tax_total || 0) > 0 && Number(expense.subtotal || 0) > 0
+    ? ((Number(expense.tax_total || 0) / Number(expense.subtotal || 1)) * 100).toFixed(2).replace(/\.00$/, '')
+    : '0';
+  document.getElementById('exp-discount').value = Number(expense.discount_total || 0);
+}
+
+function editExpense(expenseId){
+  const expense = state.expenses.find(item => item.id === expenseId);
+  if(!expense){
+    showToast('Expense not found.', 'error');
+    return;
+  }
+
+  state.editingExpenseId = expenseId;
+  updateExpenseCurrencyDisplay();
+  populateSupplierSelect();
+  const knownSupplier = state.suppliers.find(item => item.id === expense.supplier_id);
+  if(knownSupplier){
+    toggleNewSupplier(false);
+    document.getElementById('exp-supplier').value = knownSupplier.id;
+  } else {
+    toggleNewSupplier(true);
+  }
+  fillExpenseForm(expense);
+  recalcExpenseTotals();
+  setExpenseModalMode();
+  document.getElementById('expense-overlay').classList.add('show');
+}
+
+function editExpenseFromDetail(expenseId){
+  if(!expenseId) return;
+  closeDetailModal();
+  editExpense(expenseId);
+}
+function openExpenseModal(){
+  resetExpenseModal();
   document.getElementById('expense-overlay').classList.add('show');
   suggestExpenseNumber();
 }
 
 function closeExpenseModal(){
   document.getElementById('expense-overlay').classList.remove('show');
+  state.editingExpenseId = null;
+  setExpenseModalMode();
 }
 
 function populateSupplierSelect(){
@@ -1122,6 +1182,7 @@ async function saveExpense(){
   const notes = document.getElementById('exp-notes').value.trim();
   const currency = updateExpenseCurrencyDisplay();
   const usingNewSupplier = document.getElementById('new-supplier-fields').style.display !== 'none';
+  const isEditing = Boolean(state.editingExpenseId);
 
   if(!expenseNumber || !expenseDate || !dueDate){
     showToast('Complete the expense header first.', 'error');
@@ -1147,7 +1208,7 @@ async function saveExpense(){
 
   const saveBtn = document.getElementById('save-expense-btn');
   saveBtn.disabled = true;
-  saveBtn.textContent = 'Recording...';
+  saveBtn.textContent = isEditing ? 'Saving...' : 'Recording...';
 
   try{
     const companyId = await ensureCompanyId();
@@ -1167,32 +1228,32 @@ async function saveExpense(){
         supplierId = existingSupplier.id;
         supplierName = existingSupplier.name;
       } else {
-      const newSupplierPayload = {
-        company_id: companyId,
-        name: supplierName,
-        email: document.getElementById('sup-email').value.trim() || null,
-        phone: document.getElementById('sup-phone').value.trim() || null,
-        tax_id: null,
-        address: null,
-        city: null,
-        country: 'Algeria',
-        balance: 0,
-        is_active: true
-      };
-      const { data: insertedSupplier, error: supplierError } = await sb
-        .from('suppliers')
-        .insert(newSupplierPayload)
-        .select()
-        .single();
-      if(supplierError){
-        if(String(supplierError.message || '').toLowerCase().includes('row-level security')){
-          throw new Error('Supabase is still blocking new supplier creation. For now choose an existing supplier, or run the suppliers permission fix once.');
+        const newSupplierPayload = {
+          company_id: companyId,
+          name: supplierName,
+          email: document.getElementById('sup-email').value.trim() || null,
+          phone: document.getElementById('sup-phone').value.trim() || null,
+          tax_id: null,
+          address: null,
+          city: null,
+          country: 'Algeria',
+          balance: 0,
+          is_active: true
+        };
+        const { data: insertedSupplier, error: supplierError } = await sb
+          .from('suppliers')
+          .insert(newSupplierPayload)
+          .select()
+          .single();
+        if(supplierError){
+          if(String(supplierError.message || '').toLowerCase().includes('row-level security')){
+            throw new Error('Supabase is still blocking new supplier creation. For now choose an existing supplier, or run the suppliers permission fix once.');
+          }
+          throw supplierError;
         }
-        throw supplierError;
-      }
-      supplierId = insertedSupplier.id;
-      supplierName = insertedSupplier.name;
-      state.suppliers.unshift(insertedSupplier);
+        supplierId = insertedSupplier.id;
+        supplierName = insertedSupplier.name;
+        state.suppliers.unshift(insertedSupplier);
       }
     }else{
       const supplier = state.suppliers.find(item => item.id === supplierId);
@@ -1202,16 +1263,21 @@ async function saveExpense(){
       supplierName = supplier.name;
     }
 
-    const duplicate = state.expenses.some(exp => exp.expense_number === expenseNumber);
+    const duplicate = state.expenses.some(exp => exp.expense_number === expenseNumber && exp.id !== state.editingExpenseId);
     if(duplicate){
       throw new Error('This expense number already exists.');
     }
+
+    const existingExpense = isEditing ? state.expenses.find(item => item.id === state.editingExpenseId) : null;
+    const paidTotal = Number(existingExpense?.paid_total || 0);
+    const nextBalance = Math.max(totals.total - paidTotal, 0);
+    const nextStatus = nextBalance === 0 && paidTotal > 0 ? 'paid' : 'recorded';
 
     const expensePayload = {
       company_id: companyId,
       supplier_id: supplierId,
       expense_number: expenseNumber,
-      status: 'recorded',
+      status: nextStatus,
       expense_date: expenseDate,
       due_date: dueDate,
       description,
@@ -1220,25 +1286,33 @@ async function saveExpense(){
       subtotal: totals.subtotal,
       tax_total: totals.tax,
       discount_total: totals.discount,
-      paid_total: 0,
+      paid_total: paidTotal,
       payment_method: paymentMethod || null,
       reference: reference || null,
       notes: notes || null
     };
 
-    const { error: expenseError } = await sb
-      .from('expenses')
-      .insert(expensePayload);
-    if(expenseError) throw expenseError;
+    if(isEditing){
+      const { error: expenseError } = await sb
+        .from('expenses')
+        .update(expensePayload)
+        .eq('id', state.editingExpenseId);
+      if(expenseError) throw expenseError;
+    } else {
+      const { error: expenseError } = await sb
+        .from('expenses')
+        .insert(expensePayload);
+      if(expenseError) throw expenseError;
+    }
 
     closeExpenseModal();
     await refreshAll();
-    showToast('Expense recorded successfully.', 'success');
+    showToast(isEditing ? 'Expense updated successfully.' : 'Expense recorded successfully.', 'success');
   }catch(error){
-    showToast(error.message || 'Could not record expense.', 'error');
+    showToast(error.message || (isEditing ? 'Could not update expense.' : 'Could not record expense.'), 'error');
   }finally{
     saveBtn.disabled = false;
-    saveBtn.textContent = 'Record expense';
+    setExpenseModalMode();
   }
 }
 
@@ -1332,6 +1406,7 @@ async function openDetailModal(expenseId){
   if(!expense) return;
   document.getElementById('detail-delete-btn').dataset.expenseId = expenseId;
   document.getElementById('detail-pay-btn').dataset.expenseId = expenseId;
+  document.getElementById('detail-edit-btn').dataset.expenseId = expenseId;
   document.getElementById('detail-title').textContent = expense.expense_number || 'Expense details';
   document.getElementById('detail-sub').textContent = 'Recorded ' + formatDate(expense.expense_date) + ' - due ' + formatDate(expense.due_date);
   document.getElementById('detail-supplier').textContent = supplierNameById(expense.supplier_id) || 'Unknown supplier';
@@ -1344,6 +1419,11 @@ async function openDetailModal(expenseId){
   payBtn.disabled = !canPay;
   payBtn.style.opacity = canPay ? '1' : '.45';
   payBtn.style.cursor = canPay ? 'pointer' : 'not-allowed';
+  const editBtn = document.getElementById('detail-edit-btn');
+  const canEdit = normalizeStatus(expense) !== 'cancelled';
+  editBtn.disabled = !canEdit;
+  editBtn.style.opacity = canEdit ? '1' : '.45';
+  editBtn.style.cursor = canEdit ? 'pointer' : 'not-allowed';
 
   const { data: payments, error: paymentsError } = await sb
     .from('expense_payments')
@@ -1466,4 +1546,5 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
 
