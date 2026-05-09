@@ -1149,6 +1149,17 @@ async function saveExpense(){
       if(!supplierName){
         throw new Error('Add the new supplier name first.');
       }
+      const supplierEmail = document.getElementById('sup-email').value.trim().toLowerCase();
+      const existingSupplier = state.suppliers.find(item => {
+        const sameName = String(item.name || '').trim().toLowerCase() === supplierName.toLowerCase();
+        const sameEmail = supplierEmail && String(item.email || '').trim().toLowerCase() === supplierEmail;
+        return sameName || sameEmail;
+      });
+
+      if(existingSupplier){
+        supplierId = existingSupplier.id;
+        supplierName = existingSupplier.name;
+      } else {
       const newSupplierPayload = {
         company_id: companyId,
         name: supplierName,
@@ -1166,10 +1177,16 @@ async function saveExpense(){
         .insert(newSupplierPayload)
         .select()
         .single();
-      if(supplierError) throw supplierError;
+      if(supplierError){
+        if(String(supplierError.message || '').toLowerCase().includes('row-level security')){
+          throw new Error('Supabase is still blocking new supplier creation. For now choose an existing supplier, or run the suppliers permission fix once.');
+        }
+        throw supplierError;
+      }
       supplierId = insertedSupplier.id;
       supplierName = insertedSupplier.name;
       state.suppliers.unshift(insertedSupplier);
+      }
     }else{
       const supplier = state.suppliers.find(item => item.id === supplierId);
       if(!supplier){
