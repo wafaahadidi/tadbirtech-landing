@@ -208,26 +208,26 @@ tr:hover td{background:#FAFCFE}
       </a>
       <div class="sb-sec">Modules</div>
       <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer;background:rgba(26,143,209,.15)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
-        <span class="sb-item-text" style="color:#fff">Transactions</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
+        <span class="sb-item-text" style="color:#fff">Accounting</span>
         <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="sb-submenu" style="padding-left:16px;margin-bottom:4px">
-        <a href="invoices.html" class="sb-item active" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span class="sb-item-text" style="font-size:12px">Invoices</span>
-        </a>
-        <a href="expenses.html" class="sb-item" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
-          <span class="sb-item-text" style="font-size:12px">Expenses</span>
-        </a>
-      </div>
-      <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
-        <span class="sb-item-text">Accounting</span>
-        <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="sb-submenu" style="display:none;padding-left:16px;margin-bottom:4px">
+        <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer;padding:7px 10px;background:rgba(26,143,209,.12)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" style="width:13px;height:13px"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+          <span class="sb-item-text" style="font-size:12px;color:#fff">Transactions</span>
+          <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sb-submenu" style="padding-left:14px;margin:2px 0 6px">
+          <a href="invoices.html" class="sb-item active" style="padding:7px 10px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="sb-item-text" style="font-size:12px">Invoices</span>
+          </a>
+          <a href="expenses.html" class="sb-item" style="padding:7px 10px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
+            <span class="sb-item-text" style="font-size:12px">Expenses</span>
+          </a>
+        </div>
         <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
           <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
@@ -240,8 +240,7 @@ tr:hover td{background:#FAFCFE}
           <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span class="sb-item-text" style="font-size:12px">Reports</span>
         </a>
-      </div>
-      <a class="sb-item" href="inventory.html">
+      </div><a class="sb-item" href="inventory.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
         <span class="sb-item-text">Inventory</span>
       </a>
@@ -432,8 +431,8 @@ tr:hover td{background:#FAFCFE}
   <div class="modal">
     <div class="modal-head">
       <div>
-        <div class="modal-title">Create invoice</div>
-        <div class="modal-sub">Capture the sale once. TadbirTech handles the accounting entry in the background.</div>
+        <div class="modal-title" id="invoice-modal-title">Create invoice</div>
+        <div class="modal-sub" id="invoice-modal-sub">Capture the sale once. TadbirTech handles the accounting entry in the background.</div>
       </div>
       <button class="btn-secondary" onclick="closeInvoiceModal()">Close</button>
     </div>
@@ -598,6 +597,7 @@ tr:hover td{background:#FAFCFE}
     </div>
     <div class="modal-foot">
       <button class="btn-soft" id="detail-collect-btn" onclick="openDetailPayment(this.dataset.invoiceId)">Collect</button>
+      <button class="btn-soft" id="detail-edit-btn" onclick="editInvoiceFromDetail(this.dataset.invoiceId)">Edit invoice</button>
       <button class="btn-primary" id="detail-print-btn" onclick="openOfficialInvoice(this.dataset.invoiceId)">Official copy</button>
       <button class="btn-danger" id="detail-delete-btn" onclick="deleteInvoice(this.dataset.invoiceId)">Delete invoice</button>
       <button class="btn-secondary" onclick="closeDetailModal()">Close</button>
@@ -623,7 +623,8 @@ const state = {
   customers: [],
   payments: [],
   selectedInvoiceForPayment: null,
-  invoiceLines: []
+  invoiceLines: [],
+  editingInvoiceId: null
 };
 
 function toggleDropdown(el){
@@ -981,22 +982,109 @@ function customerNameById(id){
   return state.customers.find(c => c.id === id)?.name || '';
 }
 
-function openInvoiceModal(){
+function setInvoiceModalMode(){
+  const editing = Boolean(state.editingInvoiceId);
+  const title = document.getElementById('invoice-modal-title');
+  const sub = document.getElementById('invoice-modal-sub');
+  const saveBtn = document.getElementById('save-invoice-btn');
+  if(title) title.textContent = editing ? 'Edit invoice' : 'Create invoice';
+  if(sub) sub.textContent = editing
+    ? 'Update the commercial details while keeping the customer and collection history aligned.'
+    : 'Capture the sale once. TadbirTech handles the accounting entry in the background.';
+  if(saveBtn) saveBtn.textContent = editing ? 'Save changes' : 'Create invoice';
+}
+
+function resetInvoiceModal(){
+  state.editingInvoiceId = null;
   state.invoiceLines = [];
   document.getElementById('inv-number').value = '';
   document.getElementById('inv-issue-date').value = todayIso();
   document.getElementById('inv-due-date').value = addDays(todayIso(), 15);
+  document.getElementById('inv-customer').value = '';
+  document.getElementById('cust-name').value = '';
+  document.getElementById('cust-email').value = '';
+  document.getElementById('cust-phone').value = '';
   updateInvoiceCurrencyDisplay();
   populateCustomerSelect();
   toggleNewCustomer(false);
   addLineItem();
   recalcInvoiceTotals();
+  setInvoiceModalMode();
+}
+
+async function editInvoice(invoiceId){
+  const invoice = state.invoices.find(item => item.id === invoiceId);
+  if(!invoice){
+    showToast('Invoice not found.', 'error');
+    return;
+  }
+
+  const { data: items, error } = await sb
+    .from('invoice_items')
+    .select('*')
+    .eq('invoice_id', invoiceId)
+    .order('created_at', { ascending: true });
+
+  if(error){
+    showToast('Could not load invoice lines for editing: ' + error.message, 'error');
+    return;
+  }
+
+  state.editingInvoiceId = invoiceId;
+  document.getElementById('inv-number').value = invoice.invoice_number || '';
+  document.getElementById('inv-issue-date').value = invoice.issue_date || todayIso();
+  document.getElementById('inv-due-date').value = invoice.due_date || addDays(todayIso(), 15);
+  updateInvoiceCurrencyDisplay();
+  populateCustomerSelect();
+
+  const knownCustomer = state.customers.find(item => item.id === invoice.customer_id);
+  if(knownCustomer){
+    toggleNewCustomer(false);
+    document.getElementById('inv-customer').value = knownCustomer.id;
+  } else {
+    toggleNewCustomer(true);
+    document.getElementById('cust-name').value = invoice.customer_name || '';
+  }
+
+  state.invoiceLines = (items || []).map(item => ({
+    description: item.description || '',
+    quantity: Number(item.quantity || 1),
+    unit_price: Number(item.unit_price || 0),
+    tax_rate: Number(item.tax_rate || 0),
+    discount: Number(item.discount || 0)
+  }));
+
+  if(!state.invoiceLines.length){
+    state.invoiceLines = [{
+      description: '',
+      quantity: 1,
+      unit_price: 0,
+      tax_rate: 0,
+      discount: 0
+    }];
+  }
+
+  renderLineItems();
+  recalcInvoiceTotals();
+  setInvoiceModalMode();
+  document.getElementById('invoice-overlay').classList.add('show');
+}
+
+function editInvoiceFromDetail(invoiceId){
+  if(!invoiceId) return;
+  closeDetailModal();
+  editInvoice(invoiceId);
+}
+function openInvoiceModal(){
+  resetInvoiceModal();
   document.getElementById('invoice-overlay').classList.add('show');
   suggestInvoiceNumber();
 }
 
 function closeInvoiceModal(){
   document.getElementById('invoice-overlay').classList.remove('show');
+  state.editingInvoiceId = null;
+  setInvoiceModalMode();
 }
 
 function populateCustomerSelect(){
@@ -1128,6 +1216,7 @@ async function saveInvoice(){
   const dueDate = document.getElementById('inv-due-date').value;
   const currency = updateInvoiceCurrencyDisplay();
   const usingNewCustomer = document.getElementById('new-customer-fields').style.display !== 'none';
+  const isEditing = Boolean(state.editingInvoiceId);
 
   if(!invoiceNumber || !issueDate || !dueDate){
     showToast('Complete the invoice header first.', 'error');
@@ -1159,7 +1248,7 @@ async function saveInvoice(){
 
   const saveBtn = document.getElementById('save-invoice-btn');
   saveBtn.disabled = true;
-  saveBtn.textContent = 'Creating...';
+  saveBtn.textContent = isEditing ? 'Saving...' : 'Creating...';
 
   try{
     const companyId = await ensureCompanyId();
@@ -1197,18 +1286,25 @@ async function saveInvoice(){
       customerName = customer.name;
     }
 
-    const duplicate = state.invoices.some(inv => inv.invoice_number === invoiceNumber);
+    const duplicate = state.invoices.some(inv => inv.invoice_number === invoiceNumber && inv.id !== state.editingInvoiceId);
     if(duplicate){
       throw new Error('This invoice number already exists.');
     }
 
     const totals = invoiceTotals();
+    const existingInvoice = isEditing ? state.invoices.find(item => item.id === state.editingInvoiceId) : null;
+    const paidTotal = Number(existingInvoice?.paid_total || 0);
+    const balanceDue = Math.max(totals.total - paidTotal, 0);
+    const nextStatus = balanceDue === 0
+      ? (paidTotal > 0 ? 'paid' : 'issued')
+      : (paidTotal > 0 ? 'partial' : 'issued');
+
     const invoicePayload = {
       company_id: companyId,
       customer_id: customerId,
       customer_name: customerName,
       invoice_number: invoiceNumber,
-      status: 'issued',
+      status: nextStatus,
       issue_date: issueDate,
       due_date: dueDate,
       currency,
@@ -1216,19 +1312,39 @@ async function saveInvoice(){
       tax_total: totals.tax,
       discount_total: totals.discount,
       total: totals.total,
-      paid_total: 0,
-      balance_due: totals.total
+      paid_total: paidTotal,
+      balance_due: balanceDue
     };
 
-    const { data: insertedInvoice, error: invoiceError } = await sb
-      .from('invoices')
-      .insert(invoicePayload)
-      .select()
-      .single();
-    if(invoiceError) throw invoiceError;
+    let savedInvoice;
+
+    if(isEditing){
+      const { data: updatedInvoice, error: invoiceError } = await sb
+        .from('invoices')
+        .update(invoicePayload)
+        .eq('id', state.editingInvoiceId)
+        .select()
+        .single();
+      if(invoiceError) throw invoiceError;
+      savedInvoice = updatedInvoice;
+
+      const { error: deleteItemsError } = await sb
+        .from('invoice_items')
+        .delete()
+        .eq('invoice_id', state.editingInvoiceId);
+      if(deleteItemsError) throw deleteItemsError;
+    }else{
+      const { data: insertedInvoice, error: invoiceError } = await sb
+        .from('invoices')
+        .insert(invoicePayload)
+        .select()
+        .single();
+      if(invoiceError) throw invoiceError;
+      savedInvoice = insertedInvoice;
+    }
 
     const itemPayload = lines.map(line => ({
-      invoice_id: insertedInvoice.id,
+      invoice_id: savedInvoice.id,
       product_id: null,
       description: line.description,
       quantity: line.quantity,
@@ -1243,12 +1359,12 @@ async function saveInvoice(){
 
     closeInvoiceModal();
     await refreshAll();
-    showToast('Invoice created successfully.', 'success');
+    showToast(isEditing ? 'Invoice updated successfully.' : 'Invoice created successfully.', 'success');
   }catch(error){
-    showToast(error.message || 'Could not create invoice.', 'error');
+    showToast(error.message || (isEditing ? 'Could not update invoice.' : 'Could not create invoice.'), 'error');
   }finally{
     saveBtn.disabled = false;
-    saveBtn.textContent = 'Create invoice';
+    setInvoiceModalMode();
   }
 }
 
@@ -1345,6 +1461,7 @@ async function openDetailModal(invoiceId){
   document.getElementById('detail-delete-btn').dataset.invoiceId = invoiceId;
   document.getElementById('detail-print-btn').dataset.invoiceId = invoiceId;
   document.getElementById('detail-collect-btn').dataset.invoiceId = invoiceId;
+  document.getElementById('detail-edit-btn').dataset.invoiceId = invoiceId;
   document.getElementById('detail-title').textContent = invoice.invoice_number || 'Invoice details';
   document.getElementById('detail-sub').textContent = 'Issued ' + formatDate(invoice.issue_date) + ' - due ' + formatDate(invoice.due_date);
   document.getElementById('detail-customer').textContent = invoice.customer_name || customerNameById(invoice.customer_id) || 'Unknown customer';
@@ -1356,6 +1473,11 @@ async function openDetailModal(invoiceId){
   collectBtn.disabled = !canCollect;
   collectBtn.style.opacity = canCollect ? '1' : '.45';
   collectBtn.style.cursor = canCollect ? 'pointer' : 'not-allowed';
+  const editBtn = document.getElementById('detail-edit-btn');
+  const canEdit = normalizeStatus(invoice) !== 'cancelled';
+  editBtn.disabled = !canEdit;
+  editBtn.style.opacity = canEdit ? '1' : '.45';
+  editBtn.style.cursor = canEdit ? 'pointer' : 'not-allowed';
 
   const [{ data: items }, { data: payments }] = await Promise.all([
     sb.from('invoice_items').select('*').eq('invoice_id', invoiceId).order('created_at', { ascending: true }),
@@ -1755,4 +1877,5 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
 
