@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,11 +10,11 @@
     body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C}
     .app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
     .sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
-    .sb-logo{padding:16px 18px 14px;border-bottom:.5px solid rgba(255,255,255,.08)}
-.sb-logo-brand{display:flex;align-items:flex-end;gap:6px;min-height:34px}
-.sb-logo-word{font-size:24px;font-weight:800;line-height:1;color:#fff;letter-spacing:0}
-.sb-logo-mark{width:46px;height:24px;display:block;overflow:visible;flex-shrink:0}
-.sb-logo-mark path{stroke:#1a8fd1;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+    .sb-logo{padding:22px 18px 20px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;min-height:88px}
+.sb-logo-brand{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px}
+.sb-logo-word{font-size:24px;font-weight:800;line-height:1;color:rgba(255,255,255,.95);letter-spacing:0}
+.sb-logo-mark{width:48px;height:26px;display:block;overflow:visible;flex-shrink:0;margin-top:2px}
+.sb-logo-mark path{stroke:#1a8fd1;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
     .sb-user{padding:12px 14px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
     .sb-avatar{width:32px;height:32px;border-radius:50%;background:#1a8fd1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
     .sb-name{font-size:12px;font-weight:600;color:#fff}
@@ -573,11 +573,11 @@ function supplierBalances(){
   const map = new Map();
   for(const expense of activeExpenses()){
     const balance = expenseBalance(expense);
-    const key = expense.supplier_id || expense.supplier_name || 'unknown';
+    const key = expense.supplier_id || 'unknown';
     if(!map.has(key)){
       map.set(key, {
         key,
-        name: expense.supplier_name || supplierNameById(expense.supplier_id) || 'Supplier',
+        name: supplierNameById(expense.supplier_id) || 'Supplier',
         count: 0,
         balance: 0,
         overdue: 0
@@ -700,7 +700,7 @@ async function loadInvoices(){
 async function loadExpenses(){
   const { data, error } = await sb
     .from('expenses')
-    .select('id, expense_number, supplier_id, supplier_name, expense_date, due_date, status, total_amount, subtotal, tax_total, discount_total, paid_total, balance_due, currency, created_at')
+    .select('id, expense_number, supplier_id, expense_date, due_date, status, total_amount, subtotal, tax_total, discount_total, paid_total, balance_due, currency, created_at')
     .eq('company_id', state.currentCompanyId)
     .order('expense_date', { ascending: false })
     .order('created_at', { ascending: false });
@@ -855,3 +855,4 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
