@@ -191,20 +191,22 @@ tr:hover td{background:#FAFCFE}
   .surface-head{align-items:flex-start}
   th:nth-child(4),td:nth-child(4),th:nth-child(5),td:nth-child(5){display:none}
 }
+/* Unified TadbirTech sidebar logo */
+.tt-brand-logo-img{display:block;width:188px;max-width:100%;height:auto;object-fit:contain}
+.sb-logo{padding:18px 12px 14px!important;border-bottom:.5px solid rgba(255,255,255,.08);display:flex!important;align-items:center!important;justify-content:center!important;min-height:92px!important;background:#0D1F3C!important}
+.nav-logo .tt-brand-logo-img{width:138px!important;height:auto!important}
+.ft-logo .tt-brand-logo-img{width:126px!important;height:auto!important}
+.login-logo-link{display:block;width:180px;margin:0 auto 32px auto;text-decoration:none}
+.login-logo-link .tt-brand-logo-img{width:180px!important;height:auto!important}
+.tt-loader-logo{width:200px!important;height:auto!important}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <div class="sb-logo">
-  <div class="sb-logo-brand" aria-label="TadbirTech">
-    <span class="sb-logo-word">TadbirTech</span>
-    <svg class="sb-logo-mark" viewBox="0 0 44 24" fill="none" aria-hidden="true">
-      <path d="M2 20 C11 10, 20 5, 34 5"></path>
-      <path d="M28 3 H40 V15"></path>
-    </svg>
-  </div>
-</div>
+      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" alt="TadbirTech">
+    </div>
     <div class="sb-user">
       <div class="sb-avatar" id="sb-av">T</div>
       <div><div class="sb-name" id="sb-name">Team</div><div class="sb-role">Administrator</div></div>
@@ -1665,7 +1667,17 @@ function buildOfficialInvoiceHtml(documentData){
         .page{margin:0;box-shadow:none;width:auto;min-height:auto;padding:12mm}
       }
       @page{size:A4;margin:12mm}
-    </style>
+
+
+/* Unified TadbirTech sidebar logo */
+.tt-brand-logo-img{display:block;width:188px;max-width:100%;height:auto;object-fit:contain}
+.sb-logo{padding:18px 12px 14px!important;border-bottom:.5px solid rgba(255,255,255,.08);display:flex!important;align-items:center!important;justify-content:center!important;min-height:92px!important;background:#0D1F3C!important}
+.nav-logo .tt-brand-logo-img{width:138px!important;height:auto!important}
+.ft-logo .tt-brand-logo-img{width:126px!important;height:auto!important}
+.login-logo-link{display:block;width:180px;margin:0 auto 32px auto;text-decoration:none}
+.login-logo-link .tt-brand-logo-img{width:180px!important;height:auto!important}
+.tt-loader-logo{width:200px!important;height:auto!important}
+</style>
   </head>
   <body>
     <div class="toolbar">
@@ -1791,7 +1803,18 @@ async function openOfficialInvoice(invoiceId){
   }
 
   printWindow.document.open();
-  printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Preparing invoice</title><style>body{margin:0;font-family:Arial,sans-serif;background:#EEF3F8;color:#10213D;display:flex;align-items:center;justify-content:center;min-height:100vh} .box{padding:24px 28px;border-radius:12px;background:#fff;box-shadow:0 18px 44px rgba(16,33,61,.12);font-size:16px;font-weight:700}</style></head><body><div class="box">Preparing official invoice...</div></body></html>`);
+  printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Preparing invoice</title><style>body{margin:0;font-family:Arial,sans-serif;background:#EEF3F8;color:#10213D;display:flex;align-items:center;justify-content:center;min-height:100vh} .box{padding:24px 28px;border-radius:12px;background:#fff;box-shadow:0 18px 44px rgba(16,33,61,.12);font-size:16px;font-weight:700}
+
+
+/* Unified TadbirTech sidebar logo */
+.tt-brand-logo-img{display:block;width:188px;max-width:100%;height:auto;object-fit:contain}
+.sb-logo{padding:18px 12px 14px!important;border-bottom:.5px solid rgba(255,255,255,.08);display:flex!important;align-items:center!important;justify-content:center!important;min-height:92px!important;background:#0D1F3C!important}
+.nav-logo .tt-brand-logo-img{width:138px!important;height:auto!important}
+.ft-logo .tt-brand-logo-img{width:126px!important;height:auto!important}
+.login-logo-link{display:block;width:180px;margin:0 auto 32px auto;text-decoration:none}
+.login-logo-link .tt-brand-logo-img{width:180px!important;height:auto!important}
+.tt-loader-logo{width:200px!important;height:auto!important}
+</style></head><body><div class="box">Preparing official invoice...</div></body></html>`);
   printWindow.document.close();
 
   try{
@@ -1802,7 +1825,18 @@ async function openOfficialInvoice(invoiceId){
     printWindow.focus();
   }catch(error){
     printWindow.document.open();
-    printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice unavailable</title><style>body{margin:0;font-family:Arial,sans-serif;background:#EEF3F8;color:#10213D;display:flex;align-items:center;justify-content:center;min-height:100vh} .box{max-width:520px;padding:24px 28px;border-radius:12px;background:#fff;box-shadow:0 18px 44px rgba(16,33,61,.12)} h1{margin:0 0 10px;font-size:24px} p{margin:0;color:#556B86;line-height:1.6}</style></head><body><div class="box"><h1>Could not prepare this invoice</h1><p>${escapeHtml(error.message || 'Unknown error')}</p></div></body></html>`);
+    printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice unavailable</title><style>body{margin:0;font-family:Arial,sans-serif;background:#EEF3F8;color:#10213D;display:flex;align-items:center;justify-content:center;min-height:100vh} .box{max-width:520px;padding:24px 28px;border-radius:12px;background:#fff;box-shadow:0 18px 44px rgba(16,33,61,.12)} h1{margin:0 0 10px;font-size:24px} p{margin:0;color:#556B86;line-height:1.6}
+
+
+/* Unified TadbirTech sidebar logo */
+.tt-brand-logo-img{display:block;width:188px;max-width:100%;height:auto;object-fit:contain}
+.sb-logo{padding:18px 12px 14px!important;border-bottom:.5px solid rgba(255,255,255,.08);display:flex!important;align-items:center!important;justify-content:center!important;min-height:92px!important;background:#0D1F3C!important}
+.nav-logo .tt-brand-logo-img{width:138px!important;height:auto!important}
+.ft-logo .tt-brand-logo-img{width:126px!important;height:auto!important}
+.login-logo-link{display:block;width:180px;margin:0 auto 32px auto;text-decoration:none}
+.login-logo-link .tt-brand-logo-img{width:180px!important;height:auto!important}
+.tt-loader-logo{width:200px!important;height:auto!important}
+</style></head><body><div class="box"><h1>Could not prepare this invoice</h1><p>${escapeHtml(error.message || 'Unknown error')}</p></div></body></html>`);
     printWindow.document.close();
     showToast(error.message || 'Could not prepare the official invoice copy.', 'error');
   }
@@ -1890,6 +1924,13 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
