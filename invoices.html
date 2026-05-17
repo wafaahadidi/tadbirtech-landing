@@ -223,20 +223,28 @@ tr:hover td{background:#FAFCFE}
         <span class="sb-item-text" style="color:#fff">Accounting</span>
         <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
-      <div class="sb-submenu" style="padding-left:16px;margin-bottom:4px">
+            <div class="sb-submenu" style="display:block;padding-left:16px;margin-bottom:4px">
         <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer;padding:7px 10px;background:rgba(26,143,209,.12)">
           <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" style="width:13px;height:13px"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
           <span class="sb-item-text" style="font-size:12px;color:#fff">Transactions</span>
           <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div class="sb-submenu" style="padding-left:14px;margin:2px 0 6px">
+        <div class="sb-submenu" style="display:block;padding-left:14px;margin:2px 0 6px">
           <a href="invoices.html" class="sb-item active" style="padding:7px 10px">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span class="sb-item-text" style="font-size:12px">Invoices</span>
           </a>
+          <a href="customers.html" class="sb-item" style="padding:7px 10px">
+            <span style="width:15px;display:inline-block"></span>
+            <span class="sb-item-text" style="font-size:12px">Customers</span>
+          </a>
           <a href="expenses.html" class="sb-item" style="padding:7px 10px">
             <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
             <span class="sb-item-text" style="font-size:12px">Expenses</span>
+          </a>
+          <a href="suppliers.html" class="sb-item" style="padding:7px 10px">
+            <span style="width:15px;display:inline-block"></span>
+            <span class="sb-item-text" style="font-size:12px">Suppliers</span>
           </a>
         </div>
         <a href="cash-bank.html" class="sb-item" style="padding:7px 10px">
@@ -263,7 +271,11 @@ tr:hover td{background:#FAFCFE}
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         <span class="sb-item-text">HR & Payroll</span>
       </a>
-      <a class="sb-item" href="settings.html">
+      <a href="demo-dataset.html" class="sb-item">
+        <span style="width:15px;display:inline-block"></span>
+        <span class="sb-item-text">Demo Dataset</span>
+      </a>
+<a class="sb-item" href="settings.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>
         <span class="sb-item-text">Settings</span>
       </a>
@@ -1924,6 +1936,9 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
+
+
 
 
 
