@@ -24,14 +24,22 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;col
 .btn{border:0;background:#1a8fd1;color:#fff;border-radius:8px;padding:8px 13px;font-size:12px;font-weight:700;text-decoration:none;font-family:inherit;cursor:pointer}
 .btn.secondary{background:#EEF3F8;color:#0D1F3C}.btn.danger{background:#FEF2F2;color:#B42318}
 .content{padding:22px 24px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.stat{background:#fff;border:.5px solid #DDE6EF;border-radius:12px;padding:15px}.stat-label{font-size:11px;color:#5B7594;margin-bottom:6px}.stat-value{font-size:24px;font-weight:800;color:#0D1F3C}
-.surface{background:#fff;border:.5px solid #DDE6EF;border-radius:12px;overflow:hidden}.surface-head{padding:16px;border-bottom:.5px solid #DDE6EF;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.stat{background:#fff;border:.5px solid #DDE6EF;border-radius:8px;padding:15px}.stat-label{font-size:11px;color:#5B7594;margin-bottom:6px}.stat-value{font-size:24px;font-weight:800;color:#0D1F3C}
+.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.8fr);gap:16px;align-items:start}
+.surface{background:#fff;border:.5px solid #DDE6EF;border-radius:8px;overflow:hidden}.surface-head{padding:16px;border-bottom:.5px solid #DDE6EF;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .surface-title{font-size:14px;font-weight:800}.surface-sub{font-size:11px;color:#5B7594;margin-top:3px}.surface-body{padding:16px}
-.filters{display:flex;gap:10px;margin-bottom:14px}.input{width:100%;border:.5px solid #DDE6EF;border-radius:8px;padding:9px 10px;font-family:inherit;font-size:13px;background:#fff;color:#0D1F3C}
-table{width:100%;border-collapse:collapse}th{text-align:left;font-size:11px;color:#5B7594;border-bottom:.5px solid #DDE6EF;padding:0 0 10px}td{font-size:13px;border-bottom:.5px solid #F4F7FB;padding:12px 0;color:#0D1F3C;vertical-align:top}
-.muted{color:#5B7594;font-size:11px;margin-top:2px}.empty{padding:28px 0;text-align:center;color:#5B7594}.toast{position:fixed;right:18px;bottom:18px;background:#0D1F3C;color:#fff;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;box-shadow:0 12px 32px rgba(13,31,60,.18);display:none}
-.modal{position:fixed;inset:0;background:rgba(13,31,60,.32);display:none;align-items:center;justify-content:center;z-index:50}.modal.show{display:flex}.modal-card{width:min(520px,calc(100vw - 28px));background:#fff;border-radius:12px;border:.5px solid #DDE6EF;box-shadow:0 18px 60px rgba(13,31,60,.2)}
-.modal-head{padding:16px;border-bottom:.5px solid #DDE6EF}.modal-title{font-size:16px;font-weight:800}.modal-body{padding:16px;display:grid;gap:10px}.modal-foot{padding:14px 16px;border-top:.5px solid #DDE6EF;display:flex;justify-content:flex-end;gap:10px}
+.filters{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}.input,.select{width:100%;border:.5px solid #DDE6EF;border-radius:8px;padding:9px 10px;font-family:inherit;font-size:13px;background:#fff;color:#0D1F3C;outline:none}.input:focus,.select:focus{border-color:#1a8fd1;box-shadow:0 0 0 3px rgba(26,143,209,.08)}
+.search-wrap{flex:1;min-width:240px}.select{max-width:180px}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-size:10px;color:#5B7594;text-transform:uppercase;letter-spacing:.08em;border-bottom:.5px solid #DDE6EF;padding:10px 12px;background:#FAFBFC}td{font-size:13px;border-bottom:.5px solid #F4F7FB;padding:13px 12px;color:#0D1F3C;vertical-align:top}
+tr:hover td{background:#FAFCFE}.name{font-weight:800}.muted{color:#5B7594;font-size:11px;margin-top:3px}.money{font-weight:800}.money.good{color:#117A43}.money.bad{color:#B42318}.empty{padding:32px 0;text-align:center;color:#5B7594}
+.chip{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800}.chip.good{background:#EAF8EF;color:#117A43}.chip.warn{background:#FFF4D6;color:#9A6700}.chip.neutral{background:#EEF3F8;color:#5B7594}
+.list{display:grid;gap:12px}.list-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:.5px solid #F4F7FB}.list-item:last-child{border-bottom:0}.list-title{font-size:13px;font-weight:800}.list-sub{font-size:11px;color:#5B7594;margin-top:4px}.list-value{font-size:12px;font-weight:800;text-align:right}
+.toast{position:fixed;right:18px;bottom:18px;background:#0D1F3C;color:#fff;border-radius:8px;padding:11px 14px;font-size:13px;font-weight:700;box-shadow:0 12px 32px rgba(13,31,60,.18);transform:translateY(70px);opacity:0;transition:all .25s;z-index:300}.toast.show{transform:translateY(0);opacity:1}.toast.error{background:#B42318}.toast.success{background:#117A43}
+.overlay{position:fixed;inset:0;background:rgba(13,31,60,.52);display:none;align-items:center;justify-content:center;padding:18px;z-index:250;backdrop-filter:blur(4px)}.overlay.show{display:flex}
+.modal{width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border-radius:8px;box-shadow:0 24px 60px rgba(13,31,60,.2)}
+.modal.narrow{width:min(560px,100%)}.modal-head{padding:18px 20px;border-bottom:.5px solid #DDE6EF}.modal-title{font-size:16px;font-weight:800}.modal-sub{font-size:12px;color:#5B7594;margin-top:4px}.modal-body{padding:20px}.modal-foot{padding:16px 20px;border-top:.5px solid #DDE6EF;display:flex;justify-content:flex-end;gap:10px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.span-2{grid-column:span 2}.field label{font-size:12px;font-weight:800}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.detail-card{background:#FAFCFE;border:.5px solid #E6EDF5;border-radius:8px;padding:13px}.detail-label{font-size:11px;color:#5B7594;margin-bottom:5px}.detail-value{font-size:14px;font-weight:800}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{display:none}.topbar{padding:0 16px}.content{padding:16px}.stats,.form-grid,.detail-grid{grid-template-columns:1fr}.field.span-2{grid-column:auto}th:nth-child(3),td:nth-child(3){display:none}}
 
 /* Unified accounting sidebar */
 .sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
@@ -136,58 +144,105 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:11px;colo
     </div>
   </aside>
   <main class="main">
-    <div class="topbar">
-      <div><div class="topbar-title">Suppliers</div><div class="topbar-sub">Supplier master data for bills, payables, and outgoing cash planning.</div></div>
-      <div class="topbar-actions"><a class="btn secondary" href="reports.html">Reports</a><button class="btn" onclick="openModal()">Add supplier</button></div>
+  <header class="topbar">
+    <div><div class="topbar-title">Suppliers</div><div class="topbar-sub" id="company-label">Supplier master data, open payables, and payment follow-up.</div></div>
+    <div class="topbar-actions"><a class="btn secondary" href="expenses.html">Expenses</a><button class="btn" onclick="openSupplierModal()">Add supplier</button></div>
+  </header>
+  <div class="content">
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Active suppliers</div><div class="stat-value" id="stat-suppliers">0</div></div>
+      <div class="stat"><div class="stat-label">Outstanding payables</div><div class="stat-value" id="stat-payables">0 DA</div></div>
+      <div class="stat"><div class="stat-label">Overdue payables</div><div class="stat-value" id="stat-overdue">0 DA</div></div>
+      <div class="stat"><div class="stat-label">Paid this month</div><div class="stat-value" id="stat-paid">0 DA</div></div>
     </div>
-    <div class="content">
-      <div class="stats">
-        <div class="stat"><div class="stat-label">Total records</div><div class="stat-value" id="stat-total">0</div></div>
-        <div class="stat"><div class="stat-label">Active</div><div class="stat-value" id="stat-active">0</div></div>
-        <div class="stat"><div class="stat-label">With email</div><div class="stat-value" id="stat-email">0</div></div>
-        <div class="stat"><div class="stat-label">Country</div><div class="stat-value" id="stat-country">DZ</div></div>
-      </div>
+    <div class="layout">
       <section class="surface">
-        <div class="surface-head"><div><div class="surface-title">suppliers directory</div><div class="surface-sub">Search, add, and keep master data aligned with invoices and expenses.</div></div></div>
+        <div class="surface-head"><div><div class="surface-title">Suppliers directory</div><div class="surface-sub">Search, maintain supplier records, and follow expense balances from one place.</div></div></div>
         <div class="surface-body">
-          <div class="filters"><input class="input" id="search" placeholder="Search suppliers" oninput="renderRows()"></div>
-          <table><thead><tr><th>Name</th><th>Contact</th><th>Tax / Location</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table>
+          <div class="filters">
+            <div class="search-wrap"><input class="input" id="search" placeholder="Search suppliers, email, phone, tax ID, or city" oninput="renderSuppliers()"></div>
+            <select class="select" id="status-filter" onchange="renderSuppliers()">
+              <option value="all">All suppliers</option>
+              <option value="open">With payables</option>
+              <option value="overdue">Overdue</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+          <div style="overflow:auto">
+            <table>
+              <thead><tr><th>Supplier</th><th>Contact</th><th>Payables</th><th>Activity</th><th>Actions</th></tr></thead>
+              <tbody id="supplier-rows"></tbody>
+            </table>
+          </div>
         </div>
       </section>
+      <div class="list">
+        <section class="surface">
+          <div class="surface-head"><div><div class="surface-title">Top payables</div><div class="surface-sub">Suppliers with the highest unpaid balances.</div></div></div>
+          <div class="surface-body"><div class="list" id="top-payables"></div></div>
+        </section>
+        <section class="surface">
+          <div class="surface-head"><div><div class="surface-title">Recent payouts</div><div class="surface-sub">Latest supplier payments recorded.</div></div></div>
+          <div class="surface-body"><div class="list" id="recent-payouts"></div></div>
+        </section>
+      </div>
     </div>
-  </main>
+  </div>
+</main>
 </div>
 
-<div class="modal" id="modal">
-  <div class="modal-card">
-    <div class="modal-head"><div class="modal-title" id="modal-title">Add supplier</div></div>
+<div class="overlay" id="supplier-overlay">
+  <div class="modal narrow">
+    <div class="modal-head"><div class="modal-title" id="supplier-modal-title">Add supplier</div><div class="modal-sub">Supplier details are reused when recording expenses and reviewing payables.</div></div>
     <div class="modal-body">
-      <input class="input" id="name" placeholder="Name">
-      <input class="input" id="email" placeholder="Email">
-      <input class="input" id="phone" placeholder="Phone">
-      <input class="input" id="tax_id" placeholder="Tax ID">
-      <input class="input" id="address" placeholder="Address">
-      <input class="input" id="city" placeholder="City">
-      <input class="input" id="country" placeholder="Country" value="Algeria">
+      <div class="form-grid">
+        <div class="field span-2"><label for="name">Name</label><input class="input" id="name" placeholder="Supplier name"></div>
+        <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" placeholder="contact@supplier.dz"></div>
+        <div class="field"><label for="phone">Phone</label><input class="input" id="phone" placeholder="+213 ..."></div>
+        <div class="field"><label for="tax_id">Tax ID</label><input class="input" id="tax_id" placeholder="NIF / RC"></div>
+        <div class="field"><label for="city">City</label><input class="input" id="city" placeholder="Oran"></div>
+        <div class="field span-2"><label for="address">Address</label><input class="input" id="address" placeholder="Street, building, area"></div>
+        <div class="field"><label for="is_active">Status</label><select class="input" id="is_active"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+      </div>
     </div>
-    <div class="modal-foot"><button class="btn secondary" onclick="closeModal()">Cancel</button><button class="btn" id="save-btn" onclick="saveRecord()">Save</button></div>
+    <div class="modal-foot"><button class="btn secondary" onclick="closeSupplierModal()">Cancel</button><button class="btn" id="save-btn" onclick="saveSupplier()">Save supplier</button></div>
   </div>
 </div>
+
+<div class="overlay" id="detail-overlay">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="detail-title">Supplier details</div><div class="modal-sub" id="detail-sub">Open payables and payout history.</div></div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-card"><div class="detail-label">Outstanding</div><div class="detail-value" id="detail-outstanding">0 DA</div></div>
+        <div class="detail-card"><div class="detail-label">Expensed</div><div class="detail-value" id="detail-expensed">0 DA</div></div>
+        <div class="detail-card"><div class="detail-label">Paid</div><div class="detail-value" id="detail-paid">0 DA</div></div>
+      </div>
+      <section class="surface" style="margin-bottom:16px"><div class="surface-head"><div><div class="surface-title">Open expenses</div></div></div><div class="surface-body" id="detail-expenses"></div></section>
+      <section class="surface"><div class="surface-head"><div><div class="surface-title">Recent payments</div></div></div><div class="surface-body" id="detail-payments"></div></section>
+    </div>
+    <div class="modal-foot"><button class="btn secondary" onclick="closeDetailModal()">Close</button><a class="btn" href="expenses.html">Open expenses</a></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const SUPABASE_URL = 'https://gqmpqpnboenmshuuopnp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
 const DEMO_COMPANY_ID = 'ad0623bc-4c7b-449f-8657-1abc10ddee97';
-const TABLE_NAME = 'suppliers';
-const KIND = 'supplier';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const state = { session:null, companyId:null, records:[], editingId:null };
+const state = { session:null, companyId:null, company:null, suppliers:[], expenses:[], payments:[], editingId:null };
 
-function showToast(message){ const el=document.getElementById('toast'); el.textContent=message; el.style.display='block'; setTimeout(()=>el.style.display='none',2600); }
+function showToast(message,type=''){ const el=document.getElementById('toast'); el.textContent=message; el.className='toast '+type+' show'; clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>el.className='toast',2800); }
 function escapeHtml(value){ return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
-function setVal(id,value){ document.getElementById(id).value = value || ''; }
+function setVal(id,value){ document.getElementById(id).value = value ?? ''; }
 function getVal(id){ return document.getElementById(id).value.trim(); }
+function todayIso(){ return new Date().toISOString().slice(0,10); }
+function preferredCurrency(){ try{ return JSON.parse(localStorage.getItem('tt_currency') || '{}').code || 'DZD'; }catch(_e){ return 'DZD'; } }
+function currencySymbol(code){ return {DZD:'DA',MAD:'DH',TND:'DT',EUR:'EUR',USD:'USD'}[code] || code || 'DZD'; }
+function formatMoney(amount,currency){ return new Intl.NumberFormat('fr-DZ',{maximumFractionDigits:0}).format(Number(amount || 0)) + ' ' + currencySymbol(currency || state.company?.currency || preferredCurrency()); }
+function formatDate(value){ if(!value) return '-'; const d=new Date(value); return Number.isNaN(d.getTime()) ? value : new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric'}).format(d); }
 
 async function resolveCompany(){
   const stored = localStorage.getItem('tt_company_id');
@@ -197,85 +252,203 @@ async function resolveCompany(){
     if(data && data[0]?.company_id){ state.companyId = data[0].company_id; localStorage.setItem('tt_company_id', state.companyId); }
   }
   if(!state.companyId){ state.companyId = DEMO_COMPANY_ID; localStorage.setItem('tt_company_id', state.companyId); }
+  const { data: company } = await sb.from('companies').select('*').eq('id', state.companyId).maybeSingle();
+  state.company = company || null;
+  document.getElementById('company-label').textContent = (company?.name || 'Your company') + ' - Supplier master data, open payables, and payment follow-up.';
 }
 
-async function loadRecords(){
-  const { data, error } = await sb.from(TABLE_NAME).select('*').eq('company_id', state.companyId).order('name');
-  if(error){ showToast('Could not load ' + KIND + ' records: ' + error.message); state.records=[]; return; }
-  state.records = data || [];
+async function refreshAll(){
+  await resolveCompany();
+  const [suppliersRes,expensesRes,paymentsRes] = await Promise.all([
+    sb.from('suppliers').select('*').eq('company_id', state.companyId).order('name'),
+    sb.from('expenses').select('id,expense_number,supplier_id,expense_date,due_date,total_amount,paid_total,balance_due,status,currency,reference,created_at').eq('company_id', state.companyId).order('expense_date', { ascending:false }),
+    sb.from('expense_payments').select('*').eq('company_id', state.companyId).order('payment_date', { ascending:false }).order('created_at', { ascending:false })
+  ]);
+  if(suppliersRes.error) throw suppliersRes.error;
+  if(expensesRes.error) throw expensesRes.error;
+  if(paymentsRes.error) throw paymentsRes.error;
+  state.suppliers = suppliersRes.data || [];
+  state.expenses = expensesRes.data || [];
+  state.payments = paymentsRes.data || [];
   renderStats();
-  renderRows();
+  renderSuppliers();
+  renderTopPayables();
+  renderRecentPayouts();
+}
+
+function expensesForSupplier(supplier){
+  return state.expenses.filter(exp => exp.supplier_id === supplier.id);
+}
+function paymentsForSupplier(supplier){
+  const expenseIds = new Set(expensesForSupplier(supplier).map(exp => exp.id));
+  return state.payments.filter(payment => expenseIds.has(payment.expense_id) || payment.supplier_id === supplier.id);
+}
+function resolveExpenseTotal(expense){
+  return Number(expense.total_amount || 0);
+}
+function resolveExpenseBalance(expense){
+  if(expense.balance_due !== null && expense.balance_due !== undefined) return Number(expense.balance_due || 0);
+  return Math.max(resolveExpenseTotal(expense) - Number(expense.paid_total || 0), 0);
+}
+function supplierMetrics(supplier){
+  const expenses = expensesForSupplier(supplier);
+  const payments = paymentsForSupplier(supplier);
+  const expensed = expenses.reduce((sum,exp)=>sum + resolveExpenseTotal(exp), 0);
+  const paid = payments.reduce((sum,pay)=>sum + Number(pay.amount || 0), 0);
+  const outstanding = expenses.reduce((sum,exp)=>sum + resolveExpenseBalance(exp), 0);
+  const overdue = expenses.filter(exp => resolveExpenseBalance(exp) > 0 && exp.due_date && exp.due_date < todayIso()).reduce((sum,exp)=>sum + resolveExpenseBalance(exp), 0);
+  return { expenses, payments, expensed, paid, outstanding, overdue };
+}
+function normalizeStatus(supplier){
+  const metrics = supplierMetrics(supplier);
+  if(supplier.is_active === false) return 'inactive';
+  if(metrics.overdue > 0) return 'overdue';
+  if(metrics.outstanding > 0) return 'open';
+  return 'clear';
 }
 
 function renderStats(){
-  document.getElementById('stat-total').textContent = String(state.records.length);
-  document.getElementById('stat-active').textContent = String(state.records.filter(item => item.is_active !== false).length);
-  document.getElementById('stat-email').textContent = String(state.records.filter(item => item.email).length);
-  const country = state.records.find(item => item.country)?.country || 'Algeria';
-  document.getElementById('stat-country').textContent = country === 'Algeria' ? 'DZ' : country.slice(0,2).toUpperCase();
+  const currency = state.company?.currency || preferredCurrency();
+  const active = state.suppliers.filter(s => s.is_active !== false);
+  const outstanding = active.reduce((sum,s)=>sum + supplierMetrics(s).outstanding, 0);
+  const overdue = active.reduce((sum,s)=>sum + supplierMetrics(s).overdue, 0);
+  const month = todayIso().slice(0,7);
+  const paid = state.payments.filter(p => String(p.payment_date || '').slice(0,7) === month).reduce((sum,p)=>sum + Number(p.amount || 0), 0);
+  document.getElementById('stat-suppliers').textContent = String(active.length);
+  document.getElementById('stat-payables').textContent = formatMoney(outstanding, currency);
+  document.getElementById('stat-overdue').textContent = formatMoney(overdue, currency);
+  document.getElementById('stat-paid').textContent = formatMoney(paid, currency);
 }
 
-function renderRows(){
-  const host = document.getElementById('rows');
+function renderSuppliers(){
+  const host = document.getElementById('supplier-rows');
   const q = document.getElementById('search').value.trim().toLowerCase();
-  const rows = state.records.filter(item => !q || [item.name,item.email,item.phone,item.tax_id,item.city,item.country].some(v => String(v || '').toLowerCase().includes(q)));
-  if(!rows.length){ host.innerHTML = '<tr><td colspan="4" class="empty">No suppliers yet.</td></tr>'; return; }
-  host.innerHTML = rows.map(item => `
-    <tr>
-      <td><strong>${escapeHtml(item.name || 'Unnamed')}</strong><div class="muted">${escapeHtml(item.id || '')}</div></td>
-      <td>${escapeHtml(item.email || '-')}<div class="muted">${escapeHtml(item.phone || '-')}</div></td>
-      <td>${escapeHtml(item.tax_id || '-')}<div class="muted">${escapeHtml([item.city,item.country].filter(Boolean).join(', ') || '-')}</div></td>
-      <td><button class="btn secondary" onclick="editRecord('${item.id}')">Edit</button></td>
-    </tr>
-  `).join('');
+  const filter = document.getElementById('status-filter').value;
+  const rows = state.suppliers.filter(supplier => {
+    const metrics = supplierMetrics(supplier);
+    const haystack = [supplier.name,supplier.email,supplier.phone,supplier.tax_id,supplier.city,supplier.address].join(' ').toLowerCase();
+    const matchesQuery = !q || haystack.includes(q);
+    const status = normalizeStatus(supplier);
+    const matchesFilter = filter === 'all' || status === filter || (filter === 'open' && metrics.outstanding > 0);
+    return matchesQuery && matchesFilter;
+  });
+  if(!rows.length){ host.innerHTML = '<tr><td colspan="5" class="empty">No suppliers match this view.</td></tr>'; return; }
+  host.innerHTML = rows.map(supplier => {
+    const metrics = supplierMetrics(supplier);
+    const status = normalizeStatus(supplier);
+    const chip = status === 'overdue' ? '<span class="chip warn">Overdue</span>' : status === 'open' ? '<span class="chip good">Open</span>' : status === 'inactive' ? '<span class="chip neutral">Inactive</span>' : '<span class="chip neutral">Clear</span>';
+    return `
+      <tr>
+        <td><div class="name">${escapeHtml(supplier.name || 'Unnamed supplier')}</div><div class="muted">${escapeHtml(supplier.city || 'No city')}</div></td>
+        <td>${escapeHtml(supplier.email || '-')}<div class="muted">${escapeHtml(supplier.phone || '-')}</div></td>
+        <td><div class="money ${metrics.outstanding > 0 ? 'bad' : 'good'}">${formatMoney(metrics.outstanding)}</div><div class="muted">${metrics.expenses.length} expense(s) - ${chip}</div></td>
+        <td><div>Expensed: <strong>${formatMoney(metrics.expensed)}</strong></div><div class="muted">Paid: ${formatMoney(metrics.paid)}</div></td>
+        <td><button class="btn secondary" onclick="openDetailModal('${supplier.id}')">View</button> <button class="btn secondary" onclick="editSupplier('${supplier.id}')">Edit</button></td>
+      </tr>
+    `;
+  }).join('');
 }
 
-function openModal(){ state.editingId=null; ['name','email','phone','tax_id','address','city'].forEach(id=>setVal(id,'')); setVal('country','Algeria'); document.getElementById('modal-title').textContent='Add supplier'; document.getElementById('modal').classList.add('show'); }
-function closeModal(){ document.getElementById('modal').classList.remove('show'); state.editingId=null; }
-function editRecord(id){
-  const item = state.records.find(record => record.id === id);
-  if(!item) return;
-  state.editingId=id;
-  ['name','email','phone','tax_id','address','city','country'].forEach(field => setVal(field, item[field]));
-  document.getElementById('modal-title').textContent='Edit ' + KIND;
-  document.getElementById('modal').classList.add('show');
+function renderTopPayables(){
+  const host = document.getElementById('top-payables');
+  const rows = state.suppliers.map(s => ({ supplier:s, metrics:supplierMetrics(s) })).filter(x => x.metrics.outstanding > 0).sort((a,b)=>b.metrics.outstanding - a.metrics.outstanding).slice(0,5);
+  if(!rows.length){ host.innerHTML = '<div class="empty">No open payables.</div>'; return; }
+  host.innerHTML = rows.map(({supplier,metrics}) => `<div class="list-item"><div><div class="list-title">${escapeHtml(supplier.name)}</div><div class="list-sub">${metrics.expenses.length} expense(s)</div></div><div class="list-value money bad">${formatMoney(metrics.outstanding)}</div></div>`).join('');
 }
 
-async function saveRecord(){
+function renderRecentPayouts(){
+  const host = document.getElementById('recent-payouts');
+  const rows = state.payments.slice(0,5);
+  if(!rows.length){ host.innerHTML = '<div class="empty">No supplier payments recorded yet.</div>'; return; }
+  host.innerHTML = rows.map(payment => {
+    const expense = state.expenses.find(exp => exp.id === payment.expense_id);
+    const supplier = state.suppliers.find(s => s.id === (payment.supplier_id || expense?.supplier_id));
+    return `<div class="list-item"><div><div class="list-title">${escapeHtml(supplier?.name || 'Supplier')}</div><div class="list-sub">${escapeHtml(expense?.expense_number || payment.reference || 'Payment')} - ${formatDate(payment.payment_date)}</div></div><div class="list-value money good">${formatMoney(payment.amount, payment.currency)}</div></div>`;
+  }).join('');
+}
+
+function openSupplierModal(){
+  state.editingId = null;
+  ['name','email','phone','tax_id','address','city'].forEach(id=>setVal(id,''));
+  setVal('is_active','true');
+  document.getElementById('supplier-modal-title').textContent = 'Add supplier';
+  document.getElementById('supplier-overlay').classList.add('show');
+}
+function closeSupplierModal(){ document.getElementById('supplier-overlay').classList.remove('show'); state.editingId = null; }
+function editSupplier(id){
+  const supplier = state.suppliers.find(item => item.id === id);
+  if(!supplier) return;
+  state.editingId = id;
+  ['name','email','phone','tax_id','address','city'].forEach(field => setVal(field, supplier[field] || ''));
+  setVal('is_active', supplier.is_active === false ? 'false' : 'true');
+  document.getElementById('supplier-modal-title').textContent = 'Edit supplier';
+  document.getElementById('supplier-overlay').classList.add('show');
+}
+async function saveSupplier(){
   const name = getVal('name');
-  if(!name){ showToast('Name is required.'); return; }
-  const payload = { company_id: state.companyId, name, email:getVal('email') || null, phone:getVal('phone') || null, tax_id:getVal('tax_id') || null, address:getVal('address') || null, city:getVal('city') || null, country:getVal('country') || 'Algeria', is_active:true };
+  if(!name){ showToast('Supplier name is required.','error'); return; }
+  const payload = {
+    company_id: state.companyId,
+    name,
+    email: getVal('email') || null,
+    phone: getVal('phone') || null,
+    tax_id: getVal('tax_id') || null,
+    address: getVal('address') || null,
+    city: getVal('city') || null,
+    country: state.company?.country || 'Algeria',
+    is_active: document.getElementById('is_active').value !== 'false'
+  };
   const btn = document.getElementById('save-btn');
-  btn.disabled=true; btn.textContent='Saving...';
+  btn.disabled = true; btn.textContent = 'Saving...';
   try{
-    const query = state.editingId
-      ? sb.from(TABLE_NAME).update(payload).eq('id', state.editingId)
-      : sb.from(TABLE_NAME).insert(Object.assign({ balance:0 }, payload));
+    const query = state.editingId ? sb.from('suppliers').update(payload).eq('id', state.editingId) : sb.from('suppliers').insert(Object.assign({ balance:0 }, payload));
     const { error } = await query;
     if(error) throw error;
-    closeModal();
-    await loadRecords();
-    showToast(KIND.charAt(0).toUpperCase() + KIND.slice(1) + ' saved.');
+    closeSupplierModal();
+    await refreshAll();
+    showToast('Supplier saved successfully.','success');
   }catch(error){
-    showToast(error.message || 'Could not save record.');
+    showToast(error.message || 'Could not save supplier.','error');
   }finally{
-    btn.disabled=false; btn.textContent='Save';
+    btn.disabled = false; btn.textContent = 'Save supplier';
   }
 }
+
+function openDetailModal(id){
+  const supplier = state.suppliers.find(item => item.id === id);
+  if(!supplier) return;
+  const metrics = supplierMetrics(supplier);
+  document.getElementById('detail-title').textContent = supplier.name || 'Supplier details';
+  document.getElementById('detail-sub').textContent = [supplier.email, supplier.phone].filter(Boolean).join(' - ') || 'Open payables and payout history.';
+  document.getElementById('detail-outstanding').textContent = formatMoney(metrics.outstanding);
+  document.getElementById('detail-expensed').textContent = formatMoney(metrics.expensed);
+  document.getElementById('detail-paid').textContent = formatMoney(metrics.paid);
+  const openExpenses = metrics.expenses.filter(exp => resolveExpenseBalance(exp) > 0);
+  document.getElementById('detail-expenses').innerHTML = openExpenses.length ? `<table><thead><tr><th>Expense</th><th>Due</th><th>Balance</th></tr></thead><tbody>${openExpenses.map(exp => `<tr><td>${escapeHtml(exp.expense_number || exp.reference || 'Expense')}</td><td>${formatDate(exp.due_date)}</td><td class="money bad">${formatMoney(resolveExpenseBalance(exp), exp.currency)}</td></tr>`).join('')}</tbody></table>` : '<div class="empty">No open expenses for this supplier.</div>';
+  document.getElementById('detail-payments').innerHTML = metrics.payments.length ? `<table><thead><tr><th>Date</th><th>Method</th><th>Amount</th></tr></thead><tbody>${metrics.payments.slice(0,8).map(pay => `<tr><td>${formatDate(pay.payment_date)}</td><td>${escapeHtml(pay.method || 'payment')}</td><td class="money good">${formatMoney(pay.amount, pay.currency)}</td></tr>`).join('')}</tbody></table>` : '<div class="empty">No payments recorded for this supplier.</div>';
+  document.getElementById('detail-overlay').classList.add('show');
+}
+function closeDetailModal(){ document.getElementById('detail-overlay').classList.remove('show'); }
 
 async function init(){
   const { data:{session} } = await sb.auth.getSession();
-  state.session = session || null;
-  if(session){
-    const meta = session.user.user_metadata || {};
-    const first = meta.first_name || session.user.email.split('@')[0];
-    const last = meta.last_name || '';
-    document.getElementById('sb-name').textContent = last ? first + ' ' + last : first;
-    document.getElementById('sb-av').textContent = (first.charAt(0) + (last.charAt(0)||'')).toUpperCase();
-  }
-  await resolveCompany();
-  await loadRecords();
+  if(!session){ window.location.href = 'login.html'; return; }
+  state.session = session;
+  const meta = session.user.user_metadata || {};
+  const first = meta.first_name || session.user.email.split('@')[0];
+  const last = meta.last_name || '';
+  document.getElementById('sb-name').textContent = last ? first + ' ' + last : first;
+  document.getElementById('sb-av').textContent = (first.charAt(0) + (last.charAt(0)||'')).toUpperCase();
+  try{ await refreshAll(); }catch(error){ showToast(error.message || 'Could not load suppliers.','error'); }
 }
+
+['supplier-overlay','detail-overlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', event => {
+    if(event.target !== event.currentTarget) return;
+    if(id === 'supplier-overlay') closeSupplierModal();
+    if(id === 'detail-overlay') closeDetailModal();
+  });
+});
 window.addEventListener('load', init);
 </script>
 <script>
@@ -290,5 +463,8 @@ function toggleDropdown(toggle){
 </script>
 </body>
 </html>
+
+
+
 
 
