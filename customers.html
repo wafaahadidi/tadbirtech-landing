@@ -202,7 +202,6 @@ tr:hover td{background:#FAFCFE}.name{font-weight:800}.muted{color:#5B7594;font-s
         <div class="field"><label for="tax_id">Tax ID</label><input class="input" id="tax_id" placeholder="NIF / RC"></div>
         <div class="field"><label for="city">City</label><input class="input" id="city" placeholder="Algiers"></div>
         <div class="field span-2"><label for="address">Address</label><input class="input" id="address" placeholder="Street, building, area"></div>
-        <div class="field"><label for="country">Country</label><input class="input" id="country" value="Algeria"></div>
         <div class="field"><label for="is_active">Status</label><select class="input" id="is_active"><option value="true">Active</option><option value="false">Inactive</option></select></div>
       </div>
     </div>
@@ -365,7 +364,7 @@ function renderRecentCollections(){
 function openCustomerModal(){
   state.editingId = null;
   ['name','email','phone','tax_id','address','city'].forEach(id=>setVal(id,''));
-  setVal('country','Algeria'); setVal('is_active','true');
+  setVal('is_active','true');
   document.getElementById('customer-modal-title').textContent = 'Add customer';
   document.getElementById('customer-overlay').classList.add('show');
 }
@@ -374,7 +373,7 @@ function editCustomer(id){
   const customer = state.customers.find(item => item.id === id);
   if(!customer) return;
   state.editingId = id;
-  ['name','email','phone','tax_id','address','city','country'].forEach(field => setVal(field, customer[field] || ''));
+  ['name','email','phone','tax_id','address','city'].forEach(field => setVal(field, customer[field] || ''));
   setVal('is_active', customer.is_active === false ? 'false' : 'true');
   document.getElementById('customer-modal-title').textContent = 'Edit customer';
   document.getElementById('customer-overlay').classList.add('show');
@@ -390,7 +389,7 @@ async function saveCustomer(){
     tax_id: getVal('tax_id') || null,
     address: getVal('address') || null,
     city: getVal('city') || null,
-    country: getVal('country') || 'Algeria',
+    country: state.company?.country || 'Algeria',
     is_active: document.getElementById('is_active').value !== 'false'
   };
   const btn = document.getElementById('save-btn');
@@ -458,5 +457,6 @@ function toggleDropdown(toggle){
 </script>
 </body>
 </html>
+
 
 
