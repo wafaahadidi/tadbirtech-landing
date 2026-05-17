@@ -9,7 +9,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C}
 .app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-.sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden}
   .sb-logo{padding:10px 8px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;}
 .sb-logo-brand{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px}
 .sb-logo-word{font-size:24px;font-weight:800;line-height:1;color:rgba(255,255,255,.95);letter-spacing:0}
@@ -19,7 +19,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;col
 .sb-avatar{width:32px;height:32px;border-radius:50%;background:#1a8fd1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .sb-name{font-size:12px;font-weight:600;color:#fff}
 .sb-role{font-size:10px;color:rgba(255,255,255,.4)}
-.sb-nav{padding:10px 10px;flex:1;overflow-y:auto}
+.sb-nav{padding:10px 40px 10px 10px;flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none;margin-right:-32px}.sb-nav::-webkit-scrollbar{width:18px}.sb-nav::-webkit-scrollbar-track{background:transparent}.sb-nav::-webkit-scrollbar-thumb{background:transparent;border:none}
 .sb-sec{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:10px 0 4px}
 .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;text-decoration:none;transition:all .2s}
 .sb-item:hover{background:rgba(255,255,255,.06)}
@@ -234,20 +234,20 @@ tr:hover td{background:#FAFCFE}
             <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span class="sb-item-text" style="font-size:12px">Invoices</span>
           </a>
-          <a href="customers.html" class="sb-item" style="padding:7px 10px">
+                    <a href="customers.html" class="sb-item" style="padding:7px 10px">
             <span style="width:15px;display:inline-block"></span>
             <span class="sb-item-text" style="font-size:12px">Customers</span>
           </a>
-<a href="expenses.html" class="sb-item active" style="padding:7px 10px">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
+          <a href="expenses.html" class="sb-item active" style="padding:7px 10px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
             <span class="sb-item-text" style="font-size:12px">Expenses</span>
           </a>
+          <a href="suppliers.html" class="sb-item" style="padding:7px 10px">
+            <span style="width:15px;display:inline-block"></span>
+            <span class="sb-item-text" style="font-size:12px">Suppliers</span>
+          </a>
         </div>
-        <a href="suppliers.html" class="sb-item" style="padding:7px 10px">
-          <span style="width:15px;display:inline-block"></span>
-          <span class="sb-item-text" style="font-size:12px">Suppliers</span>
-        </a>
-<a href="cash-bank.html" class="sb-item" style="padding:7px 10px">
+        <a href="cash-bank.html" class="sb-item" style="padding:7px 10px">
           <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
           <span class="sb-item-text" style="font-size:12px">Cash & Bank</span>
         </a>
@@ -1573,6 +1573,11 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
+
+
+
+
 
 
 
