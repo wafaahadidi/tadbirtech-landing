@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TadbirTech - Accounting Reports</title>
+  <title>TadbirTech - Receivables & Payables</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C}
     .app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-    .sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+    .sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden}
     .sb-logo{padding:22px 18px 20px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;min-height:88px}
 .sb-logo-brand{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px}
 .sb-logo-word{font-size:24px;font-weight:800;line-height:1;color:rgba(255,255,255,.95);letter-spacing:0}
@@ -19,7 +19,7 @@
     .sb-avatar{width:32px;height:32px;border-radius:50%;background:#1a8fd1;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
     .sb-name{font-size:12px;font-weight:600;color:#fff}
     .sb-role{font-size:10px;color:rgba(255,255,255,.4)}
-    .sb-nav{padding:10px;flex:1;overflow-y:auto}
+    .sb-nav{padding:10px;flex:1;overflow-y:auto}.sb-nav::-webkit-scrollbar{width:14px}.sb-nav::-webkit-scrollbar-track{background:transparent}.sb-nav::-webkit-scrollbar-thumb{background:transparent;border:none}
     .sb-sec{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:10px 0 4px}
     .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;text-decoration:none;transition:all .2s}
     .sb-item:hover{background:rgba(255,255,255,.06)}
@@ -141,12 +141,21 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span class="sb-item-text" style="font-size:12px">Invoices</span>
           </a>
+          <a href="customers.html" class="sb-item" style="padding:7px 10px">
+            <span style="width:15px;display:inline-block"></span>
+            <span class="sb-item-text" style="font-size:12px">Customers</span>
+          </a>
           <a href="expenses.html" class="sb-item" style="padding:7px 10px">
             <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
             <span class="sb-item-text" style="font-size:12px">Expenses</span>
           </a>
+          <a href="suppliers.html" class="sb-item" style="padding:7px 10px">
+            <span style="width:15px;display:inline-block"></span>
+            <span class="sb-item-text" style="font-size:12px">Suppliers</span>
+          </a>
         </div>
-        <a href="cash-bank.html" class="sb-item" style="padding:7px 10px">
+
+<a href="cash-bank.html" class="sb-item" style="padding:7px 10px">
           <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
           <span class="sb-item-text" style="font-size:12px">Cash & Bank</span>
         </a>
@@ -171,6 +180,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         <span class="sb-item-text">HR & Payroll</span>
       </a>
+      <a href="demo-dataset.html" class="sb-item">
+        <span style="width:15px;display:inline-block"></span>
+        <span class="sb-item-text">Demo Dataset</span>
+      </a>
       <a class="sb-item" href="settings.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>
         <span class="sb-item-text">Settings</span>
@@ -187,8 +200,8 @@
   <main class="main">
     <div class="topbar">
       <div class="tb-left">
-        <h2>Accounting Reports</h2>
-        <p id="company-label">Loading accounting signals...</p>
+        <h2>Receivables & Payables</h2>
+        <p id="company-label">Loading customer and supplier balances...</p>
       </div>
       <div class="tb-right">
         <button class="btn-secondary" onclick="refreshAll()">Refresh</button>
@@ -253,7 +266,7 @@
           <section class="surface">
             <div class="surface-head">
               <div>
-                <div class="surface-title">Customer balances</div>
+                <div class="surface-title">Customer receivables</div>
                 <div class="surface-sub">Outstanding invoices and overdue exposure by customer.</div>
               </div>
             </div>
@@ -261,7 +274,7 @@
               <div class="filters">
                 <div class="search-wrap">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <input id="customer-search" class="search-input" placeholder="Search customer balances" oninput="renderCustomers()">
+                  <input id="customer-search" class="search-input" placeholder="Search receivables by customer" oninput="renderCustomers()">
                 </div>
               </div>
               <div style="overflow:auto">
@@ -283,7 +296,7 @@
           <section class="surface">
             <div class="surface-head">
               <div>
-                <div class="surface-title">Supplier balances</div>
+                <div class="surface-title">Supplier payables</div>
                 <div class="surface-sub">Open expenses and overdue commitments by supplier.</div>
               </div>
             </div>
@@ -291,7 +304,7 @@
               <div class="filters">
                 <div class="search-wrap">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <input id="supplier-search" class="search-input" placeholder="Search supplier balances" oninput="renderSuppliers()">
+                  <input id="supplier-search" class="search-input" placeholder="Search payables by supplier" oninput="renderSuppliers()">
                 </div>
               </div>
               <div style="overflow:auto">
@@ -315,8 +328,8 @@
           <section class="surface">
             <div class="surface-head">
               <div>
-                <div class="surface-title">Operational snapshot</div>
-                <div class="surface-sub">A compact read on working capital pressure right now.</div>
+                <div class="surface-title">Working capital snapshot</div>
+                <div class="surface-sub">A compact read on what collections and supplier obligations are doing right now.</div>
               </div>
             </div>
             <div class="surface-body">
@@ -358,9 +371,9 @@
           </section>
 
           <div class="helper">
-            <div class="helper-title">How these reports work today</div>
+            <div class="helper-title">How this receivables & payables view works today</div>
             <div class="helper-copy">
-              These accounting reports read directly from invoices, expenses, customer collections, and supplier payments. That keeps the numbers useful for daily decisions while the fully automatic journal posting layer is still being tightened.
+              This view reads directly from invoices, expenses, customer collections, and supplier payments. That keeps the numbers useful for daily decisions while the fully automatic journal posting layer is still being tightened.
             </div>
           </div>
         </div>
@@ -481,7 +494,7 @@ async function resolveCompany(){
   const { data: company } = await sb.from('companies').select('*').eq('id', state.currentCompanyId).maybeSingle();
   state.currentCompany = company || null;
   state.currentCompanyName = company?.name || 'Your company';
-  document.getElementById('company-label').textContent = state.currentCompanyName + ' - Customer and supplier balances with collection and payout signals.';
+  document.getElementById('company-label').textContent = state.currentCompanyName + ' - Open receivables, supplier payables, collections, and payout pressure.';
 }
 
 async function ensureCompanyId(){
@@ -857,6 +870,12 @@ window.addEventListener('load', init);
 </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
