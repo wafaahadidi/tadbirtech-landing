@@ -280,13 +280,50 @@ tr:hover td{background:transparent!important}
 .login-logo-link{display:block;width:180px;margin:0 auto 32px auto;text-decoration:none}
 .login-logo-link .tt-brand-logo-img{width:180px!important;height:auto!important}
 .tt-loader-logo{width:200px!important;height:auto!important}
+
+/* Global sidebar consistency lock */
+.app{grid-template-columns:220px 1fr!important}
+.sidebar{width:220px!important;background:#0D1F3C!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important}
+.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:auto!important;background:#0D1F3C!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important}
+.sb-user{display:none!important}
+.sb-nav{padding:10px 40px 10px 10px!important;flex:1!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important;margin-right:-32px!important}
+.sb-nav::-webkit-scrollbar{width:18px!important}
+.sb-nav::-webkit-scrollbar-track,.sb-nav::-webkit-scrollbar-thumb{background:transparent!important;border:none!important}
+.sb-sec,.sb-section{font-size:9px!important;font-weight:700!important;color:rgba(255,255,255,.25)!important;text-transform:uppercase!important;letter-spacing:1px!important;padding:0 8px!important;margin:10px 0 4px!important}
+.sb-item{display:flex!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;border-radius:8px!important;cursor:pointer!important;margin-bottom:2px!important;text-decoration:none!important;transition:all .2s!important;color:rgba(255,255,255,.65)!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important}
+.sb-item.active{background:rgba(26,143,209,.2)!important;border:.5px solid rgba(26,143,209,.3)!important;color:#fff!important}
+.sb-item svg{width:15px!important;height:15px!important;flex-shrink:0!important;opacity:.7!important}
+.sb-item.active svg{opacity:1!important}
+.sb-item-text,.sb-item span{font-size:13px!important;color:rgba(255,255,255,.65)!important;font-weight:500!important}
+.sb-item.active .sb-item-text,.sb-item.active span{color:#fff!important}
+.sb-foot{padding:10px!important;border-top:.5px solid rgba(255,255,255,.08)!important}
+.sb-logout{display:flex!important;align-items:center!important;gap:8px!important;font-size:12px!important;color:rgba(255,255,255,.4)!important;padding:8px 10px!important;border-radius:8px!important;cursor:pointer!important;border:none!important;background:none!important;width:100%!important;transition:all .2s!important;font-family:inherit!important}
+.sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
+@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
+
+/* Sidebar dropdown behavior */
+.sb-dropdown-toggle{width:100%!important;border:0!important;background:transparent!important;font-family:inherit!important}
+.sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.16)!important;border:.5px solid rgba(26,143,209,.28)!important}
+.sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;border-right:1.5px solid rgba(255,255,255,.55)!important;border-bottom:1.5px solid rgba(255,255,255,.55)!important;transform:rotate(45deg)!important;transition:transform .18s ease,border-color .18s ease!important}
+.sb-dropdown-toggle.open .sb-chevron{transform:rotate(225deg)!important;border-color:#fff!important}
+.sb-submenu{display:grid!important;gap:2px!important;margin:2px 0 6px 16px!important}
+.sb-submenu[hidden]{display:none!important}
+.sb-submenu .sb-item{padding:7px 10px!important}
+.sb-submenu .sb-item svg{width:13px!important;height:13px!important}
+.sb-submenu .sb-item-text{font-size:12px!important}
+.sb-sub-toggle{background:rgba(255,255,255,.04)!important}
+.sb-submenu-nested{margin:2px 0 6px 14px!important}
+.sb-dot{width:6px!important;height:6px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;display:inline-block!important;flex:0 0 6px!important;margin-left:4px!important}
+.sb-item.active .sb-dot{background:#1a8fd1!important}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar">
     <div class="sb-logo">
-      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" alt="TadbirTech">
+      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="file:///C:/Users/Bon%20Prix%20Pc/Documents/MY%20PROJECT/Rebranding%20TadbirTech/tadbirtech-logo-sidebar.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
     </div>
     <div class="sb-user">
       <div class="sb-avatar" id="sb-av">T</div>
@@ -294,69 +331,42 @@ tr:hover td{background:transparent!important}
     </div>
     <nav class="sb-nav">
       <div class="sb-sec">Main</div>
-      <a class="sb-item" href="dashboard.html">
+      <a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <span class="sb-item-text">Dashboard</span>
       </a>
+
       <div class="sb-sec">Modules</div>
-      <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer;background:rgba(26,143,209,.15)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
-        <span class="sb-item-text" style="color:#fff">Accounting</span>
-        <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="sb-submenu" style="padding-left:16px;margin-bottom:4px">
-        <div class="sb-item sb-dropdown-toggle" onclick="toggleDropdown(this)" style="cursor:pointer;padding:7px 10px;background:rgba(26,143,209,.12)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" style="width:13px;height:13px"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
-          <span class="sb-item-text" style="font-size:12px;color:#fff">Transactions</span>
-          <svg class="sb-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:12px;height:12px;margin-left:auto;transform:rotate(180deg);transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+      <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+        <span class="sb-item-text">Accounting</span>
+        <span class="sb-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sb-submenu" id="sidebar-accounting-menu" hidden>
+        <button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+          <span class="sb-item-text">Transactions</span>
+          <span class="sb-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
+          <a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
+          <a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
+          <a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
+          <a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
         </div>
-        <div class="sb-submenu" style="padding-left:14px;margin:2px 0 6px">
-          <a href="invoices.html" class="sb-item" style="padding:7px 10px">
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span class="sb-item-text" style="font-size:12px">Invoices</span>
-          </a>
-                    <a href="customers.html" class="sb-item" style="padding:7px 10px">
-            <span style="width:15px;display:inline-block"></span>
-            <span class="sb-item-text" style="font-size:12px">Customers</span>
-          </a>
-          <a href="expenses.html" class="sb-item" style="padding:7px 10px">
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
-            <span class="sb-item-text" style="font-size:12px">Expenses</span>
-          </a>
-          <a href="suppliers.html" class="sb-item" style="padding:7px 10px">
-            <span style="width:15px;display:inline-block"></span>
-            <span class="sb-item-text" style="font-size:12px">Suppliers</span>
-          </a>
-        </div>
-        <a href="cash-bank.html" class="sb-item" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
-          <span class="sb-item-text" style="font-size:12px">Cash & Bank</span>
-        </a>
-        <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/></svg>
-          <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
-        </a>
-        <a href="journal-entries.html" class="sb-item" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
-          <span class="sb-item-text" style="font-size:12px">Journal Entries</span>
-        </a>
-        <a href="reports.html" class="sb-item" style="padding:7px 10px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span class="sb-item-text" style="font-size:12px">Reports</span>
-        </a>
+        <a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
+        <a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
+        <a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
+        <a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
       </div>
-      <a href="inventory.html" class="sb-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        <span class="sb-item-text">Inventory</span>
-      </a>
-      <a href="company-profile.html" class="sb-item">
-        <span style="width:15px;display:inline-block"></span>
-        <span class="sb-item-text">Company Profile</span>
-      </a>
-<a href="settings.html" class="sb-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.36.4.58.93.6 1.47H21a2 2 0 1 1 0 4h-.09c-.02.54-.24 1.07-.6 1.53z"/></svg>
-        <span class="sb-item-text">Settings</span>
-      </a>
+
+      <a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
+      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
+
+      <div class="sb-sec">Account</div>
+      <a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
+      <a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
+      <a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
     </nav>
     <div class="sb-foot">
       <button class="sb-logout" onclick="handleLogout()">
@@ -1378,8 +1388,67 @@ document.getElementById('manual-movement-overlay').addEventListener('click', eve
 
 window.addEventListener('load', init);
 </script>
+<script>
+(function(){
+  const transactionPages = ['invoices.html','customers.html','expenses.html','suppliers.html'];
+  const accountingPages = transactionPages.concat(['cash-bank.html','chart-of-accounts.html','journal-entries.html','reports.html']);
+
+  function pageName(){
+    const raw = window.location.pathname.split('/').pop() || 'dashboard.html';
+    return decodeURIComponent(raw).toLowerCase();
+  }
+
+  function setDropdown(name, open){
+    const button = document.querySelector('[data-sidebar-toggle="' + name + '"]');
+    if(!button) return;
+    const menu = document.getElementById(button.getAttribute('aria-controls'));
+    if(!menu) return;
+    button.classList.toggle('open', open);
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menu.hidden = !open;
+  }
+
+  function initSidebarDropdowns(){
+    const current = pageName();
+    document.querySelectorAll('.sb-nav a[href]').forEach(link => {
+      const href = (link.getAttribute('href') || '').split('?')[0].toLowerCase();
+      link.classList.toggle('active', href === current);
+    });
+
+    const isTransaction = transactionPages.includes(current);
+    const isAccounting = accountingPages.includes(current);
+    setDropdown('accounting', isAccounting);
+    setDropdown('transactions', isTransaction);
+
+    const accountingToggle = document.querySelector('[data-sidebar-toggle="accounting"]');
+    const transactionsToggle = document.querySelector('[data-sidebar-toggle="transactions"]');
+    if(accountingToggle) accountingToggle.classList.toggle('active', isAccounting);
+    if(transactionsToggle) transactionsToggle.classList.toggle('active', isTransaction);
+  }
+
+  document.addEventListener('click', event => {
+    const toggle = event.target.closest('[data-sidebar-toggle]');
+    if(!toggle) return;
+    event.preventDefault();
+    const name = toggle.getAttribute('data-sidebar-toggle');
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    setDropdown(name, !isOpen);
+    if(name === 'accounting' && isOpen){
+      setDropdown('transactions', false);
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', initSidebarDropdowns);
+  window.initSidebarDropdowns = initSidebarDropdowns;
+})();
+</script>
 </body>
 </html>
+
+
+
+
+
 
 
 
