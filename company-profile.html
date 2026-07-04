@@ -1,0 +1,722 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TadbirTech - Company Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:#0D1F3C;display:flex;flex-direction:column}
+.sb-logo{padding:18px 12px 14px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;min-height:92px;background:#0D1F3C}
+.sb-logo img{display:block;width:188px;max-width:100%;height:auto;object-fit:contain}
+.sb-user{padding:14px 16px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:#1a8fd1;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.sb-user-name{font-size:12px;font-weight:600;color:#fff}
+.sb-user-role{font-size:10px;color:rgba(255,255,255,.45)}
+.sb-nav{padding:12px 10px;flex:1}
+.sb-section{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:12px 0 6px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;margin-bottom:2px;color:rgba(255,255,255,.68);font-size:13px;font-weight:500}
+.sb-item:hover,.sb-item.active{background:rgba(26,143,209,.2);color:#fff}
+.sb-item svg{width:15px;height:15px;flex-shrink:0}
+.main{display:flex;flex-direction:column}
+.topbar{height:56px;background:#fff;border-bottom:.5px solid #DDE6EF;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:15px;font-weight:800}
+.topbar-sub{font-size:11px;color:#5B7594}
+.content{padding:24px}
+.page{display:grid;gap:18px;max-width:1180px}
+.panel{background:#fff;border:.5px solid #DDE6EF;border-radius:12px;padding:22px}
+.header-panel{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#1a8fd1}
+.title{margin-top:8px;font-size:28px;line-height:1.15;font-weight:800;color:#0D1F3C}
+.sub{margin-top:8px;font-size:14px;line-height:1.7;color:#5B7594;max-width:720px}
+.btn{border:0;background:#1a8fd1;color:#fff;border-radius:8px;padding:12px 16px;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.btn.secondary{background:#EEF3F8;color:#0D1F3C}
+.profile-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:grid;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:700;color:#526984}
+.field input,.field textarea{width:100%;border:1px solid #DDE6EF;border-radius:8px;background:#fff;padding:11px 12px;font:inherit;font-size:13px;color:#0D1F3C;outline:none}
+.field textarea{min-height:82px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:#1a8fd1;box-shadow:0 0 0 3px rgba(26,143,209,.12)}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.demo-tool{margin-top:18px;border:1px solid #DDE6EF;border-radius:10px;background:#F8FBFF;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.demo-tool strong{display:block;font-size:13px;color:#0D1F3C}
+.demo-tool span{display:block;margin-top:4px;font-size:12px;line-height:1.5;color:#5B7594}
+.preview-card{display:grid;gap:16px}
+.logo-preview{border:1px solid #DDE6EF;border-radius:12px;padding:18px;background:#F8FBFF}
+.logo-preview svg{display:block;width:100%;max-width:360px;height:auto;margin:0 auto}
+.identity-list{display:grid;gap:0;border:1px solid #E8EEF5;border-radius:10px;overflow:hidden}
+.identity-row{display:flex;justify-content:space-between;gap:18px;padding:13px 14px;border-bottom:1px solid #E8EEF5;font-size:13px;background:#fff}
+.identity-row:last-child{border-bottom:none}
+.identity-row span{color:#6A7F97}
+.identity-row strong{text-align:right;color:#10213D}
+.toast{position:fixed;right:24px;bottom:24px;background:#0D1F3C;color:#fff;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:700;box-shadow:0 12px 28px rgba(13,31,60,.18);transform:translateY(70px);opacity:0;transition:all .3s;z-index:300}
+.toast.show{transform:translateY(0);opacity:1}
+@media (max-width: 980px){
+  .profile-grid{grid-template-columns:1fr}
+}
+@media (max-width: 720px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .content{padding:16px}
+  .header-panel{display:grid}
+  .form-grid{grid-template-columns:1fr}
+  .title{font-size:24px}
+}
+
+/* Global sidebar consistency lock */
+.app{grid-template-columns:220px 1fr!important}
+.sidebar{width:220px!important;background:#0D1F3C!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important}
+.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:auto!important;background:#0D1F3C!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important}
+.sb-user{display:none!important}
+.sb-nav{padding:10px 40px 10px 10px!important;flex:1!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important;margin-right:-32px!important}
+.sb-nav::-webkit-scrollbar{width:18px!important}
+.sb-nav::-webkit-scrollbar-track,.sb-nav::-webkit-scrollbar-thumb{background:transparent!important;border:none!important}
+.sb-sec,.sb-section{font-size:9px!important;font-weight:700!important;color:rgba(255,255,255,.25)!important;text-transform:uppercase!important;letter-spacing:1px!important;padding:0 8px!important;margin:10px 0 4px!important}
+.sb-item{display:flex!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;border-radius:8px!important;cursor:pointer!important;margin-bottom:2px!important;text-decoration:none!important;transition:all .2s!important;color:rgba(255,255,255,.65)!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important}
+.sb-item.active{background:rgba(26,143,209,.2)!important;border:.5px solid rgba(26,143,209,.3)!important;color:#fff!important}
+.sb-item svg{width:15px!important;height:15px!important;flex-shrink:0!important;opacity:.7!important}
+.sb-item.active svg{opacity:1!important}
+.sb-item-text,.sb-item span{font-size:13px!important;color:rgba(255,255,255,.65)!important;font-weight:500!important}
+.sb-item.active .sb-item-text,.sb-item.active span{color:#fff!important}
+.sb-foot{padding:10px!important;border-top:.5px solid rgba(255,255,255,.08)!important}
+.sb-logout{display:flex!important;align-items:center!important;gap:8px!important;font-size:12px!important;color:rgba(255,255,255,.4)!important;padding:8px 10px!important;border-radius:8px!important;cursor:pointer!important;border:none!important;background:none!important;width:100%!important;transition:all .2s!important;font-family:inherit!important}
+.sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
+@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
+
+/* Sidebar dropdown behavior */
+.sb-dropdown-toggle{width:100%!important;border:0!important;background:transparent!important;font-family:inherit!important}
+.sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.16)!important;border:.5px solid rgba(26,143,209,.28)!important}
+.sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;border-right:1.5px solid rgba(255,255,255,.55)!important;border-bottom:1.5px solid rgba(255,255,255,.55)!important;transform:rotate(45deg)!important;transition:transform .18s ease,border-color .18s ease!important}
+.sb-dropdown-toggle.open .sb-chevron{transform:rotate(225deg)!important;border-color:#fff!important}
+.sb-submenu{display:grid!important;gap:2px!important;margin:2px 0 6px 16px!important}
+.sb-submenu[hidden]{display:none!important}
+.sb-submenu .sb-item{padding:7px 10px!important}
+.sb-submenu .sb-item svg{width:13px!important;height:13px!important}
+.sb-submenu .sb-item-text{font-size:12px!important}
+.sb-sub-toggle{background:rgba(255,255,255,.04)!important}
+.sb-submenu-nested{margin:2px 0 6px 14px!important}
+.sb-dot{width:6px!important;height:6px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;display:inline-block!important;flex:0 0 6px!important;margin-left:4px!important}
+.sb-item.active .sb-dot{background:#1a8fd1!important}
+
+/* Restored TadbirTech sidebar logo */
+.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+        <div class="sb-logo">
+      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-sidebar.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
+    </div>
+    <div class="sb-user"><div class="sb-avatar" id="sb-av">T</div><div><div class="sb-user-name" id="sb-name">Team</div><div class="sb-user-role">Administrator</div></div></div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Main</div>
+      <a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="sb-item-text">Dashboard</span>
+      </a>
+
+      <div class="sb-sec">Modules</div>
+      <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+        <span class="sb-item-text">Accounting</span>
+        <span class="sb-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sb-submenu" id="sidebar-accounting-menu" hidden>
+        <button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+          <span class="sb-item-text">Transactions</span>
+          <span class="sb-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
+          <a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
+          <a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
+          <a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
+          <a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
+        </div>
+        <a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
+        <a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
+        <a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
+        <a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
+        <a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
+      </div>
+
+      <a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
+      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
+
+      <div class="sb-sec">Account</div>
+      <a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
+      <a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
+      <a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
+    </nav>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Company Profile</div>
+        <div class="topbar-sub">Company identity used across invoices, reports, and printed documents.</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="page">
+        <section class="panel header-panel">
+          <div>
+            <div class="eyebrow">Settings</div>
+            <h1 class="title">Company Profile</h1>
+            <p class="sub">Keep the company name, legal identity, contact details, currency, and document branding in one focused place.</p>
+          </div>
+          <button class="btn" onclick="saveCompanyProfile()">Save profile</button>
+        </section>
+
+        <section class="profile-grid">
+          <div class="panel">
+            <div class="form-grid">
+              <div class="field"><label for="name">Trading name</label><input id="name"></div>
+              <div class="field"><label for="legalName">Legal name</label><input id="legalName"></div>
+              <div class="field full"><label for="address">Address</label><textarea id="address"></textarea></div>
+              <div class="field"><label for="city">City</label><input id="city"></div>
+              <div class="field"><label for="country">Country</label><input id="country"></div>
+              <div class="field"><label for="phone">Phone</label><input id="phone"></div>
+              <div class="field"><label for="email">Email</label><input id="email"></div>
+              <div class="field"><label for="taxId">Tax ID</label><input id="taxId"></div>
+              <div class="field"><label for="currency">Currency</label><input id="currency"></div>
+            </div>
+            <div class="actions">
+              <button class="btn secondary" onclick="resetProfile()">Reset</button>
+              <button class="btn" onclick="saveCompanyProfile()">Save profile</button>
+            </div>
+            <div class="demo-tool">
+              <div>
+                <strong>Prototype demo data</strong>
+                <span>Load customers, suppliers, invoices, expenses, and payments for a realistic demo workspace.</span>
+              </div>
+              <button class="btn secondary" id="demo-seed-btn" onclick="prepareDemoWorkspace()">Load demo data</button>
+            </div>
+          </div>
+
+          <aside class="panel preview-card">
+            <div class="logo-preview" id="brand-preview"></div>
+            <div class="identity-list" id="identity-list"></div>
+          </aside>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SUPABASE_URL = 'https://gqmpqpnboenmshuuopnp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
+const DEMO_COMPANY_ID = 'ad0623bc-4c7b-449f-8657-1abc10ddee97';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const DEFAULT_COMPANY = {
+  name: 'Atlas Office',
+  legalName: 'Atlas Office Distribution SARL',
+  address: "Lot 14, Zone d'Activite de Cheraga",
+  city: 'Algiers',
+  country: 'Algeria',
+  phone: '+213 23 54 88 10',
+  email: 'finance@atlasoffice.demo',
+  taxId: 'NIF 002316098765432',
+  currency: 'DZD'
+};
+
+const DEMO_CUSTOMERS = [
+  { name: 'CIEPTAL', email: 'billing@cieptal.demo', phone: '+213 21 50 00 11', tax_id: 'RC-CIE-2026', city: 'Algiers', address: 'Hydra business district, Algiers' },
+  { name: 'Delmar', email: 'finance@delmar.demo', phone: '+213 41 50 00 21', tax_id: 'RC-DEL-2026', city: 'Oran', address: 'Akid Lotfi commercial area, Oran' },
+  { name: 'Nova Medical', email: 'orders@novamedical.demo', phone: '+213 31 50 00 51', tax_id: 'RC-NOV-2026', city: 'Constantine', address: 'Plateau medical zone, Constantine' }
+];
+
+const DEMO_SUPPLIERS = [
+  { name: 'Office Supply DZ', email: 'sales@officedz.demo', phone: '+213 21 90 00 30', tax_id: 'SUP-OFF-2026', city: 'Algiers', address: 'Cheraga service cluster, Algiers' },
+  { name: 'Cloud Hosting Partner', email: 'billing@cloud.demo', phone: '+213 21 90 00 40', tax_id: 'SUP-CLD-2026', city: 'Algiers', address: 'Digital harbour, Algiers' },
+  { name: 'Logistics Express', email: 'accounts@logistics.demo', phone: '+213 25 90 00 50', tax_id: 'SUP-LOG-2026', city: 'Blida', address: 'Freight platform east, Blida' }
+];
+
+const DEMO_INVOICES = [
+  {
+    invoice_number: 'AOD-INV-001',
+    customer: 'CIEPTAL',
+    issueOffset: -28,
+    dueOffset: -5,
+    items: [
+      { description: 'Head office stationery packs', quantity: 80, unit_price: 2800, tax_rate: 19, discount: 0 },
+      { description: 'Printer consumables bundle', quantity: 24, unit_price: 5100, tax_rate: 19, discount: 4000 }
+    ],
+    payments: [{ amount: 150000, paymentOffset: -12, method: 'bank_transfer', reference: 'COL-AOD-001' }]
+  },
+  {
+    invoice_number: 'AOD-INV-002',
+    customer: 'Delmar',
+    issueOffset: -14,
+    dueOffset: 16,
+    items: [{ description: 'Branch replenishment order', quantity: 48, unit_price: 3900, tax_rate: 19, discount: 0 }],
+    payments: []
+  },
+  {
+    invoice_number: 'AOD-INV-003',
+    customer: 'Nova Medical',
+    issueOffset: -7,
+    dueOffset: 23,
+    items: [{ description: 'Medical administration supplies', quantity: 35, unit_price: 4600, tax_rate: 19, discount: 2500 }],
+    payments: [{ amount: 189210, paymentOffset: -2, method: 'cash', reference: 'COL-AOD-003' }]
+  }
+];
+
+const DEMO_EXPENSES = [
+  { expense_number: 'AOD-EXP-001', supplier: 'Office Supply DZ', subtotal: 118000, tax_rate: 19, discount_total: 0, category: 'Office supplies', description: 'Office inventory replenishment.', payment_method: 'bank_transfer', reference: 'SUP-OFF-2401', expenseOffset: -20, dueOffset: -3, payment: { amount: 70000, paymentOffset: -7, reference: 'PAY-AOD-001' } },
+  { expense_number: 'AOD-EXP-002', supplier: 'Cloud Hosting Partner', subtotal: 64000, tax_rate: 19, discount_total: 0, category: 'Hosting', description: 'Cloud services for ERP demo environment.', payment_method: 'card', reference: 'SUP-CLD-2401', expenseOffset: -11, dueOffset: 19, payment: null },
+  { expense_number: 'AOD-EXP-003', supplier: 'Logistics Express', subtotal: 145000, tax_rate: 19, discount_total: 5000, category: 'Logistics', description: 'Customer delivery operations.', payment_method: 'bank_transfer', reference: 'SUP-LOG-2401', expenseOffset: -6, dueOffset: 10, payment: { amount: 167550, paymentOffset: -1, reference: 'PAY-AOD-003' } }
+];
+
+const LOGO_SVG = `
+  <svg viewBox="0 0 420 118" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Atlas Office">
+    <defs>
+      <linearGradient id="atlasBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#1A8FD1"/>
+        <stop offset="100%" stop-color="#0F6FA8"/>
+      </linearGradient>
+      <linearGradient id="atlasGold" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#F59E0B"/>
+        <stop offset="100%" stop-color="#F97316"/>
+      </linearGradient>
+    </defs>
+    <rect width="420" height="118" rx="22" fill="#F8FBFF"/>
+    <circle cx="66" cy="59" r="34" fill="#D9EEF9"/>
+    <path d="M50 90L67 29l17 61H71l-3-13H55l-3 13H50Zm8-23h10l-5-21-5 21Z" fill="url(#atlasBlue)"/>
+    <text x="120" y="55" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="30" font-weight="800" fill="#10213D">Atlas Office</text>
+    <text x="122" y="82" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="14" font-weight="600" fill="#5B7594">Distribution for business essentials</text>
+    <path d="M277 47c16-10 31-13 45-8" fill="none" stroke="url(#atlasGold)" stroke-width="7" stroke-linecap="round"/>
+  </svg>
+`;
+
+let companyId = null;
+let company = Object.assign({}, DEFAULT_COMPANY);
+
+function showToast(message){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+function getStoredCompany(){
+  try{
+    const stored = JSON.parse(localStorage.getItem('tt_demo_company_brand') || 'null');
+    return stored && typeof stored === 'object' ? stored : null;
+  }catch(_){
+    return null;
+  }
+}
+
+function persistCompany(){
+  localStorage.setItem('tt_demo_company_brand', JSON.stringify(Object.assign({}, company, { logoSvg: LOGO_SVG })));
+  localStorage.setItem('tt_currency', JSON.stringify({ code: company.currency }));
+}
+
+function syncForm(){
+  ['name','legalName','address','city','country','phone','email','taxId','currency'].forEach(id => {
+    document.getElementById(id).value = company[id] || '';
+  });
+}
+
+function readForm(){
+  ['name','legalName','address','city','country','phone','email','taxId','currency'].forEach(id => {
+    company[id] = document.getElementById(id).value.trim();
+  });
+}
+
+function renderPreview(){
+  document.getElementById('brand-preview').innerHTML = LOGO_SVG;
+  document.getElementById('identity-list').innerHTML = `
+    <div class="identity-row"><span>Business name</span><strong>${company.legalName || '-'}</strong></div>
+    <div class="identity-row"><span>Trading name</span><strong>${company.name || '-'}</strong></div>
+    <div class="identity-row"><span>Address</span><strong>${[company.address, company.city].filter(Boolean).join(', ') || '-'}</strong></div>
+    <div class="identity-row"><span>Tax ID</span><strong>${company.taxId || '-'}</strong></div>
+    <div class="identity-row"><span>Contact</span><strong>${company.email || '-'}<br>${company.phone || ''}</strong></div>
+  `;
+}
+
+function resetProfile(){
+  company = Object.assign({}, DEFAULT_COMPANY);
+  syncForm();
+  renderPreview();
+  showToast('Profile reset locally.');
+}
+
+async function resolveCompany(){
+  const stored = localStorage.getItem('tt_company_id');
+  companyId = stored && stored !== 'null' && stored !== 'undefined' ? stored : DEMO_COMPANY_ID;
+  localStorage.setItem('tt_company_id', companyId);
+}
+
+async function saveCompanyProfile(){
+  readForm();
+  persistCompany();
+  renderPreview();
+  try{
+    await resolveCompany();
+    const payload = {
+      name: company.name,
+      legal_name: company.legalName,
+      address: company.address,
+      country: company.country,
+      phone: company.phone,
+      email: company.email,
+      tax_id: company.taxId,
+      currency: company.currency
+    };
+    const { data: existing, error: fetchError } = await sb
+      .from('companies')
+      .select('id')
+      .eq('id', companyId)
+      .maybeSingle();
+    if(fetchError) throw fetchError;
+    if(existing){
+      const { error } = await sb.from('companies').update(payload).eq('id', companyId);
+      if(error) throw error;
+    }else{
+      const { error } = await sb.from('companies').insert(Object.assign({ id: companyId }, payload));
+      if(error) throw error;
+    }
+    showToast('Company profile saved.');
+  }catch(error){
+    showToast('Saved locally. Database update failed.');
+    console.error(error);
+  }
+}
+
+function todayOffset(days){
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function invoiceTotals(items){
+  return items.reduce((acc, item) => {
+    const subtotal = Number(item.quantity || 0) * Number(item.unit_price || 0);
+    const tax = subtotal * (Number(item.tax_rate || 0) / 100);
+    const discount = Number(item.discount || 0);
+    const lineTotal = Math.max(subtotal + tax - discount, 0);
+    acc.subtotal += subtotal;
+    acc.tax += tax;
+    acc.discount += discount;
+    acc.total += lineTotal;
+    return acc;
+  }, { subtotal: 0, tax: 0, discount: 0, total: 0 });
+}
+
+async function upsertParty(table, row){
+  const { data: existingRows, error: findError } = await sb
+    .from(table)
+    .select('id')
+    .eq('company_id', companyId)
+    .eq('name', row.name)
+    .limit(1);
+  if(findError) throw findError;
+
+  const payload = Object.assign({
+    company_id: companyId,
+    country: company.country || 'Algeria',
+    is_active: true
+  }, row);
+
+  if(existingRows && existingRows.length){
+    const { data, error } = await sb
+      .from(table)
+      .update(payload)
+      .eq('id', existingRows[0].id)
+      .select()
+      .single();
+    if(error) throw error;
+    return data;
+  }
+
+  const { data, error } = await sb
+    .from(table)
+    .insert(payload)
+    .select()
+    .single();
+  if(error) throw error;
+  return data;
+}
+
+async function ensureDemoInvoice(seed, customersByName){
+  const customer = customersByName[seed.customer];
+  if(!customer) return;
+
+  const totals = invoiceTotals(seed.items);
+  const paidTotal = seed.payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+  const balanceDue = Math.max(totals.total - paidTotal, 0);
+  const invoicePayload = {
+    company_id: companyId,
+    customer_id: customer.id,
+    customer_name: customer.name,
+    invoice_number: seed.invoice_number,
+    status: balanceDue === 0 ? 'paid' : (paidTotal > 0 ? 'partial' : 'issued'),
+    issue_date: todayOffset(seed.issueOffset),
+    due_date: todayOffset(seed.dueOffset),
+    currency: company.currency || 'DZD',
+    subtotal: totals.subtotal,
+    tax_total: totals.tax,
+    discount_total: totals.discount,
+    total: totals.total,
+    paid_total: paidTotal,
+    balance_due: balanceDue
+  };
+
+  const { data: existingRows, error: findError } = await sb
+    .from('invoices')
+    .select('id')
+    .eq('company_id', companyId)
+    .eq('invoice_number', seed.invoice_number)
+    .limit(1);
+  if(findError) throw findError;
+
+  let invoiceId;
+  if(existingRows && existingRows.length){
+    invoiceId = existingRows[0].id;
+    const { error } = await sb.from('invoices').update(invoicePayload).eq('id', invoiceId);
+    if(error) throw error;
+  }else{
+    const { data, error } = await sb.from('invoices').insert(invoicePayload).select('id').single();
+    if(error) throw error;
+    invoiceId = data.id;
+  }
+
+  await sb.from('invoice_items').delete().eq('invoice_id', invoiceId);
+  const itemPayload = seed.items.map(item => {
+    const subtotal = Number(item.quantity || 0) * Number(item.unit_price || 0);
+    const tax = subtotal * (Number(item.tax_rate || 0) / 100);
+    const discount = Number(item.discount || 0);
+    return {
+      invoice_id: invoiceId,
+      product_id: null,
+      description: item.description,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+      tax_rate: item.tax_rate,
+      discount,
+      line_total: Math.max(subtotal + tax - discount, 0)
+    };
+  });
+  const { error: itemError } = await sb.from('invoice_items').insert(itemPayload);
+  if(itemError) throw itemError;
+
+  for(const payment of seed.payments){
+    const { data: existingPayments, error: paymentFindError } = await sb
+      .from('payments')
+      .select('id')
+      .eq('company_id', companyId)
+      .eq('reference', payment.reference)
+      .limit(1);
+    if(paymentFindError) throw paymentFindError;
+    if(existingPayments && existingPayments.length) continue;
+    const { error } = await sb.from('payments').insert({
+      company_id: companyId,
+      invoice_id: invoiceId,
+      amount: payment.amount,
+      currency: company.currency || 'DZD',
+      payment_date: todayOffset(payment.paymentOffset),
+      method: payment.method,
+      reference: payment.reference,
+      notes: 'Prototype demo collection.'
+    });
+    if(error) throw error;
+  }
+}
+
+async function ensureDemoExpense(seed, suppliersByName){
+  const supplier = suppliersByName[seed.supplier];
+  if(!supplier) return;
+
+  const tax = Number(seed.subtotal || 0) * (Number(seed.tax_rate || 0) / 100);
+  const total = Math.max(Number(seed.subtotal || 0) + tax - Number(seed.discount_total || 0), 0);
+  const paidTotal = seed.payment ? Number(seed.payment.amount || 0) : 0;
+  const expensePayload = {
+    company_id: companyId,
+    supplier_id: supplier.id,
+    expense_number: seed.expense_number,
+    status: paidTotal >= total ? 'paid' : 'recorded',
+    expense_date: todayOffset(seed.expenseOffset),
+    due_date: todayOffset(seed.dueOffset),
+    description: seed.description,
+    category: seed.category,
+    currency: company.currency || 'DZD',
+    subtotal: seed.subtotal,
+    tax_total: tax,
+    discount_total: seed.discount_total,
+    paid_total: paidTotal,
+    payment_method: seed.payment_method,
+    reference: seed.reference,
+    notes: 'Prototype demo expense.'
+  };
+
+  const { data: existingRows, error: findError } = await sb
+    .from('expenses')
+    .select('id')
+    .eq('company_id', companyId)
+    .eq('expense_number', seed.expense_number)
+    .limit(1);
+  if(findError) throw findError;
+
+  let expenseId;
+  if(existingRows && existingRows.length){
+    expenseId = existingRows[0].id;
+    const { error } = await sb.from('expenses').update(expensePayload).eq('id', expenseId);
+    if(error) throw error;
+  }else{
+    const { data, error } = await sb.from('expenses').insert(expensePayload).select('id').single();
+    if(error) throw error;
+    expenseId = data.id;
+  }
+
+  if(seed.payment){
+    const { data: existingPayments, error: paymentFindError } = await sb
+      .from('expense_payments')
+      .select('id')
+      .eq('company_id', companyId)
+      .eq('reference', seed.payment.reference)
+      .limit(1);
+    if(paymentFindError) throw paymentFindError;
+    if(!existingPayments || !existingPayments.length){
+      const { error } = await sb.from('expense_payments').insert({
+        company_id: companyId,
+        expense_id: expenseId,
+        supplier_id: supplier.id,
+        amount: seed.payment.amount,
+        currency: company.currency || 'DZD',
+        payment_date: todayOffset(seed.payment.paymentOffset),
+        method: seed.payment_method,
+        reference: seed.payment.reference,
+        notes: 'Prototype demo supplier payment.'
+      });
+      if(error) throw error;
+    }
+  }
+}
+
+async function prepareDemoWorkspace(){
+  const btn = document.getElementById('demo-seed-btn');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+  try{
+    readForm();
+    persistCompany();
+    renderPreview();
+    await saveCompanyProfile();
+    await resolveCompany();
+
+    const customers = {};
+    for(const row of DEMO_CUSTOMERS){
+      const saved = await upsertParty('customers', row);
+      customers[saved.name] = saved;
+    }
+
+    const suppliers = {};
+    for(const row of DEMO_SUPPLIERS){
+      const saved = await upsertParty('suppliers', row);
+      suppliers[saved.name] = saved;
+    }
+
+    for(const invoice of DEMO_INVOICES){
+      await ensureDemoInvoice(invoice, customers);
+    }
+
+    for(const expense of DEMO_EXPENSES){
+      await ensureDemoExpense(expense, suppliers);
+    }
+
+    showToast('Demo workspace loaded.');
+  }catch(error){
+    console.error(error);
+    showToast(error.message || 'Could not load demo data.');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Load demo data';
+  }
+}
+
+function init(){
+  company = Object.assign({}, DEFAULT_COMPANY, getStoredCompany() || {});
+  syncForm();
+  renderPreview();
+}
+
+init();
+</script>
+<script>
+(function(){
+  const transactionPages = ['invoices.html','customers.html','expenses.html','suppliers.html'];
+  const accountingPages = transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);
+
+  function pageName(){
+    const raw = window.location.pathname.split('/').pop() || 'dashboard.html';
+    return decodeURIComponent(raw).toLowerCase();
+  }
+
+  function setDropdown(name, open){
+    const button = document.querySelector('[data-sidebar-toggle="' + name + '"]');
+    if(!button) return;
+    const menu = document.getElementById(button.getAttribute('aria-controls'));
+    if(!menu) return;
+    button.classList.toggle('open', open);
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menu.hidden = !open;
+  }
+
+  function initSidebarDropdowns(){
+    const current = pageName();
+    document.querySelectorAll('.sb-nav a[href]').forEach(link => {
+      const href = (link.getAttribute('href') || '').split('?')[0].toLowerCase();
+      link.classList.toggle('active', href === current);
+    });
+
+    const isTransaction = transactionPages.includes(current);
+    const isAccounting = accountingPages.includes(current);
+    setDropdown('accounting', isAccounting);
+    setDropdown('transactions', isTransaction);
+
+    const accountingToggle = document.querySelector('[data-sidebar-toggle="accounting"]');
+    const transactionsToggle = document.querySelector('[data-sidebar-toggle="transactions"]');
+    if(accountingToggle) accountingToggle.classList.toggle('active', isAccounting);
+    if(transactionsToggle) transactionsToggle.classList.toggle('active', isTransaction);
+  }
+
+  document.addEventListener('click', event => {
+    const toggle = event.target.closest('[data-sidebar-toggle]');
+    if(!toggle) return;
+    event.preventDefault();
+    const name = toggle.getAttribute('data-sidebar-toggle');
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    setDropdown(name, !isOpen);
+    if(name === 'accounting' && isOpen){
+      setDropdown('transactions', false);
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', initSidebarDropdowns);
+  window.initSidebarDropdowns = initSidebarDropdowns;
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

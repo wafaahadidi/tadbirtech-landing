@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TadbirTech - Settings</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 
 /* Loading screen */
@@ -140,6 +140,93 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
 
 .toast{position:fixed;bottom:24px;right:24px;background:#0D1F3C;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;z-index:9999;}
 .toast.show{opacity:1;transform:translateY(0);}
+
+/* Professional settings page refresh */
+body{font-family:'Inter','Plus Jakarta Sans',system-ui,sans-serif!important;background:#F0F4F9!important;color:#0D1F3C!important;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-feature-settings:'cv02','cv03','cv04','cv11'}
+.main{min-width:0;background:#F0F4F9!important}
+.topbar{height:64px!important;background:rgba(255,255,255,.92)!important;border-bottom:.5px solid #DCE6F2!important;padding:0 28px!important;backdrop-filter:blur(10px)}
+.topbar-title{font-size:15px!important;font-weight:800!important;letter-spacing:0!important;color:#0D1F3C!important}
+.topbar-sub{font-size:11px!important;color:#7A93AE!important;margin-top:2px!important}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.topbar-pill{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 11px;border:.5px solid #DCE6F2;border-radius:999px;background:#F8FAFD;color:#5B7594;font-size:11px;font-weight:700}
+.topbar-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:#22C55E}
+.content{padding:24px 28px 36px!important}
+.settings-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:18px}
+.settings-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1a8fd1;margin-bottom:7px}
+.settings-title{font-size:30px;line-height:1.08;font-weight:800;color:#0D1F3C;letter-spacing:0}
+.settings-desc{max-width:650px;margin-top:9px;font-size:13px;line-height:1.65;color:#5B7594}
+.settings-hero-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.settings-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.settings-stat{background:#fff;border:.5px solid #E2EAF2;border-radius:12px;padding:14px 15px;box-shadow:0 1px 8px rgba(13,31,60,.04)}
+.settings-stat-label{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#7A93AE;margin-bottom:7px}
+.settings-stat-value{font-size:18px;line-height:1;font-weight:800;color:#0D1F3C}
+.settings-stat-note{font-size:11px;line-height:1.45;color:#8AA0B8;margin-top:6px}
+.settings-layout{display:grid!important;grid-template-columns:248px minmax(0,1fr)!important;gap:18px!important;align-items:start!important}
+.settings-nav{position:sticky!important;top:84px!important;background:#fff!important;border:.5px solid #E2EAF2!important;border-radius:12px!important;overflow:hidden!important;box-shadow:0 1px 8px rgba(13,31,60,.04)!important}
+.settings-nav-head{padding:15px 15px 12px;border-bottom:.5px solid #EDF2F7}
+.settings-nav-title{font-size:13px;font-weight:800;color:#0D1F3C}
+.settings-nav-sub{font-size:11px;color:#7A93AE;margin-top:3px;line-height:1.4}
+.sn-item{min-height:42px!important;gap:11px!important;padding:10px 14px!important;border-bottom:0!important;color:#5B7594!important;font-size:12px!important;font-weight:700!important;transition:background .15s,color .15s,border-color .15s!important}
+.sn-item svg{width:15px!important;height:15px!important;color:#8AA0B8!important}
+.sn-item:hover{background:#F6FAFE!important;color:#0D1F3C!important}
+.sn-item.active{background:#E8F5FD!important;color:#0D79B8!important;border-left:3px solid #1a8fd1!important;padding-left:11px!important}
+.sn-item.active svg{color:#1a8fd1!important}
+.settings-panels{min-width:0}
+.sc{background:#fff!important;border:.5px solid #E2EAF2!important;border-radius:12px!important;box-shadow:0 1px 8px rgba(13,31,60,.04)!important;overflow:hidden!important;margin-bottom:18px!important}
+.sc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px 22px!important;border-bottom:.5px solid #EDF2F7!important;background:#fff!important}
+.sc-head::after{content:'Ready';display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;background:#ECFDF3;color:#067647;font-size:10px;font-weight:800;letter-spacing:.02em}
+#sec-danger .sc-head::after{content:'Restricted';background:#FFF1F3;color:#B42318}
+.sc-title{font-size:16px!important;font-weight:800!important;color:#0D1F3C!important;margin-bottom:4px!important}
+.sc-sub{font-size:12px!important;line-height:1.5!important;color:#6C7E95!important}
+.sc-body{padding:20px 22px!important}
+.sc-foot{padding:14px 22px!important;border-top:.5px solid #EDF2F7!important;background:#FAFCFE!important}
+.sc-hint{font-size:12px!important;color:#6C7E95!important}
+.btn-save,.btn-outline,.btn-danger{height:36px!important;border-radius:9px!important;padding:0 15px!important;font-size:12px!important;font-weight:800!important;font-family:inherit!important;transition:transform .15s,box-shadow .15s,background .15s,border-color .15s!important}
+.btn-save{background:#1a8fd1!important;color:#fff!important;border:0!important;box-shadow:0 8px 18px rgba(26,143,209,.18)!important}
+.btn-save:hover{background:#137FBC!important;transform:translateY(-1px)!important}
+.btn-outline{background:#fff!important;color:#0D1F3C!important;border:.5px solid #DCE6F2!important}
+.btn-outline:hover{border-color:#B7C8DB!important;background:#F8FAFD!important}
+.btn-danger{background:#fff!important;color:#B42318!important;border:.5px solid #FDA29B!important}
+.field-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(180px,260px)!important;gap:20px!important;align-items:center!important;padding:15px 0!important;border-bottom:.5px solid #EDF2F7!important}
+.field-row:last-child{border-bottom:0!important}
+.field-lbl{font-size:13px!important;font-weight:800!important;color:#0D1F3C!important}
+.field-sub{font-size:11px!important;line-height:1.45!important;color:#7A93AE!important;margin-top:4px!important}
+.field-input,.field-select,.curr-search{height:38px!important;width:100%!important;border:.5px solid #D7E2EE!important;border-radius:9px!important;background:#fff!important;color:#0D1F3C!important;font-size:12px!important;font-weight:600!important;box-shadow:0 1px 2px rgba(13,31,60,.02)!important}
+.field-input:focus,.field-select:focus,.curr-search:focus{border-color:#1a8fd1!important;box-shadow:0 0 0 3px rgba(26,143,209,.10)!important}
+.curr-search{margin-bottom:14px!important;padding:0 13px!important}
+.curr-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important;max-height:310px!important}
+.curr-card{border:.5px solid #DCE6F2!important;border-radius:10px!important;padding:11px!important;background:#fff!important;box-shadow:0 1px 3px rgba(13,31,60,.03)!important}
+.curr-card:hover{border-color:#A7D8F2!important;background:#F8FCFF!important}
+.curr-card.selected{border-color:#1a8fd1!important;background:#EAF7FE!important;box-shadow:0 0 0 3px rgba(26,143,209,.08)!important}
+.curr-flag{width:30px;height:30px;border-radius:8px;background:#F2F6FA;display:flex;align-items:center;justify-content:center;font-size:10px!important;font-weight:800;color:#5B7594}
+.curr-code{font-size:12px!important;font-weight:800!important}
+.curr-name,.curr-sym{font-size:10px!important;line-height:1.35!important}
+.prev-box{background:#F8FAFD!important;border:.5px solid #E2EAF2;border-radius:11px!important;padding:14px!important}
+.prev-row{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+.prev-item{border:.5px solid #E2EAF2!important;border-radius:9px!important;text-align:left!important;padding:10px 12px!important}
+.prev-val{font-size:15px!important;font-weight:800!important}
+.lang-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+.lang-card{border:.5px solid #DCE6F2!important;border-radius:11px!important;background:#fff!important;text-align:left!important;padding:14px!important}
+.lang-card:hover{border-color:#A7D8F2!important;background:#F8FCFF!important}
+.lang-card.selected{border-color:#1a8fd1!important;background:#EAF7FE!important;box-shadow:0 0 0 3px rgba(26,143,209,.08)!important}
+.lang-flag{width:36px;height:28px;border-radius:8px;background:#F2F6FA;display:flex;align-items:center;justify-content:center;font-size:11px!important;font-weight:800;color:#5B7594;margin-bottom:10px!important}
+.profile-header{padding:14px;border:.5px solid #E2EAF2;border-radius:11px;background:#FAFCFE;margin-bottom:12px!important}
+.profile-avatar{width:58px!important;height:58px!important;margin:0!important;background:linear-gradient(135deg,#1a8fd1,#0D1F3C)!important;font-size:18px!important}
+.profile-change{font-size:11px!important;font-weight:800!important;color:#1a8fd1!important}
+.plan-card{border:.5px solid #DCE6F2!important;border-radius:11px!important;background:#fff!important;padding:15px!important}
+.plan-card.current{border-color:#1a8fd1!important;background:#EAF7FE!important}
+.plan-name{font-size:14px!important;font-weight:800!important}
+.integr-item,.danger-item{padding:15px 0!important;border-bottom:.5px solid #EDF2F7!important}
+.integr-icon{width:38px!important;height:38px!important;border-radius:10px!important;background:#F8FAFD!important;font-size:11px!important;font-weight:800!important;color:#5B7594!important}
+.integr-name,.danger-lbl{font-size:13px!important;font-weight:800!important}
+.integr-sub,.danger-sub{font-size:11px!important;line-height:1.45!important;color:#7A93AE!important}
+.toggle{width:42px!important;height:24px!important;justify-self:end!important;background:#D9E4EF!important}
+.toggle-thumb{width:18px!important;height:18px!important;top:3px!important;left:3px!important;box-shadow:0 1px 3px rgba(13,31,60,.18)}
+.toggle.on{background:#1a8fd1!important}
+.toggle.on .toggle-thumb{left:21px!important}
+.toast{border-radius:10px!important;box-shadow:0 16px 36px rgba(13,31,60,.22)!important}
+@media(max-width:1180px){.settings-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.curr-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:900px){.content{padding:18px!important}.settings-hero{display:block}.settings-hero-actions{justify-content:flex-start;margin-top:14px}.settings-layout{grid-template-columns:1fr!important}.settings-nav{position:static!important}.settings-summary{grid-template-columns:1fr}.curr-grid,.prev-row,.lang-grid{grid-template-columns:1fr!important}.field-row{grid-template-columns:1fr!important;gap:10px!important}.topbar-actions{display:none}}
 /* Unified TadbirTech sidebar logo */
 .tt-brand-logo-img{display:block;width:188px;max-width:100%;height:auto;object-fit:contain}
 .sb-logo{padding:18px 12px 14px!important;border-bottom:.5px solid rgba(255,255,255,.08);display:flex!important;align-items:center!important;justify-content:center!important;min-height:92px!important;background:#0D1F3C!important}
@@ -185,6 +272,10 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
 .sb-submenu-nested{margin:2px 0 6px 14px!important}
 .sb-dot{width:6px!important;height:6px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;display:inline-block!important;flex:0 0 6px!important;margin-left:4px!important}
 .sb-item.active .sb-dot{background:#1a8fd1!important}
+
+/* Restored TadbirTech sidebar logo */
+.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
 </style>
 </head>
 <body>
@@ -198,8 +289,8 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
 
 <div class="app">
   <div class="sidebar">
-    <div class="sb-logo">
-      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="file:///C:/Users/Bon%20Prix%20Pc/Documents/MY%20PROJECT/Rebranding%20TadbirTech/tadbirtech-logo-sidebar.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
+        <div class="sb-logo">
+      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-sidebar.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
     </div>
     <div class="sb-user">
       <div class="sb-avatar">WH</div>
@@ -231,6 +322,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
           <a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
         </div>
         <a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
+        <a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
         <a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
         <a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
         <a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
@@ -255,12 +347,33 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
 
   <div class="main">
     <div class="topbar">
-      <div><div class="topbar-title">Settings</div><div class="topbar-sub">Manage your platform preferences</div></div>
+      <div><div class="topbar-title">Settings</div><div class="topbar-sub">Manage workspace, finance, security, and regional preferences</div></div>
+      <div class="topbar-actions"><span class="topbar-pill">Demo workspace</span></div>
     </div>
     <div class="content">
+      <section class="settings-hero">
+        <div>
+          <div class="settings-kicker">Workspace control center</div>
+          <h1 class="settings-title">Settings</h1>
+          <p class="settings-desc">Configure the operating defaults that shape TadbirTech across invoices, reports, team access, alerts, currency, and regional formatting.</p>
+        </div>
+        <div class="settings-hero-actions">
+          <button class="btn-outline" onclick="showToast('Settings audit coming soon!')">Review changes</button>
+          <button class="btn-save" onclick="showToast('All visible preferences are up to date')">Save all</button>
+        </div>
+      </section>
+
+      <section class="settings-summary" aria-label="Settings summary">
+        <div class="settings-stat"><div class="settings-stat-label">Currency</div><div class="settings-stat-value" id="settingsCurrencyStat">USD</div><div class="settings-stat-note">Used in dashboards and documents</div></div>
+        <div class="settings-stat"><div class="settings-stat-label">Language</div><div class="settings-stat-value" id="settingsLanguageStat">EN</div><div class="settings-stat-note">Arabic-ready regional setup</div></div>
+        <div class="settings-stat"><div class="settings-stat-label">Security</div><div class="settings-stat-value">Standard</div><div class="settings-stat-note">Password and session controls</div></div>
+        <div class="settings-stat"><div class="settings-stat-label">Integrations</div><div class="settings-stat-value">2 active</div><div class="settings-stat-note">Supabase and Gmail connected</div></div>
+      </section>
+
       <div class="settings-layout">
 
         <div class="settings-nav">
+          <div class="settings-nav-head"><div class="settings-nav-title">Settings menu</div><div class="settings-nav-sub">Move between configuration areas.</div></div>
           <a class="sn-item active" onclick="showSection('currency',this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Currency
           </a>
@@ -290,7 +403,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;}
           </a>
         </div>
 
-        <div>
+        <div class="settings-panels">
 
           <!-- CURRENCY -->
           <div class="sc" id="sec-currency">
@@ -525,6 +638,13 @@ const CURRENCIES=[
 
 const BASE_USD=48250;
 let selectedCode='USD';
+function syncSettingsSummary(){
+  const cur=document.getElementById('settingsCurrencyStat');
+  if(cur) cur.textContent=selectedCode;
+  const savedLang=localStorage.getItem('tt_language') || 'en';
+  const lang=document.getElementById('settingsLanguageStat');
+  if(lang) lang.textContent=savedLang.toUpperCase();
+}
 
 function fmt(usdVal,code){
   const c=CURRENCIES.find(x=>x.code===code)||CURRENCIES[1];
@@ -556,6 +676,7 @@ function selectCurrency(code){
   document.getElementById('pv2').textContent=fmt(4200,code);
   document.getElementById('pv3').textContent=fmt(26000,code);
   document.getElementById('pv4').textContent=fmt(22250,code);
+  syncSettingsSummary();
 }
 
 function saveCurrency(){
@@ -584,6 +705,7 @@ function selectLang(el,lang){
   document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
   localStorage.setItem('tt_language',lang);
+  syncSettingsSummary();
 }
 
 function showToast(msg){
@@ -598,6 +720,7 @@ function init(){
   if(saved){const{code}=JSON.parse(saved);selectedCode=code;}
   renderCurrencies();
   selectCurrency(selectedCode);
+  syncSettingsSummary();
   const lang=localStorage.getItem('tt_language');
   if(lang){
     document.querySelectorAll('.lang-card').forEach(c=>{
@@ -619,7 +742,7 @@ window.addEventListener('load', function(){
 <script>
 (function(){
   const transactionPages = ['invoices.html','customers.html','expenses.html','suppliers.html'];
-  const accountingPages = transactionPages.concat(['cash-bank.html','chart-of-accounts.html','journal-entries.html','reports.html']);
+  const accountingPages = transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);
 
   function pageName(){
     const raw = window.location.pathname.split('/').pop() || 'dashboard.html';
@@ -672,6 +795,10 @@ window.addEventListener('load', function(){
 </script>
 </body>
 </html>
+
+
+
+
 
 
 
