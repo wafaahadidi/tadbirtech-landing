@@ -3,350 +3,901 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TadbirTech - Budgeting</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>TadbirTech â€” Budgeting</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+/* â”€â”€ Reset â”€â”€ */
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:#F0F4F9;color:#0D1F3C;-webkit-font-smoothing:antialiased}
-.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-.sidebar{width:220px;background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden}
-.sb-logo{padding:12px 8px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;background:#0D1F3C}
-.tt-brand-logo-img{display:block;width:215px;max-width:100%;height:auto;object-fit:contain}
-.sb-nav{padding:10px 40px 10px 10px;flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none;margin-right:-32px}
-.sb-nav::-webkit-scrollbar{width:18px}.sb-nav::-webkit-scrollbar-track,.sb-nav::-webkit-scrollbar-thumb{background:transparent;border:none}
-.sb-sec{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:10px 0 4px}
-.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:2px;text-decoration:none;transition:all .2s;color:rgba(255,255,255,.65)}
-.sb-item:hover{background:rgba(255,255,255,.06)}
-.sb-item.active{background:rgba(26,143,209,.2);border:.5px solid rgba(26,143,209,.3);color:#fff}
-.sb-item svg{width:15px;height:15px;flex-shrink:0;opacity:.7}.sb-item.active svg{opacity:1}
-.sb-item-text,.sb-item span{font-size:13px;color:rgba(255,255,255,.65);font-weight:500}.sb-item.active .sb-item-text,.sb-item.active span{color:#fff}
-.sb-bottom{padding:10px;border-top:.5px solid rgba(255,255,255,.08)}
-.sb-dropdown-toggle{width:100%;border:0;background:transparent;font-family:inherit}
-.sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.16);border:.5px solid rgba(26,143,209,.28)}
-.sb-chevron{margin-left:auto;width:7px;height:7px;border-right:1.5px solid rgba(255,255,255,.55);border-bottom:1.5px solid rgba(255,255,255,.55);transform:rotate(45deg);transition:transform .18s ease,border-color .18s ease}
-.sb-dropdown-toggle.open .sb-chevron{transform:rotate(225deg);border-color:#fff}
-.sb-submenu{display:grid;gap:2px;margin:2px 0 6px 16px}.sb-submenu[hidden]{display:none}.sb-submenu .sb-item{padding:7px 10px}.sb-submenu .sb-item svg{width:13px;height:13px}.sb-submenu .sb-item-text{font-size:12px}.sb-sub-toggle{background:rgba(255,255,255,.04)}.sb-submenu-nested{margin:2px 0 6px 14px}.sb-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);display:inline-block;flex:0 0 6px;margin-left:4px}.sb-item.active .sb-dot{background:#1a8fd1}
-.main{min-width:0;display:flex;flex-direction:column}
-.topbar{height:64px;padding:0 28px;background:rgba(255,255,255,.94);border-bottom:.5px solid #DDE6EF;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;backdrop-filter:blur(10px)}
-.tb-left h2{font-size:16px;font-weight:800;color:#0D1F3C}.tb-left p{font-size:11px;color:#7A93AE;margin-top:2px}
-.tb-actions{display:flex;align-items:center;gap:8px}
-.content{padding:24px 28px 36px}
-.btn{border:0;border-radius:9px;height:36px;padding:0 14px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .18s;text-decoration:none;white-space:nowrap}
-.btn-primary{background:#1a8fd1;color:#fff;box-shadow:0 8px 18px rgba(26,143,209,.18)}.btn-primary:hover{background:#1476b0;transform:translateY(-1px)}
-.btn-secondary{background:#fff;color:#0D1F3C;border:.5px solid #DDE6EF}.btn-secondary:hover{border-color:#1a8fd1;color:#1a8fd1}
-.btn-danger{background:#fff;color:#B42318;border:.5px solid #FDA29B}
-.settings-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:18px}
-.settings-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1a8fd1;margin-bottom:7px}
-.settings-title{font-size:30px;line-height:1.08;font-weight:900;color:#0D1F3C}
-.settings-desc{max-width:760px;margin-top:9px;font-size:13px;line-height:1.65;color:#5B7594}
-.hero-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
-.summary-card{background:#fff;border:.5px solid #E2EAF2;border-radius:12px;padding:14px 15px;box-shadow:0 1px 8px rgba(13,31,60,.04);position:relative;overflow:hidden}
-.summary-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#1a8fd1}.summary-card:nth-child(1)::before{background:#22C55E}.summary-card:nth-child(3)::before{background:#F59E0B}.summary-card:nth-child(4)::before{background:#EF4444}
-.summary-label{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#7A93AE;margin-bottom:8px}
-.summary-value{font-size:21px;line-height:1;font-weight:800;color:#0D1F3C}
-.summary-note{font-size:11px;line-height:1.45;color:#8AA0B8;margin-top:7px}
-.control-panel{background:#fff;border:.5px solid #E2EAF2;border-radius:12px;box-shadow:0 1px 8px rgba(13,31,60,.04);padding:16px;margin-bottom:18px}
-.control-grid{display:grid;grid-template-columns:1.2fr .7fr .7fr auto auto;gap:12px;align-items:end}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-size:10px;font-weight:800;color:#6C7E95;text-transform:uppercase;letter-spacing:.07em}
-.field input,.field select{height:38px;border:.5px solid #D7E2EE;border-radius:9px;background:#fff;padding:0 11px;font-size:12px;font-weight:700;color:#0D1F3C;font-family:inherit;outline:none}
-.field input:focus,.field select:focus{border-color:#1a8fd1;box-shadow:0 0 0 3px rgba(26,143,209,.09)}
-.surface{background:#fff;border:.5px solid #E2EAF2;border-radius:12px;box-shadow:0 1px 8px rgba(13,31,60,.04);overflow:hidden;margin-bottom:16px}
-.surface-head{padding:16px 20px;border-bottom:.5px solid #F0F4F8;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.surface-title{font-size:14px;font-weight:800;color:#0D1F3C}.surface-sub{font-size:11px;color:#7A93AE;margin-top:3px;line-height:1.45}
-.table-wrap{overflow:auto;max-width:100%}
-.monthly-table{width:100%;min-width:1560px;border-collapse:separate;border-spacing:0}
-.monthly-table th{position:sticky;top:0;background:#FAFBFC;z-index:2;font-size:10px;font-weight:800;color:#6C7E95;text-transform:uppercase;letter-spacing:.07em;text-align:left;padding:11px 10px;border-bottom:.5px solid #DDE6EF;white-space:nowrap}
-.monthly-table td{font-size:12px;padding:10px;border-bottom:.5px solid #F0F4F8;vertical-align:middle;background:#fff}
-.monthly-table tr:hover td{background:#FBFDFF}
-.monthly-table .sticky-col{position:sticky;left:0;z-index:3;background:#fff;box-shadow:1px 0 0 #EEF2F6}
-.monthly-table th.sticky-col{background:#FAFBFC;z-index:4}
-.month-name{font-size:13px;font-weight:800;color:#0D1F3C}.month-sub{font-size:11px;color:#7A93AE;margin-top:2px}
-.budget-input{width:112px;height:34px;border:.5px solid #D7E2EE;border-radius:8px;background:#fff;padding:0 9px;font-size:12px;font-weight:700;color:#0D1F3C;font-family:inherit;text-align:right}
-.budget-input:focus{outline:none;border-color:#1a8fd1;box-shadow:0 0 0 3px rgba(26,143,209,.09)}
-.actual{font-weight:800;color:#0D1F3C;white-space:nowrap}.actual.good{color:#117A43}.actual.bad{color:#B42318}
-.coverage{display:flex;align-items:center;gap:8px;min-width:120px}.bar{width:74px;height:7px;background:#EAF0F6;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:#1a8fd1;border-radius:999px}.bar span.good{background:#22C55E}.bar span.warn{background:#F59E0B}.bar span.bad{background:#EF4444}
-.coverage-text{font-size:11px;font-weight:800;color:#5B7594}
-.total-row td{background:#F8FAFD!important;font-weight:800;border-top:.5px solid #DDE6EF}
-.insights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:16px 20px}
-.insight{padding:13px;border:.5px solid #E8EEF6;border-radius:10px;background:#F8FAFD}
-.insight-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}.insight-title{font-size:12px;font-weight:800;color:#0D1F3C}.insight-chip{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:#EAF7FE;color:#0D79B8}
-.insight-copy{font-size:11px;line-height:1.55;color:#6C7E95}
-.toast{position:fixed;right:24px;bottom:24px;background:#0D1F3C;color:#fff;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:700;box-shadow:0 16px 36px rgba(13,31,60,.22);transform:translateY(70px);opacity:0;transition:all .25s;z-index:200}.toast.show{transform:translateY(0);opacity:1}.toast.error{background:#B42318}.toast.success{background:#117A43}
-.loading{display:none;align-items:center;gap:8px;font-size:12px;color:#7A93AE}.loading.show{display:flex}.loading-dot{width:9px;height:9px;border-radius:50%;background:#1a8fd1;animation:pulse 1s ease-in-out infinite}
-@keyframes pulse{0%,100%{transform:scale(.75);opacity:.5}50%{transform:scale(1);opacity:1}}
-@media(max-width:1180px){.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.control-grid{grid-template-columns:1fr 1fr}.insights{grid-template-columns:1fr}}
-@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.content{padding:18px}.topbar{padding:0 18px}.settings-hero{display:block}.hero-actions{justify-content:flex-start;margin-top:14px}.summary-grid,.control-grid{grid-template-columns:1fr}.tb-actions{display:none}}
+body{font-family:'Inter',system-ui,sans-serif;background:#F0F4F9;color:#0D1F3C;-webkit-font-smoothing:antialiased;font-feature-settings:'cv02','cv03','cv04','cv11'}
 
-/* Restored TadbirTech sidebar logo */
-.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
-.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+/* â”€â”€ Layout â”€â”€ */
+.app{display:grid;grid-template-columns:224px 1fr;min-height:100vh}
+
+/* â”€â”€ Sidebar â”€â”€ */
+.sidebar{background:#0D1F3C;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:12px 8px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+.sb-user{padding:13px 15px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,#1a8fd1,#0c5a8a);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-name{font-size:12px;font-weight:600;color:#fff}
+.sb-role{font-size:10px;color:rgba(255,255,255,.38);margin-top:1px}
+.sb-nav{padding:10px 8px;flex:1;overflow-y:auto;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.sb-sec{font-size:9px;font-weight:700;color:rgba(255,255,255,.22);text-transform:uppercase;letter-spacing:1.2px;padding:0 8px;margin:14px 0 5px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;cursor:pointer;margin-bottom:2px;text-decoration:none;transition:background .15s}
+.sb-item:hover{background:rgba(255,255,255,.07)}
+.sb-item.active{background:rgba(26,143,209,.22);border:.5px solid rgba(26,143,209,.4)}
+.sb-item svg{width:15px;height:15px;flex-shrink:0;opacity:.55}
+.sb-item.active svg{opacity:1}
+.sb-item-text{font-size:13px;color:rgba(255,255,255,.58);font-weight:500}
+.sb-item.active .sb-item-text{color:#fff;font-weight:600}
+.sb-badge{margin-left:auto;font-size:10px;background:#1a8fd1;color:#fff;padding:1px 7px;border-radius:20px;font-weight:700}
+.sb-badge.red{background:#e24b4a}
+.sb-bottom{padding:10px 8px;border-top:.5px solid rgba(255,255,255,.08)}
+.sb-logout{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.4);padding:8px 10px;border-radius:8px;cursor:pointer;border:none;background:none;width:100%;font-family:inherit;transition:all .2s}
+.sb-logout:hover{background:rgba(220,38,38,.1);color:#f87171}
+.sb-chevron{margin-left:auto;width:7px;height:7px;border-right:1.5px solid rgba(255,255,255,.4);border-bottom:1.5px solid rgba(255,255,255,.4);transform:rotate(45deg);transition:transform .18s}
+.sb-item.open .sb-chevron{transform:rotate(225deg)}
+.sb-submenu{padding-left:14px;margin:2px 0 4px;display:none}
+.sb-submenu.open{display:block}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0}
+.sb-item.active .sb-dot{background:#1a8fd1}
+
+/* â”€â”€ Main â”€â”€ */
+.main{display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:.5px solid #dde6ef;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.topbar-title{font-size:15px;font-weight:700;color:#0D1F3C}
+.topbar-sub{font-size:11px;color:#7a93ae;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.content{padding:22px 28px 36px}
+
+/* â”€â”€ Buttons â”€â”€ */
+.btn-primary{background:#1a8fd1;color:#fff;border:none;padding:9px 16px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.btn-primary:hover{background:#1476b0;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,143,209,.3)}
+.btn-secondary{background:#fff;color:#0D1F3C;border:.5px solid #dde6ef;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.btn-secondary:hover{border-color:#1a8fd1;color:#1a8fd1}
+.btn-danger{background:#fff;color:#B42318;border:.5px solid #FDA29B;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.btn-danger:hover{background:#FEF2F2}
+.btn-ghost{background:#F4F8FC;color:#35516F;border:.5px solid #E1E9F2;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.btn-ghost:hover{background:#E8EEF6}
+
+/* â”€â”€ Tabs â”€â”€ */
+.budget-tabs{display:flex;gap:4px;margin-bottom:20px;background:#E8EEF6;border:.5px solid #D4DCE8;border-radius:12px;padding:4px;width:max-content}
+.budget-tab{border:none;background:transparent;color:#607896;border-radius:9px;height:36px;padding:0 18px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;transition:all .2s}
+.budget-tab svg{width:14px;height:14px}
+.budget-tab.active{background:#fff;color:#0D1F3C;box-shadow:0 2px 10px rgba(13,31,60,.1);font-weight:700}
+.budget-view[hidden]{display:none !important}
+
+/* â”€â”€ KPI strip â”€â”€ */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:20px}
+.kpi{background:#fff;border:.5px solid #e2eaf2;border-radius:13px;padding:18px 20px;box-shadow:0 1px 8px rgba(13,31,60,.04);position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:13px 13px 0 0}
+.kpi.green::after{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.kpi.blue::after{background:linear-gradient(90deg,#1a8fd1,#60aee8)}
+.kpi.amber::after{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.kpi.purple::after{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.kpi.red::after{background:linear-gradient(90deg,#dc2626,#f87171)}
+.kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.kpi-val{font-size:22px;font-weight:500;color:#0D1F3C;line-height:1;letter-spacing:-.3px;margin-bottom:5px}
+.kpi-label{font-size:12px;color:#7a93ae;font-weight:400}
+.kpi-note{font-size:11px;color:#94a3b8;margin-top:4px}
+
+/* â”€â”€ Alert banner â”€â”€ */
+.alert-banner{display:none;align-items:center;gap:12px;background:#FEF2F2;border:.5px solid #FECACA;border-radius:11px;padding:13px 16px;margin-bottom:16px}
+.alert-banner.show{display:flex}
+.alert-banner-icon{width:32px;height:32px;border-radius:8px;background:#FDE8E8;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.alert-text{flex:1;font-size:13px;color:#991b1b;font-weight:600}
+.alert-sub{font-size:11px;color:#b91c1c;margin-top:2px;font-weight:400}
+
+/* â”€â”€ Surface / Panel â”€â”€ */
+.surface{background:#fff;border:.5px solid #e2eaf2;border-radius:13px;box-shadow:0 1px 8px rgba(13,31,60,.04);overflow:hidden;margin-bottom:16px}
+.surface-head{padding:16px 20px;border-bottom:.5px solid #f0f4f8;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#FAFBFD}
+.surface-title{font-size:14px;font-weight:700;color:#0D1F3C}
+.surface-sub{font-size:11px;color:#7a93ae;margin-top:3px}
+.surface-body{padding:18px 20px}
+.surface-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* â”€â”€ Controls bar â”€â”€ */
+.controls-bar{display:grid;grid-template-columns:minmax(200px,1.3fr) 120px minmax(160px,.7fr) auto auto;gap:10px;align-items:end;padding:16px 20px;border-bottom:.5px solid #f0f4f8}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:10px;font-weight:700;color:#7a93ae;text-transform:uppercase;letter-spacing:.07em}
+.field input,.field select{height:36px;border:.5px solid #dde6ef;border-radius:9px;background:#fff;padding:0 11px;font-size:12px;font-weight:600;color:#0D1F3C;font-family:inherit;outline:none;transition:all .18s}
+.field input:focus,.field select:focus{border-color:#1a8fd1;box-shadow:0 0 0 3px rgba(26,143,209,.09)}
+
+/* â”€â”€ Budget sheet â”€â”€ */
+.sheet-wrap{overflow:auto;max-width:100%;scrollbar-color:#AAB7C6 #EEF3F8;scrollbar-width:thin}
+.sheet{width:100%;min-width:1360px;border-collapse:separate;border-spacing:0}
+.sheet th{position:sticky;top:0;z-index:5;background:#F8FAFC;border-bottom:1px solid #CBD5E1;color:#334155;font-size:10px;font-weight:700;padding:10px 9px;text-align:right;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase}
+.sheet th.category-head{text-align:left;position:sticky;left:0;z-index:7;min-width:260px}
+.sheet th.action-head{position:sticky;left:260px;z-index:7;width:40px;text-align:center}
+.sheet td{border-right:.5px solid #EEF3F8;border-bottom:.5px solid #EEF3F8;background:#fff;padding:0;height:36px;font-size:12px}
+.sheet tr:hover td:not(.section-title-cell){background:#FAFCFE}
+.sheet .section-row td{height:40px;background:#FAFBFD;border-bottom:1px solid #D9E2EC}
+.section-title-cell{position:sticky;left:0;z-index:3;background:#FAFBFD !important;color:#1a8fd1 !important;font-size:11px !important;font-weight:800 !important;text-transform:uppercase;letter-spacing:.08em;text-align:left !important;padding:0 14px !important;border-right:0 !important}
+.section-spacer{background:#FAFBFD !important}
+.summary-row td{background:#F0F4F9 !important;border-color:#DDE6EF !important;height:36px}
+.summary-row .category-cell{font-weight:700;color:#0D1F3C !important;background:#F0F4F9 !important;font-size:11px}
+.summary-row .sheet-value{font-weight:700;color:#0D1F3C}
+.category-cell{position:sticky;left:0;z-index:2;background:#fff !important;min-width:260px;border-right:.5px solid #DDE6EF !important}
+.action-cell{position:sticky;left:260px;z-index:2;background:#fff !important;width:40px;text-align:center;border-right:.5px solid #DDE6EF !important}
+.category-input{width:100%;height:36px;border:0;background:transparent;padding:0 12px;font-size:13px;font-weight:600;color:#0D1F3C;font-family:inherit;outline:none}
+.category-input:focus{background:#EFF6FF;box-shadow:inset 0 0 0 2px rgba(26,143,209,.2)}
+.cell-input{width:100%;height:36px;border:0;background:transparent;padding:0 9px;text-align:right;font-size:12px;font-weight:500;color:#0D1F3C;font-family:inherit;outline:none}
+.cell-input:focus{background:#FFF7ED;box-shadow:inset 0 0 0 2px rgba(249,115,22,.2)}
+.sheet-value{display:block;text-align:right;padding:0 9px;line-height:36px;color:#374151;font-weight:600;white-space:nowrap;font-size:12px}
+.delete-row{width:24px;height:24px;border:none;border-radius:6px;background:#F4F7FA;color:#8AA0B8;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;margin:auto}
+.delete-row:hover{background:#FEE2E2;color:#B42318}
+.blank-row td{height:16px;background:#fff;border-bottom:0}
+
+/* â”€â”€ Charts grid â”€â”€ */
+.perf-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:14px}
+.chart-card{background:#fff;border:.5px solid #e2eaf2;border-radius:13px;padding:18px 20px;box-shadow:0 1px 8px rgba(13,31,60,.04)}
+.chart-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.chart-title{font-size:14px;font-weight:700;color:#0D1F3C}
+.chart-sub{font-size:11px;color:#7a93ae;margin-top:3px}
+.chart-wrap{position:relative;height:220px}
+.chart-wrap.sm{height:160px}
+.chart-legend{display:flex;gap:14px;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#7a93ae;font-weight:500}
+.leg-dot{width:9px;height:9px;border-radius:2px}
+.side-stack{display:flex;flex-direction:column;gap:14px}
+.gauge-wrap{position:relative;height:160px}
+.gauge-center{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);text-align:center}
+.gauge-percent{font-size:22px;font-weight:500;color:#0D1F3C;line-height:1}
+.gauge-label{font-size:10px;font-weight:700;color:#7a93ae;margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
+.gauge-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.gauge-meta-item{background:#f8fafd;border:.5px solid #e8eef6;border-radius:9px;padding:10px}
+.gauge-meta-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#7a93ae;margin-bottom:4px}
+.gauge-meta-v{font-size:13px;font-weight:600;color:#0D1F3C}
+
+/* â”€â”€ Health items â”€â”€ */
+.health-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:.5px solid #f0f4f8}
+.health-item:last-child{border-bottom:none;padding-bottom:0}
+.health-label{font-size:12px;font-weight:600;color:#0D1F3C}
+.health-note{font-size:11px;color:#7a93ae;margin-top:2px}
+.health-good{color:#16a34a;font-size:12px;font-weight:700;white-space:nowrap}
+.health-bad{color:#dc2626;font-size:12px;font-weight:700;white-space:nowrap}
+.health-neutral{color:#374151;font-size:12px;font-weight:700;white-space:nowrap}
+
+/* â”€â”€ Actuals table â”€â”€ */
+.actuals-table{width:100%;min-width:1100px;border-collapse:collapse}
+.actuals-table th{background:#f8fafc;color:#7a93ae;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;text-align:right;padding:10px 12px;border-bottom:.5px solid #f0f4f8;white-space:nowrap}
+.actuals-table th:first-child,.actuals-table td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:2;min-width:240px}
+.actuals-table td{font-size:12px;padding:12px 12px;border-bottom:.5px solid #f8fafd;text-align:right;white-space:nowrap;color:#374151}
+.actuals-table tr:hover td{background:#fafcfe}
+.actual-name{font-size:13px;font-weight:600;color:#0D1F3C}
+.actual-sub{font-size:11px;color:#7a93ae;margin-top:2px}
+.actual-good{color:#16a34a;font-weight:600}
+.actual-bad{color:#dc2626;font-weight:600}
+.actual-neutral{color:#374151;font-weight:500}
+
+/* â”€â”€ Forecast â”€â”€ */
+.forecast-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:16px}
+.forecast-card{background:#fff;border:.5px solid #e2eaf2;border-radius:13px;padding:18px 20px;box-shadow:0 1px 8px rgba(13,31,60,.04)}
+.forecast-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#7a93ae;margin-bottom:8px}
+.forecast-card-val{font-size:22px;font-weight:500;color:#0D1F3C;line-height:1;margin-bottom:5px}
+.forecast-card-note{font-size:11px;color:#94a3b8}
+.forecast-month-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:.5px solid #f0f4f8}
+.forecast-month-row:last-child{border-bottom:none}
+.fm-label{font-size:12px;font-weight:600;color:#0D1F3C;width:40px;flex-shrink:0}
+.fm-bar-wrap{flex:1;height:6px;background:#f0f4f8;border-radius:3px;overflow:hidden}
+.fm-bar{height:100%;border-radius:3px;background:#1a8fd1;transition:width .4s ease}
+.fm-amt{font-size:12px;font-weight:600;color:#374151;white-space:nowrap;min-width:90px;text-align:right}
+.fm-status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.fm-good{background:#dcfce7;color:#16a34a}
+.fm-bad{background:#fee2e2;color:#dc2626}
+.fm-neutral{background:#f0f4f8;color:#64748b}
+
+/* â”€â”€ Loading â”€â”€ */
+.loading{display:none;align-items:center;gap:8px;font-size:12px;color:#7a93ae}
+.loading.show{display:flex}
+.loading-dot{width:8px;height:8px;border-radius:50%;background:#1a8fd1;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(.75);opacity:.5}50%{transform:scale(1);opacity:1}}
+
+/* â”€â”€ Toast â”€â”€ */
+.toast{position:fixed;right:22px;bottom:22px;background:#0D1F3C;color:#fff;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:600;box-shadow:0 12px 32px rgba(13,31,60,.2);transform:translateY(70px);opacity:0;transition:all .3s;z-index:300}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:#b91c1c}
+.toast.success{background:#15803d}
+
+@media(max-width:1200px){.perf-grid{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(2,1fr)}.forecast-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.content{padding:16px}.controls-bar{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-        <div class="sb-logo">
-      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-sidebar.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
+
+<!-- â•â• SIDEBAR â•â• -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <img src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-light.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" style="width:215px;height:auto;display:block;" alt="TadbirTech">
+  </div>
+  <div class="sb-user">
+    <div class="sb-avatar" id="sb-av">T</div>
+    <div><div class="sb-name" id="sb-name">Team</div><div class="sb-role">Administrator</div></div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-sec">Main</div>
+    <a href="dashboard.html" class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="sb-item-text">Dashboard</span>
+    </a>
+    <div class="sb-sec">Modules</div>
+    <div class="sb-item open" onclick="toggleSb(this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
+      <span class="sb-item-text" style="color:#fff">Accounting</span>
+      <span class="sb-chevron"></span>
     </div>
-    <nav class="sb-nav">
-      <div class="sb-sec">Main</div>
-      <a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span class="sb-item-text">Dashboard</span></a>
-      <div class="sb-sec">Modules</div>
-      <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span class="sb-item-text">Accounting</span><span class="sb-chevron" aria-hidden="true"></span></button>
-      <div class="sb-submenu" id="sidebar-accounting-menu" hidden>
-        <button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg><span class="sb-item-text">Transactions</span><span class="sb-chevron" aria-hidden="true"></span></button>
-        <div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
-          <a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
-          <a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
-          <a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
-          <a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
-        </div>
-        <a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
-        <a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
-        <a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
-        <a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
-        <a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
+    <div class="sb-submenu open">
+      <div class="sb-item" onclick="toggleSb(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+        <span class="sb-item-text" style="font-size:12px">Transactions</span>
+        <span class="sb-chevron"></span>
       </div>
-      <a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
-      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
-      <div class="sb-sec">Account</div>
-      <a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
-      <a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
-      <a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
-    </nav>
-    <div class="sb-bottom"><a href="login.html" class="sb-item"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg><span class="sb-item-text">Logout</span></a></div>
-  </aside>
-
-  <main class="main">
-    <div class="topbar">
-      <div class="tb-left"><h2>Budgeting</h2><p>Monthly planning table with actual accounting coverage.</p></div>
-      <div class="tb-actions"><div class="loading" id="loading"><span class="loading-dot"></span><span>Syncing actuals</span></div><button class="btn btn-secondary" onclick="refreshAll()">Refresh actuals</button><button class="btn btn-primary" onclick="saveBudget()">Save monthly budget</button></div>
+      <div class="sb-submenu">
+        <a href="invoices.html" class="sb-item" style="padding:7px 10px"><span class="sb-dot"></span><span class="sb-item-text" style="font-size:12px">Invoices</span></a>
+        <a href="customers.html" class="sb-item" style="padding:7px 10px"><span class="sb-dot"></span><span class="sb-item-text" style="font-size:12px">Customers</span></a>
+        <a href="expenses.html" class="sb-item" style="padding:7px 10px"><span class="sb-dot"></span><span class="sb-item-text" style="font-size:12px">Expenses</span></a>
+        <a href="suppliers.html" class="sb-item" style="padding:7px 10px"><span class="sb-dot"></span><span class="sb-item-text" style="font-size:12px">Suppliers</span></a>
+      </div>
+      <a href="cash-bank.html" class="sb-item" style="padding:7px 10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
+        <span class="sb-item-text" style="font-size:12px">Cash & Bank</span>
+      </a>
+      <a href="budgeting.html" class="sb-item active" style="padding:7px 10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg>
+        <span class="sb-item-text" style="font-size:12px">Budgeting</span>
+      </a>
+      <a href="chart-of-accounts.html" class="sb-item" style="padding:7px 10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span class="sb-item-text" style="font-size:12px">Chart of Accounts</span>
+      </a>
+      <a href="journal-entries.html" class="sb-item" style="padding:7px 10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="sb-item-text" style="font-size:12px">Journal Entries</span>
+      </a>
+      <a href="reports.html" class="sb-item" style="padding:7px 10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span class="sb-item-text" style="font-size:12px">Reports</span>
+      </a>
     </div>
-    <div class="content">
-      <section class="settings-hero">
+    <a href="hr-payroll.html" class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span class="sb-item-text">HR & Payroll</span>
+    </a>
+    <a href="inventory.html" class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      <span class="sb-item-text">Inventory</span>
+    </a>
+    <div class="sb-sec">Account</div>
+    <a href="company-profile.html" class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+      <span class="sb-item-text">Company Profile</span>
+    </a>
+    <a href="settings.html" class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>
+      <span class="sb-item-text">Settings</span>
+    </a>
+  </div>
+  <div class="sb-bottom">
+    <button class="sb-logout" onclick="window.location.href='login.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      <span>Sign out</span>
+    </button>
+  </div>
+</div>
+
+<!-- â•â• MAIN â•â• -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Budgeting</div>
+      <div class="topbar-sub">Plan, compare, and forecast your financial performance.</div>
+    </div>
+    <div class="topbar-right">
+      <div class="loading" id="loading"><span class="loading-dot"></span><span>Syncing</span></div>
+      <button class="btn-secondary" onclick="refreshAll()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+      <button class="btn-primary" onclick="saveBudget()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save budget
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- â”€â”€ Tabs â”€â”€ -->
+    <div class="budget-tabs" role="tablist">
+      <button class="budget-tab active" data-budget-tab="planned" onclick="switchBudgetView('planned')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg>
+        Budget Plan
+      </button>
+      <button class="budget-tab" data-budget-tab="actual" onclick="switchBudgetView('actual')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-7"/></svg>
+        Performance
+      </button>
+      <button class="budget-tab" data-budget-tab="forecast" onclick="switchBudgetView('forecast')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><path d="m16 6 6 6-6 6"/><path d="M8 6 2 12l6 6"/></svg>
+        Forecast
+      </button>
+    </div>
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+         TAB 1: BUDGET PLAN
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <div class="budget-view" id="planned-budget-view">
+
+      <!-- Alert banner -->
+      <div class="alert-banner" id="plan-alert">
+        <div class="alert-banner-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
         <div>
-          <div class="settings-kicker">Budget control center</div>
-          <h1 class="settings-title">Budgeting</h1>
-          <p class="settings-desc">Plan every month in detail, then compare the budget against invoices, collections, expenses, and supplier payments recorded during the year.</p>
+          <div class="alert-text" id="plan-alert-text">Planned expenses exceed planned income</div>
+          <div class="alert-sub" id="plan-alert-sub">Review your budget to ensure sustainability.</div>
         </div>
-        <div class="hero-actions">
-          <button class="btn btn-secondary" onclick="fillStarterBudget()">Fill starter budget</button>
-          <button class="btn btn-danger" onclick="clearBudgetInputs()">Clear planned values</button>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="kpi-strip">
+        <div class="kpi green">
+          <div class="kpi-icon" style="background:#dcfce7">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="kpi-val" id="sum-income">â€”</div>
+          <div class="kpi-label">Planned income</div>
+          <div class="kpi-note">Total revenue for the year</div>
         </div>
-      </section>
-
-      <section class="summary-grid">
-        <div class="summary-card"><div class="summary-label">Planned revenue</div><div class="summary-value" id="sum-planned-revenue">0 DA</div><div class="summary-note">Sales plus collections target</div></div>
-        <div class="summary-card"><div class="summary-label">Actual covered</div><div class="summary-value" id="sum-actual-revenue">0 DA</div><div class="summary-note">Real sales and collections</div></div>
-        <div class="summary-card"><div class="summary-label">Expense plan</div><div class="summary-value" id="sum-planned-expense">0 DA</div><div class="summary-note">Expense and payout limits</div></div>
-        <div class="summary-card"><div class="summary-label">Net variance</div><div class="summary-value" id="sum-net-variance">0 DA</div><div class="summary-note">Actual net cash vs planned net cash</div></div>
-      </section>
-
-      <section class="control-panel">
-        <div class="control-grid">
-          <div class="field"><label>Budget name</label><input id="budget-name" value="Operating budget"></div>
-          <div class="field"><label>Period type</label><select id="period-type" onchange="applyPeriodPreset()"><option value="quarter">Quarter</option><option value="half">6 months</option><option value="year">Year</option></select></div>
-          <div class="field"><label>Start month</label><input id="start-month" type="month" onchange="buildMonthlyTable()"></div>
-          <button class="btn btn-secondary" onclick="buildMonthlyTable()">Build table</button>
-          <button class="btn btn-primary" onclick="saveBudget()">Save budget</button>
+        <div class="kpi blue">
+          <div class="kpi-icon" style="background:#dbeafe">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
+          </div>
+          <div class="kpi-val" id="sum-expense">â€”</div>
+          <div class="kpi-label">Planned spending</div>
+          <div class="kpi-note">Total costs for the year</div>
         </div>
-      </section>
+        <div class="kpi purple">
+          <div class="kpi-icon" style="background:#ede9fe">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="kpi-val" id="sum-surplus">â€”</div>
+          <div class="kpi-label">Planned surplus</div>
+          <div class="kpi-note">Income minus spending</div>
+        </div>
+        <div class="kpi amber">
+          <div class="kpi-icon" style="background:#fef9c3">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#a16207" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="kpi-val" id="sum-average">â€”</div>
+          <div class="kpi-label">Monthly average</div>
+          <div class="kpi-note">Average surplus per month</div>
+        </div>
+      </div>
 
-      <section class="surface">
+      <!-- Setup controls -->
+      <div class="surface">
         <div class="surface-head">
-          <div><div class="surface-title">Monthly budget table</div><div class="surface-sub">Write the planned numbers directly in the table. Actual columns are calculated from accounting data already entered in TadbirTech.</div></div>
-          <button class="btn btn-secondary" onclick="copyPreviousMonth()">Copy previous month</button>
+          <div>
+            <div class="surface-title">Budget configuration</div>
+            <div class="surface-sub">Set the year, scenario, and budget name before filling in values.</div>
+          </div>
+          <div class="surface-actions">
+            <button class="btn-ghost" onclick="fillStarterBudget()">Fill sample data</button>
+            <button class="btn-danger" onclick="clearBudget()">Clear values</button>
+            <button class="btn-secondary" onclick="addCategory('income')">+ Income row</button>
+            <button class="btn-secondary" onclick="addCategory('expense')">+ Expense row</button>
+          </div>
         </div>
-        <div class="table-wrap">
-          <table class="monthly-table">
-            <thead>
-              <tr>
-                <th class="sticky-col">Month</th>
-                <th>Planned sales</th><th>Actual sales</th><th>Sales coverage</th>
-                <th>Planned collections</th><th>Actual collections</th><th>Collections coverage</th>
-                <th>Expense budget</th><th>Actual expenses</th><th>Expense use</th>
-                <th>Supplier payment budget</th><th>Actual supplier payments</th><th>Payout use</th>
-                <th>Planned net cash</th><th>Actual net cash</th><th>Net variance</th>
-              </tr>
-            </thead>
-            <tbody id="budget-month-rows"></tbody>
+        <div class="controls-bar">
+          <div class="field"><label>Budget name</label><input id="budget-name" value="Operating budget"></div>
+          <div class="field"><label>Year</label><input id="budget-year" type="number" min="2020" max="2035" onchange="buildMonths()"></div>
+          <div class="field"><label>Scenario</label>
+            <select id="scenario" onchange="refreshAll()">
+              <option value="base">Base case</option>
+              <option value="optimistic">Optimistic</option>
+              <option value="conservative">Conservative</option>
+            </select>
+          </div>
+          <button class="btn-secondary" onclick="copyJanuaryAcross()">Copy Jan across</button>
+          <button class="btn-primary" onclick="saveBudget()">Save</button>
+        </div>
+      </div>
+
+      <!-- Sheet -->
+      <div class="surface">
+        <div class="surface-head">
+          <div>
+            <div class="surface-title">Annual budget worksheet</div>
+            <div class="surface-sub">Category names are editable. Month cells accept any number. Totals update automatically.</div>
+          </div>
+        </div>
+        <div class="sheet-wrap">
+          <table class="sheet">
+            <thead id="sheet-head"></thead>
+            <tbody id="sheet-body"></tbody>
           </table>
         </div>
-      </section>
-
-      <section class="surface">
-        <div class="surface-head"><div><div class="surface-title">Management insights</div><div class="surface-sub">Quick reading of the monthly plan after actual data is loaded.</div></div></div>
-        <div class="insights" id="insights"></div>
-      </section>
+      </div>
     </div>
-  </main>
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+         TAB 2: PERFORMANCE (ACTUAL vs PLAN)
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <div class="budget-view" id="actual-budget-view" hidden>
+
+      <!-- KPI strip -->
+      <div class="kpi-strip">
+        <div class="kpi green">
+          <div class="kpi-icon" style="background:#dcfce7">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="kpi-val" id="actual-income-total">â€”</div>
+          <div class="kpi-label">Actual income</div>
+          <div class="kpi-note">Invoices + collections recorded</div>
+        </div>
+        <div class="kpi red">
+          <div class="kpi-icon" style="background:#fee2e2">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2"><path d="M20 7H8"/><path d="M20 12H8"/><path d="M20 17H8"/><path d="M5 7h.01"/><path d="M5 12h.01"/><path d="M5 17h.01"/></svg>
+          </div>
+          <div class="kpi-val" id="actual-spending-total">â€”</div>
+          <div class="kpi-label">Actual spending</div>
+          <div class="kpi-note">Expenses + supplier payouts</div>
+        </div>
+        <div class="kpi blue">
+          <div class="kpi-icon" style="background:#dbeafe">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="kpi-val" id="actual-net-total">â€”</div>
+          <div class="kpi-label">Actual net</div>
+          <div class="kpi-note">Income minus spending</div>
+        </div>
+        <div class="kpi purple">
+          <div class="kpi-icon" style="background:#ede9fe">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          </div>
+          <div class="kpi-val" id="actual-variance-total">â€”</div>
+          <div class="kpi-label">Net variance</div>
+          <div class="kpi-note">Actual vs planned net</div>
+        </div>
+      </div>
+
+      <!-- Charts grid -->
+      <div class="perf-grid" style="margin-bottom:16px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="chart-card">
+            <div class="chart-card-head">
+              <div><div class="chart-title">Income performance</div><div class="chart-sub">Planned income vs invoices and collections</div></div>
+              <div class="chart-legend"><span class="leg-item"><span class="leg-dot" style="background:#CBD5E1"></span>Planned</span><span class="leg-item"><span class="leg-dot" style="background:#1a8fd1"></span>Actual</span></div>
+            </div>
+            <div class="chart-wrap"><canvas id="budget-income-chart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-head">
+              <div><div class="chart-title">Spending performance</div><div class="chart-sub">Planned costs vs recorded expenses and payouts</div></div>
+              <div class="chart-legend"><span class="leg-item"><span class="leg-dot" style="background:#CBD5E1"></span>Planned</span><span class="leg-item"><span class="leg-dot" style="background:#f87171"></span>Actual</span></div>
+            </div>
+            <div class="chart-wrap"><canvas id="budget-spending-chart"></canvas></div>
+          </div>
+        </div>
+        <div class="side-stack">
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px">Budget utilisation</div>
+            <div class="chart-sub" style="margin-bottom:8px">How much of the spending budget has been used</div>
+            <div class="gauge-wrap">
+              <canvas id="budget-progress-gauge"></canvas>
+              <div class="gauge-center"><div class="gauge-percent" id="budget-progress-percent">0%</div><div class="gauge-label">Used</div></div>
+            </div>
+            <div class="gauge-meta">
+              <div class="gauge-meta-item"><div class="gauge-meta-k">Used</div><div class="gauge-meta-v" id="budget-progress-used">â€”</div></div>
+              <div class="gauge-meta-item"><div class="gauge-meta-k">Remaining</div><div class="gauge-meta-v" id="budget-progress-remaining">â€”</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px">Net variance by month</div>
+            <div class="chart-sub" style="margin-bottom:8px">Green = ahead of plan Â· Red = behind plan</div>
+            <div class="chart-wrap sm"><canvas id="budget-variance-chart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px">Budget health signals</div>
+            <div class="chart-sub" style="margin-bottom:12px">Months with the most significant variance</div>
+            <div id="budget-health-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actuals table -->
+      <div class="surface">
+        <div class="surface-head">
+          <div><div class="surface-title">Month-by-month actuals</div><div class="surface-sub">Automatically calculated from invoices, collections, expenses, and supplier payouts.</div></div>
+          <button class="btn-secondary" onclick="refreshAll()">Refresh</button>
+        </div>
+        <div class="sheet-wrap">
+          <table class="actuals-table">
+            <thead id="actuals-head"></thead>
+            <tbody id="actuals-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+         TAB 3: FORECAST
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <div class="budget-view" id="forecast-budget-view" hidden>
+
+      <!-- KPI strip -->
+      <div class="forecast-grid">
+        <div class="forecast-card">
+          <div class="forecast-card-label">Full-year forecast (income)</div>
+          <div class="forecast-card-val" id="fc-income">â€”</div>
+          <div class="forecast-card-note" id="fc-income-note">Based on actual + remaining planned</div>
+        </div>
+        <div class="forecast-card">
+          <div class="forecast-card-label">Full-year forecast (spending)</div>
+          <div class="forecast-card-val" id="fc-spending">â€”</div>
+          <div class="forecast-card-note" id="fc-spending-note">Based on actual + remaining planned</div>
+        </div>
+        <div class="forecast-card">
+          <div class="forecast-card-label">Forecast net position</div>
+          <div class="forecast-card-val" id="fc-net">â€”</div>
+          <div class="forecast-card-note" id="fc-net-note">Forecast income minus forecast spending</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="surface">
+          <div class="surface-head">
+            <div><div class="surface-title">Monthly income forecast</div><div class="surface-sub">Actual months locked in Â· Future months from plan</div></div>
+          </div>
+          <div class="surface-body" id="fc-income-rows"></div>
+        </div>
+        <div class="surface">
+          <div class="surface-head">
+            <div><div class="surface-title">Monthly spending forecast</div><div class="surface-sub">Actual months locked in Â· Future months from plan</div></div>
+          </div>
+          <div class="surface-body" id="fc-spending-rows"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
+</div>
+
 <div class="toast" id="toast">Saved</div>
 
 <script>
+
+
+
 const SUPABASE_URL = 'https://gqmpqpnboenmshuuopnp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
 const DEMO_COMPANY_ID = 'ad0623bc-4c7b-449f-8657-1abc10ddee97';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const state = { session:null, companyId:null, months:[], budget:{}, invoices:[], payments:[], expenses:[], expensePayments:[] };
-const starter = { sales:900000, collections:750000, expenses:420000, payouts:360000 };
+const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const state = { session:null, companyId:null, dbReady:false, budgetId:null, months:[], categories:[], invoices:[], payments:[], expenses:[], expensePayments:[], charts:{} };
+const starterRows = [
+  { type:'income', name:'Sales revenue', values:[950000,980000,1020000,1080000,1120000,1180000,1210000,1260000,1320000,1380000,1440000,1520000] },
+  { type:'income', name:'Service revenue', values:[160000,165000,170000,180000,185000,190000,195000,200000,210000,215000,220000,230000] },
+  { type:'expense', name:'Rent', values:[180000,180000,180000,180000,180000,180000,180000,180000,180000,180000,180000,180000] },
+  { type:'expense', name:'Payroll', values:[420000,420000,435000,435000,450000,450000,465000,465000,480000,480000,500000,500000] },
+  { type:'expense', name:'Inventory purchases', values:[320000,350000,365000,380000,410000,430000,440000,455000,470000,500000,520000,550000] },
+  { type:'expense', name:'Logistics', values:[85000,92000,98000,105000,110000,115000,118000,122000,126000,132000,138000,145000] },
+  { type:'expense', name:'Marketing', values:[65000,70000,75000,80000,85000,90000,95000,100000,105000,110000,115000,125000] }
+];
 
 function currencySymbol(){ try{ return JSON.parse(localStorage.getItem('tt_currency') || '{}').sym || 'DA'; }catch(e){ return 'DA'; } }
-function money(value){ return new Intl.NumberFormat('fr-DZ',{maximumFractionDigits:0}).format(Number(value || 0)) + ' ' + currencySymbol(); }
-function parseAmount(value){
-  const clean = String(value || '').replace(/[^0-9.-]/g, '');
-  const parsed = Number(clean);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-function pct(value){ if(!Number.isFinite(value)) return '0%'; return Math.round(value) + '%'; }
-function monthKey(date){ return String(date || '').slice(0,7); }
-function todayMonth(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
-function monthLabel(key){ const parts = key.split('-').map(Number); return new Date(parts[0], parts[1]-1, 1).toLocaleDateString('en-GB', { month:'short', year:'numeric' }); }
-function addMonths(key, offset){ const parts = key.split('-').map(Number); const d = new Date(parts[0], parts[1]-1 + offset, 1); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
-function periodLength(){ return { quarter:3, half:6, year:12 }[document.getElementById('period-type').value] || 3; }
+function money(value){ return new Intl.NumberFormat('fr-DZ',{maximumFractionDigits:0}).format(Number(value || 0)) + '\u00A0' + currencySymbol(); }
+function parseAmount(value){ const parsed = Number(String(value || '').replace(/[^0-9.-]/g, '')); return Number.isFinite(parsed) ? parsed : 0; }
+function escapeHtml(value){ return String(value || '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+function makeId(){ return 'cat_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function isActive(item){ return !['cancelled','draft'].includes(String(item.status || '').toLowerCase()); }
 function invoiceTotal(item){ return Number(item.total ?? item.subtotal ?? 0); }
 function expenseTotal(item){ return Number(item.total_amount ?? item.total ?? item.subtotal ?? 0); }
-function getBudgetKey(){ return 'tt_monthly_budget_' + (state.companyId || 'demo'); }
-function emptyMonth(){ return { sales:0, collections:0, expenses:0, payouts:0 }; }
-function plannedNet(row){ return Number(row.collections || 0) - Number(row.payouts || 0); }
-
+function keyMonth(value){ return String(value || '').slice(0, 7); }
 function actualForMonth(key){
-  const sales = state.invoices.filter(item => isActive(item) && monthKey(item.issue_date || item.created_at) === key).reduce((sum,item)=>sum+invoiceTotal(item),0);
-  const collections = state.payments.filter(item => monthKey(item.payment_date || item.created_at) === key).reduce((sum,item)=>sum+Number(item.amount||0),0);
-  const expenses = state.expenses.filter(item => isActive(item) && monthKey(item.expense_date || item.created_at) === key).reduce((sum,item)=>sum+expenseTotal(item),0);
-  const payouts = state.expensePayments.filter(item => monthKey(item.payment_date || item.created_at) === key).reduce((sum,item)=>sum+Number(item.amount||0),0);
-  return { sales, collections, expenses, payouts, netCash: collections - payouts };
+  const sales = state.invoices.filter(item => isActive(item) && keyMonth(item.issue_date || item.created_at) === key).reduce((sum, item) => sum + invoiceTotal(item), 0);
+  const collections = state.payments.filter(item => keyMonth(item.payment_date || item.created_at) === key).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const expenses = state.expenses.filter(item => isActive(item) && keyMonth(item.expense_date || item.created_at) === key).reduce((sum, item) => sum + expenseTotal(item), 0);
+  const payouts = state.expensePayments.filter(item => keyMonth(item.payment_date || item.created_at) === key).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  return { sales, collections, expenses, payouts, income: sales + collections, spending: expenses + payouts, net: (sales + collections) - (expenses + payouts) };
 }
-
-function coverage(actual, planned, lowerIsBetter){
-  if(!planned) return { value:0, cls:'warn' };
-  const value = actual / planned * 100;
-  const cls = lowerIsBetter ? (actual <= planned ? 'good' : actual <= planned * 1.1 ? 'warn' : 'bad') : (actual >= planned ? 'good' : actual >= planned * .75 ? 'warn' : 'bad');
-  return { value, cls };
+function plannedForMonth(key){
+  const income = monthTotal('income', key);
+  const expense = monthTotal('expense', key);
+  return { income, expense, net: income - expense };
 }
-
-function coverageHtml(actual, planned, lowerIsBetter){
-  const c = coverage(actual, planned, lowerIsBetter);
-  const width = Math.max(0, Math.min(100, c.value));
-  return '<div class="coverage"><div class="bar"><span class="' + c.cls + '" style="width:' + width + '%"></span></div><div class="coverage-text">' + pct(c.value) + '</div></div>';
-}
-
-function readInputs(){
-  state.months.forEach(key => {
-    state.budget[key] = {
-      sales: parseAmount(document.querySelector('[data-budget="' + key + '.sales"]')?.value),
-      collections: parseAmount(document.querySelector('[data-budget="' + key + '.collections"]')?.value),
-      expenses: parseAmount(document.querySelector('[data-budget="' + key + '.expenses"]')?.value),
-      payouts: parseAmount(document.querySelector('[data-budget="' + key + '.payouts"]')?.value)
-    };
-  });
-}
+function storageKey(){ return 'tt_budget_sheet_' + (state.companyId || 'demo') + '_' + document.getElementById('scenario').value + '_' + document.getElementById('budget-year').value; }
+function showToast(message,type){ const t=document.getElementById('toast'); t.textContent=message; t.className='toast show ' + (type||''); setTimeout(()=>t.className='toast',2600); }
+function setLoading(on){ document.getElementById('loading').classList.toggle('show', !!on); }
 
 function buildMonths(){
-  const start = document.getElementById('start-month').value || todayMonth();
-  return Array.from({ length: periodLength() }, (_, index) => addMonths(start, index));
+  const year = Number(document.getElementById('budget-year').value || new Date().getFullYear());
+  state.months = monthNames.map((label, index) => ({ label, key: year + '-' + String(index + 1).padStart(2, '0') }));
+  state.categories.forEach(cat => state.months.forEach(month => { if(cat.values[month.key] == null) cat.values[month.key] = 0; }));
+  renderSheet();
 }
-
-function buildMonthlyTable(){
-  readInputs();
-  state.months = buildMonths();
-  state.months.forEach((key, index) => {
-    if(!state.budget[key]){
-      const prev = index > 0 ? state.budget[state.months[index - 1]] : null;
-      state.budget[key] = prev ? Object.assign({}, prev) : emptyMonth();
+function ensureDefaultCategories(){
+  if(state.categories.length) return;
+  state.categories = [
+    { id:makeId(), type:'income', name:'Sales revenue', values:{} },
+    { id:makeId(), type:'income', name:'Service revenue', values:{} },
+    { id:makeId(), type:'expense', name:'Rent', values:{} },
+    { id:makeId(), type:'expense', name:'Payroll', values:{} },
+    { id:makeId(), type:'expense', name:'Inventory purchases', values:{} },
+    { id:makeId(), type:'expense', name:'Logistics', values:{} }
+  ];
+}
+function readSheet(){
+  state.categories.forEach(cat => {
+    const nameInput = document.querySelector('[data-category-name="' + cat.id + '"]');
+    if(nameInput) cat.name = nameInput.value.trim() || 'Untitled category';
+    state.months.forEach(month => {
+      const cell = document.querySelector('[data-cell="' + cat.id + '.' + month.key + '"]');
+      if(cell) cat.values[month.key] = parseAmount(cell.value);
+    });
+  });
+}
+function rowsByType(type){ return state.categories.filter(cat => cat.type === type); }
+function categoryTotal(cat){ return state.months.reduce((sum, month) => sum + Number(cat.values[month.key] || 0), 0); }
+function monthTotal(type, key){ return rowsByType(type).reduce((sum, cat) => sum + Number(cat.values[key] || 0), 0); }
+function totalForType(type){ return rowsByType(type).reduce((sum, cat) => sum + categoryTotal(cat), 0); }
+function average(value){ return value / 12; }
+function renderHead(){
+  document.getElementById('sheet-head').innerHTML = '<tr><th class="category-head">Category</th><th class="action-head"></th>' + state.months.map(m => '<th>' + m.label + '</th>').join('') + '<th>Total</th><th>Average</th></tr>';
+}
+function sectionHeader(title){
+  return '<tr class="section-row"><td class="section-title-cell" colspan="2">' + title + '</td>' + state.months.map(() => '<td class="section-spacer"></td>').join('') + '<td class="section-spacer"></td><td class="section-spacer"></td></tr>';
+}
+function summaryRow(type, label){
+  const rows = rowsByType(type);
+  const total = totalForType(type);
+  return '<tr class="summary-row"><td class="category-cell"><strong>' + label + '</strong></td><td class="action-cell"></td>' +
+    state.months.map(m => '<td><span class="sheet-value">' + money(monthTotal(type, m.key)) + '</span></td>').join('') +
+    '<td><span class="sheet-value">' + money(total) + '</span></td><td><span class="sheet-value">' + money(rows.length ? average(total) : 0) + '</span></td></tr>';
+}
+function categoryRow(cat){
+  const total = categoryTotal(cat);
+  return '<tr><td class="category-cell"><input class="category-input" value="' + escapeHtml(cat.name) + '" data-category-name="' + cat.id + '" oninput="readSheet();saveLocal();renderSummary()"></td>' +
+    '<td class="action-cell"><button class="delete-row" onclick="deleteCategory(\'' + cat.id + '\')" title="Delete row">x</button></td>' +
+    state.months.map(m => '<td><input class="cell-input" type="text" inputmode="decimal" value="' + Number(cat.values[m.key] || 0) + '" data-cell="' + cat.id + '.' + m.key + '" oninput="updateFromSheet()"></td>').join('') +
+    '<td><span class="sheet-value">' + money(total) + '</span></td><td><span class="sheet-value">' + money(average(total)) + '</span></td></tr>';
+}
+function monthlyBudgetMetrics(){
+  const plannedIncome = state.months.map(m => plannedForMonth(m.key).income);
+  const actualIncome = state.months.map(m => actualForMonth(m.key).income);
+  const incomeVariance = state.months.map((m, i) => actualIncome[i] - plannedIncome[i]);
+  const plannedExpense = state.months.map(m => plannedForMonth(m.key).expense);
+  const actualExpense = state.months.map(m => actualForMonth(m.key).spending);
+  const expenseVariance = state.months.map((m, i) => plannedExpense[i] - actualExpense[i]);
+  const plannedNet = state.months.map(m => plannedForMonth(m.key).net);
+  const actualNet = state.months.map(m => actualForMonth(m.key).net);
+  const netVariance = state.months.map((m, i) => actualNet[i] - plannedNet[i]);
+  return { plannedIncome, actualIncome, incomeVariance, plannedExpense, actualExpense, expenseVariance, plannedNet, actualNet, netVariance };
+}
+function sumValues(values){ return values.reduce((sum, value) => sum + Number(value || 0), 0); }
+function setText(id, value){ const el = document.getElementById(id); if(el) el.textContent = value; }
+function destroyChart(name){ if(state.charts[name]){ state.charts[name].destroy(); state.charts[name] = null; } }
+function chartOptions(){
+  return {
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:ctx => ctx.dataset.label + ': ' + money(ctx.parsed.y || 0) } } },
+    scales:{
+      x:{ grid:{ display:false }, ticks:{ color:'#7A93AE', font:{ family:'Inter', size:11, weight:'600' } } },
+      y:{ beginAtZero:true, grid:{ color:'#EEF3F8' }, ticks:{ color:'#94A3B8', font:{ family:'Inter', size:11 }, callback:value => money(value).replace('\u00A0DA','') } }
+    }
+  };
+}
+function renderPairChart(name, canvasId, planned, actual){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas || !window.Chart) return;
+  destroyChart(name);
+  state.charts[name] = new Chart(canvas, {
+    type:'bar',
+    data:{
+      labels:state.months.map(month => month.label),
+      datasets:[
+        { label:'Planned', data:planned, backgroundColor:'#A7B4C5', borderRadius:5, maxBarThickness:22 },
+        { label:'Actual', data:actual, backgroundColor:'#1a8fd1', borderRadius:5, maxBarThickness:22 }
+      ]
+    },
+    options:chartOptions()
+  });
+}
+function renderVarianceChart(values){
+  const canvas = document.getElementById('budget-variance-chart');
+  if(!canvas || !window.Chart) return;
+  destroyChart('variance');
+  state.charts.variance = new Chart(canvas, {
+    type:'bar',
+    data:{
+      labels:state.months.map(month => month.label),
+      datasets:[{ label:'Net variance', data:values, backgroundColor:values.map(value => value >= 0 ? '#22C55E' : '#EF4444'), borderRadius:5, maxBarThickness:24 }]
+    },
+    options:chartOptions()
+  });
+}
+function renderProgressGauge(metrics){
+  const planned = sumValues(metrics.plannedExpense);
+  const actual = sumValues(metrics.actualExpense);
+  const usedRatio = planned > 0 ? actual / planned : 0;
+  const usedPercent = Math.max(0, Math.min(100, Math.round(usedRatio * 100)));
+  const remaining = Math.max(0, planned - actual);
+  setText('budget-progress-percent', usedPercent + '%');
+  setText('budget-progress-used', money(actual));
+  setText('budget-progress-remaining', money(remaining));
+  const canvas = document.getElementById('budget-progress-gauge');
+  if(!canvas || !window.Chart) return;
+  destroyChart('progress');
+  const color = usedRatio > 1 ? '#EF4444' : usedRatio >= .85 ? '#F59E0B' : '#1a8fd1';
+  state.charts.progress = new Chart(canvas, {
+    type:'doughnut',
+    data:{
+      labels:['Used','Remaining'],
+      datasets:[{ data:[Math.min(actual, planned || actual || 1), remaining || 0], backgroundColor:[color, '#E5E7EB'], borderWidth:0, hoverOffset:0 }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      rotation:-90,
+      circumference:180,
+      cutout:'68%',
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:ctx => ctx.label + ': ' + money(ctx.parsed || 0) } } }
     }
   });
-  renderBudget();
 }
-
-function renderBudget(){
-  const tbody = document.getElementById('budget-month-rows');
-  const totals = { plannedSales:0, sales:0, plannedCollections:0, collections:0, plannedExpenses:0, expenses:0, plannedPayouts:0, payouts:0, plannedNet:0, net:0 };
-  tbody.innerHTML = state.months.map(key => {
-    const plan = state.budget[key] || emptyMonth();
-    const actual = actualForMonth(key);
-    const netPlan = plannedNet(plan);
-    totals.plannedSales += Number(plan.sales || 0); totals.sales += actual.sales;
-    totals.plannedCollections += Number(plan.collections || 0); totals.collections += actual.collections;
-    totals.plannedExpenses += Number(plan.expenses || 0); totals.expenses += actual.expenses;
-    totals.plannedPayouts += Number(plan.payouts || 0); totals.payouts += actual.payouts;
-    totals.plannedNet += netPlan; totals.net += actual.netCash;
-    const variance = actual.netCash - netPlan;
-    return '<tr>' +
-      '<td class="sticky-col"><div class="month-name">' + monthLabel(key) + '</div><div class="month-sub">' + key + '</div></td>' +
-      inputCell(key,'sales',plan.sales) + '<td><span class="actual">' + money(actual.sales) + '</span></td><td>' + coverageHtml(actual.sales, plan.sales, false) + '</td>' +
-      inputCell(key,'collections',plan.collections) + '<td><span class="actual good">' + money(actual.collections) + '</span></td><td>' + coverageHtml(actual.collections, plan.collections, false) + '</td>' +
-      inputCell(key,'expenses',plan.expenses) + '<td><span class="actual bad">' + money(actual.expenses) + '</span></td><td>' + coverageHtml(actual.expenses, plan.expenses, true) + '</td>' +
-      inputCell(key,'payouts',plan.payouts) + '<td><span class="actual bad">' + money(actual.payouts) + '</span></td><td>' + coverageHtml(actual.payouts, plan.payouts, true) + '</td>' +
-      '<td><span class="actual">' + money(netPlan) + '</span></td><td><span class="actual ' + (actual.netCash >= 0 ? 'good' : 'bad') + '">' + money(actual.netCash) + '</span></td><td><span class="actual ' + (variance >= 0 ? 'good' : 'bad') + '">' + (variance >= 0 ? '+' : '') + money(variance) + '</span></td>' +
-      '</tr>';
-  }).join('') + totalRow(totals);
-  renderSummary(totals);
-  renderInsights(totals);
+function renderBudgetHealth(metrics){
+  const host = document.getElementById('budget-health-list');
+  if(!host) return;
+  const rows = state.months.map((month, index) => ({
+    month:month.label,
+    net:Number(metrics.netVariance[index] || 0),
+    income:Number(metrics.incomeVariance[index] || 0),
+    spending:Number(metrics.expenseVariance[index] || 0)
+  }));
+  const strongest = rows.slice().sort((a,b) => Math.abs(b.net) - Math.abs(a.net)).slice(0, 4);
+  host.innerHTML = strongest.map(row => {
+    const cls = row.net >= 0 ? 'health-good' : 'health-bad';
+    const label = row.net >= 0 ? 'Ahead of budget' : 'Behind budget';
+    return '<div class="health-item"><div><div class="health-label">' + row.month + ' - ' + label + '</div><div class="health-note">Income variance ' + money(row.income) + ', spending variance ' + money(row.spending) + '</div></div><div class="health-value ' + cls + '">' + money(row.net) + '</div></div>';
+  }).join('') || '<div class="health-item"><div><div class="health-label">No actuals yet</div><div class="health-note">Add invoices and expenses to see budget health.</div></div><div class="health-value health-neutral">0 DA</div></div>';
 }
-
-function inputCell(key, name, value){
-  return '<td><input class="budget-input" type="text" inputmode="decimal" autocomplete="off" value="' + Number(value || 0) + '" data-budget="' + key + '.' + name + '" oninput="updateFromTable()"></td>';
+function renderActualCharts(metrics){
+  if(window.Chart && window.Chart.defaults){
+    window.Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+    window.Chart.defaults.color = '#7A93AE';
+  }
+  renderPairChart('income', 'budget-income-chart', metrics.plannedIncome, metrics.actualIncome);
+  renderPairChart('spending', 'budget-spending-chart', metrics.plannedExpense, metrics.actualExpense);
+  renderVarianceChart(metrics.netVariance);
+  renderProgressGauge(metrics);
+  renderBudgetHealth(metrics);
 }
-
-function totalRow(t){
-  const variance = t.net - t.plannedNet;
-  return '<tr class="total-row"><td class="sticky-col">Total</td><td>' + money(t.plannedSales) + '</td><td>' + money(t.sales) + '</td><td>' + coverageHtml(t.sales,t.plannedSales,false) + '</td><td>' + money(t.plannedCollections) + '</td><td>' + money(t.collections) + '</td><td>' + coverageHtml(t.collections,t.plannedCollections,false) + '</td><td>' + money(t.plannedExpenses) + '</td><td>' + money(t.expenses) + '</td><td>' + coverageHtml(t.expenses,t.plannedExpenses,true) + '</td><td>' + money(t.plannedPayouts) + '</td><td>' + money(t.payouts) + '</td><td>' + coverageHtml(t.payouts,t.plannedPayouts,true) + '</td><td>' + money(t.plannedNet) + '</td><td>' + money(t.net) + '</td><td class="' + (variance >= 0 ? 'actual good' : 'actual bad') + '">' + (variance >= 0 ? '+' : '') + money(variance) + '</td></tr>';
+function renderActuals(){
+  const head = document.getElementById('actuals-head');
+  const body = document.getElementById('actuals-body');
+  const metrics = monthlyBudgetMetrics();
+  const actualIncomeTotal = sumValues(metrics.actualIncome);
+  const actualSpendingTotal = sumValues(metrics.actualExpense);
+  const actualNetTotal = sumValues(metrics.actualNet);
+  const netVarianceTotal = sumValues(metrics.netVariance);
+  setText('actual-income-total', money(actualIncomeTotal));
+  setText('actual-spending-total', money(actualSpendingTotal));
+  setText('actual-net-total', money(actualNetTotal));
+  setText('actual-variance-total', money(netVarianceTotal));
+  renderActualCharts(metrics);
+  if(!head || !body) return;
+  head.innerHTML = '<tr><th>Metric</th>' + state.months.map(m => '<th>' + m.label + '</th>').join('') + '<th>Total</th><th>Average</th></tr>';
+  const row = (name, sub, values, clsFn) => {
+    const total = sumValues(values);
+    return '<tr><td><div class="actual-name">' + name + '</div><div class="actual-sub">' + sub + '</div></td>' +
+      values.map(value => '<td><span class="' + (clsFn ? clsFn(value) : 'actual-neutral') + '">' + money(value) + '</span></td>').join('') +
+      '<td><span class="' + (clsFn ? clsFn(total) : 'actual-neutral') + '">' + money(total) + '</span></td><td><span class="actual-neutral">' + money(total / 12) + '</span></td></tr>';
+  };
+  body.innerHTML = [
+    row('Actual income', 'Invoices issued plus collections received', metrics.actualIncome, value => value >= 0 ? 'actual-good' : 'actual-neutral'),
+    row('Income variance', 'Actual income minus planned income', metrics.incomeVariance, value => value >= 0 ? 'actual-good' : 'actual-bad'),
+    row('Actual spending', 'Expenses recorded plus supplier payouts', metrics.actualExpense, value => value > 0 ? 'actual-bad' : 'actual-neutral'),
+    row('Spending variance', 'Planned spending minus actual spending', metrics.expenseVariance, value => value >= 0 ? 'actual-good' : 'actual-bad'),
+    row('Actual net', 'Actual income minus actual spending', metrics.actualNet, value => value >= 0 ? 'actual-good' : 'actual-bad'),
+    row('Net variance', 'Actual net minus planned net', metrics.netVariance, value => value >= 0 ? 'actual-good' : 'actual-bad')
+  ].join('');
 }
-
-function renderSummary(t){
-  document.getElementById('sum-planned-revenue').textContent = money(t.plannedSales + t.plannedCollections);
-  document.getElementById('sum-actual-revenue').textContent = money(t.sales + t.collections);
-  document.getElementById('sum-planned-expense').textContent = money(t.plannedExpenses + t.plannedPayouts);
-  const variance = t.net - t.plannedNet;
-  document.getElementById('sum-net-variance').textContent = (variance >= 0 ? '+' : '') + money(variance);
+function switchBudgetView(view){
+  if(view === 'actual') readSheet();
+  document.querySelectorAll('[data-budget-tab]').forEach(tab => tab.classList.toggle('active', tab.dataset.budgetTab === view));
+  const planned = document.getElementById('planned-budget-view');
+  const actual = document.getElementById('actual-budget-view');
+  if(planned) planned.hidden = view !== 'planned';
+  if(actual) actual.hidden = view !== 'actual';
+  if(view === 'actual') renderActuals();
 }
-
-function renderInsights(t){
-  const salesCoverage = t.plannedSales ? t.sales / t.plannedSales * 100 : 0;
-  const expenseUse = t.plannedExpenses ? t.expenses / t.plannedExpenses * 100 : 0;
-  const variance = t.net - t.plannedNet;
-  const items = [
-    { chip:'Sales', title:pct(salesCoverage) + ' sales coverage', copy:salesCoverage >= 100 ? 'Sales are meeting or exceeding the plan.' : 'Sales are still below the current budget target.' },
-    { chip:'Expenses', title:pct(expenseUse) + ' expense usage', copy:expenseUse <= 100 ? 'Expenses are inside the planned limit.' : 'Expenses are above budget and need review.' },
-    { chip:'Cash', title:(variance >= 0 ? 'Positive' : 'Negative') + ' net variance', copy:'Actual net cash is ' + (variance >= 0 ? 'above' : 'below') + ' the planned cash position.' }
-  ];
-  document.getElementById('insights').innerHTML = items.map(item => '<div class="insight"><div class="insight-top"><div class="insight-title">' + item.title + '</div><span class="insight-chip">' + item.chip + '</span></div><div class="insight-copy">' + item.copy + '</div></div>').join('');
+function renderSheet(){
+  renderHead();
+  const body = [];
+  body.push(sectionHeader('Income'));
+  body.push(summaryRow('income', 'Monthly totals:'));
+  rowsByType('income').forEach(cat => body.push(categoryRow(cat)));
+  body.push('<tr class="blank-row"><td colspan="16"></td></tr>');
+  body.push(sectionHeader('Expenses'));
+  body.push(summaryRow('expense', 'Monthly totals:'));
+  rowsByType('expense').forEach(cat => body.push(categoryRow(cat)));
+  document.getElementById('sheet-body').innerHTML = body.join('');
+  renderSummary();
 }
-
-function updateFromTable(){ readInputs(); renderBudget(); }
-function fillStarterBudget(){ state.months.forEach((key,index)=>{ const growth = 1 + index * .025; state.budget[key] = { sales:Math.round(starter.sales * growth), collections:Math.round(starter.collections * growth), expenses:Math.round(starter.expenses * growth), payouts:Math.round(starter.payouts * growth) }; }); renderBudget(); showToast('Starter monthly budget filled.', 'success'); }
-function clearBudgetInputs(){ state.months.forEach(key => state.budget[key] = emptyMonth()); renderBudget(); showToast('Planned values cleared.', 'success'); }
-function copyPreviousMonth(){ readInputs(); for(let i=1;i<state.months.length;i++){ state.budget[state.months[i]] = Object.assign({}, state.budget[state.months[i-1]] || emptyMonth()); } renderBudget(); showToast('Previous month values copied forward.', 'success'); }
-function applyPeriodPreset(){ buildMonthlyTable(); }
-function saveBudget(){
-  readInputs();
-  const payload = { name:document.getElementById('budget-name').value || 'Operating budget', periodType:document.getElementById('period-type').value, startMonth:document.getElementById('start-month').value, budget:state.budget, savedAt:new Date().toISOString() };
-  localStorage.setItem(getBudgetKey(), JSON.stringify(payload));
-  showToast('Monthly budget saved.', 'success');
+function renderSummary(){
+  const income = totalForType('income');
+  const expense = totalForType('expense');
+  const surplus = income - expense;
+  document.getElementById('sum-income').textContent = money(income);
+  document.getElementById('sum-expense').textContent = money(expense);
+  document.getElementById('sum-surplus').textContent = money(surplus);
+  document.getElementById('sum-average').textContent = money(surplus / 12);
+  renderActuals();
 }
-function loadBudget(){
-  const saved = localStorage.getItem(getBudgetKey());
-  document.getElementById('start-month').value = todayMonth();
+function updateFromSheet(){ readSheet(); renderSheet(); saveLocal(); }
+function addCategory(type){
+  readSheet();
+  const name = type === 'income' ? 'New income category' : 'New spending category';
+  const cat = { id:makeId(), type, name, values:{} };
+  state.months.forEach(month => cat.values[month.key] = 0);
+  state.categories.push(cat);
+  renderSheet();
+  saveLocal();
+}
+function deleteCategory(id){
+  readSheet();
+  state.categories = state.categories.filter(cat => cat.id !== id);
+  renderSheet();
+  saveLocal();
+}
+function fillStarterBudget(){
+  const year = Number(document.getElementById('budget-year').value || new Date().getFullYear());
+  state.categories = starterRows.map(row => {
+    const values = {};
+    row.values.forEach((value, index) => values[year + '-' + String(index + 1).padStart(2, '0')] = value);
+    return { id:makeId(), type:row.type, name:row.name, values };
+  });
+  buildMonths();
+  saveLocal();
+  showToast('Sample budget filled.', 'success');
+}
+function clearBudget(){
+  readSheet();
+  state.categories.forEach(cat => state.months.forEach(month => cat.values[month.key] = 0));
+  renderSheet();
+  saveLocal();
+  showToast('Budget values cleared.', 'success');
+}
+function copyJanuaryAcross(){
+  readSheet();
+  state.categories.forEach(cat => {
+    const first = Number(cat.values[state.months[0].key] || 0);
+    state.months.forEach(month => cat.values[month.key] = first);
+  });
+  renderSheet();
+  saveLocal();
+  showToast('January copied across the year.', 'success');
+}
+function localPayload(){ return { name:document.getElementById('budget-name').value || 'Operating budget', scenario:document.getElementById('scenario').value, year:document.getElementById('budget-year').value, categories:state.categories, savedAt:new Date().toISOString() }; }
+function saveLocal(){ localStorage.setItem(storageKey(), JSON.stringify(localPayload())); }
+function loadLocal(){
+  const saved = localStorage.getItem(storageKey());
   if(saved){
     try{
       const payload = JSON.parse(saved);
       document.getElementById('budget-name').value = payload.name || 'Operating budget';
-      document.getElementById('period-type').value = payload.periodType || 'quarter';
-      document.getElementById('start-month').value = payload.startMonth || todayMonth();
-      state.budget = payload.budget || {};
+      state.categories = payload.categories || [];
     }catch(e){}
   }
-  state.months = buildMonths();
-  state.months.forEach(key => { if(!state.budget[key]) state.budget[key] = emptyMonth(); });
+  ensureDefaultCategories();
+  buildMonths();
 }
-function showToast(message,type){ const t=document.getElementById('toast'); t.textContent=message; t.className='toast show ' + (type||''); setTimeout(()=>t.className='toast',2600); }
-function setLoading(on){ document.getElementById('loading').classList.toggle('show', !!on); }
-
 async function resolveCompany(){
   const stored = localStorage.getItem('tt_company_id');
   if(stored){ state.companyId = stored; return; }
@@ -357,44 +908,137 @@ async function resolveCompany(){
   state.companyId = DEMO_COMPANY_ID;
   localStorage.setItem('tt_company_id', state.companyId);
 }
+async function checkBudgetTables(){
+  try{
+    const { error } = await sb.from('budget_categories').select('id').eq('company_id', state.companyId).limit(1);
+    if(error) throw error;
+    state.dbReady = true;
+  }catch(error){
+    state.dbReady = false;
+  }
+}
+async function loadDbBudget(){
+  if(!state.dbReady) return false;
+  const year = Number(document.getElementById('budget-year').value || new Date().getFullYear());
+  const { data: budgets, error } = await sb.from('budgets').select('*').eq('company_id', state.companyId).eq('scenario', document.getElementById('scenario').value).eq('start_month', year + '-01-01').order('updated_at', { ascending:false }).limit(1);
+  if(error) return false;
+  const budget = budgets && budgets[0];
+  if(!budget) return false;
+  state.budgetId = budget.id;
+  document.getElementById('budget-name').value = budget.name || 'Operating budget';
+  const { data: cats, error: catError } = await sb.from('budget_categories').select('*').eq('budget_id', budget.id).order('sort_order');
+  if(catError) return false;
+  const { data: vals } = await sb.from('budget_category_values').select('*').eq('budget_id', budget.id);
+  state.categories = (cats || []).map(cat => {
+    const values = {};
+    (vals || []).filter(v => v.category_id === cat.id).forEach(v => values[v.month] = Number(v.amount || 0));
+    return { id:cat.id, type:cat.type, name:cat.name, values };
+  });
+  ensureDefaultCategories();
+  buildMonths();
+  return true;
+}
+async function saveDbBudget(){
+  const year = Number(document.getElementById('budget-year').value || new Date().getFullYear());
+  const header = { company_id:state.companyId, name:document.getElementById('budget-name').value || 'Operating budget', scenario:document.getElementById('scenario').value, period_type:'year', start_month:year + '-01-01', created_by:state.session?.user?.id || null, updated_at:new Date().toISOString() };
+  let budgetId = state.budgetId;
+  if(budgetId){
+    const { error } = await sb.from('budgets').update(header).eq('id', budgetId);
+    if(error) throw error;
+  }else{
+    const { data, error } = await sb.from('budgets').insert(header).select('id').single();
+    if(error) throw error;
+    budgetId = data.id;
+    state.budgetId = budgetId;
+  }
+  const { error: deleteCategoriesError } = await sb.from('budget_categories').delete().eq('budget_id', budgetId);
+  if(deleteCategoriesError) throw deleteCategoriesError;
+
+  const categories = state.categories.map((cat, index) => ({
+    budget_id:budgetId,
+    company_id:state.companyId,
+    type:cat.type,
+    name:cat.name,
+    sort_order:index,
+    updated_at:new Date().toISOString()
+  }));
+  const { data: savedCats, error: catError } = await sb.from('budget_categories').insert(categories).select('*');
+  if(catError) throw catError;
+
+  (savedCats || []).forEach((saved, index) => {
+    const local = state.categories[index];
+    if(local) local.id = saved.id;
+  });
+
+  const values = [];
+  state.categories.forEach(cat => state.months.forEach(month => values.push({
+    budget_id:budgetId,
+    company_id:state.companyId,
+    category_id:cat.id,
+    month:month.key,
+    amount:Number(cat.values[month.key] || 0),
+    updated_at:new Date().toISOString()
+  })));
+  if(values.length){
+    const { error: valueError } = await sb.from('budget_category_values').insert(values);
+    if(valueError) throw valueError;
+  }
+}
+async function saveBudget(){
+  readSheet();
+  saveLocal();
+  if(state.dbReady){
+    try{
+      await saveDbBudget();
+      showToast('Budget saved to Supabase.', 'success');
+      return;
+    }catch(error){
+      state.dbReady = false;
+      showToast(error.message || 'Budget saved locally only.', 'error');
+    }
+  }else{
+    showToast('Budget saved locally. Run the Supabase schema update to sync it.', 'success');
+  }
+}
 async function refreshAll(){
   setLoading(true);
   try{
     await resolveCompany();
-    const [invoices, payments, expenses, expensePayments] = await Promise.all([
-      sb.from('invoices').select('id,invoice_number,issue_date,status,total,subtotal,created_at').eq('company_id', state.companyId),
-      sb.from('payments').select('*').eq('company_id', state.companyId),
-      sb.from('expenses').select('id,expense_number,expense_date,status,total_amount,total,subtotal,created_at').eq('company_id', state.companyId),
-      sb.from('expense_payments').select('*').eq('company_id', state.companyId)
-    ]);
-    if(invoices.error) throw invoices.error;
-    if(payments.error) throw payments.error;
-    if(expenses.error) throw expenses.error;
-    if(expensePayments.error) throw expensePayments.error;
-    state.invoices = invoices.data || [];
-    state.payments = payments.data || [];
-    state.expenses = expenses.data || [];
-    state.expensePayments = expensePayments.data || [];
-    renderBudget();
+    await checkBudgetTables();
+    const loadedDb = await loadDbBudget();
+    if(!loadedDb) loadLocal();
+    const r1 = await sb.from('invoices').select('*').eq('company_id', state.companyId);
+    if(r1.error) throw r1.error;
+    state.invoices = r1.data || [];
+    const r2 = await sb.from('payments').select('*').eq('company_id', state.companyId);
+    if(r2.error) throw r2.error;
+    state.payments = r2.data || [];
+    const r3 = await sb.from('expenses').select('*').eq('company_id', state.companyId);
+    if(r3.error) throw r3.error;
+    state.expenses = r3.data || [];
+    const r4 = await sb.from('expense_payments').select('*').eq('company_id', state.companyId);
+    if(r4.error) throw r4.error;
+    state.expensePayments = r4.data || [];
+    renderActuals();
   }catch(error){
-    showToast(error.message || 'Could not load actuals.', 'error');
-    renderBudget();
+    showToast(error.message || 'Could not load budget.', 'error');
+    loadLocal();
   }finally{
     setLoading(false);
   }
 }
 async function init(){
+  document.getElementById('budget-year').value = new Date().getFullYear();
   const { data:{ session } } = await sb.auth.getSession();
   if(!session){ window.location.href = 'login.html'; return; }
   state.session = session;
   await resolveCompany();
-  loadBudget();
-  renderBudget();
+  loadLocal();
   await refreshAll();
 }
 window.addEventListener('load', init);
-</script>
-<script>
+
+
 (function(){
   const transactionPages = ['invoices.html','customers.html','expenses.html','suppliers.html'];
   const accountingPages = transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);
@@ -415,9 +1059,119 @@ window.addEventListener('load', init);
   document.addEventListener('click', event => { const toggle = event.target.closest('[data-sidebar-toggle]'); if(!toggle) return; event.preventDefault(); const name = toggle.getAttribute('data-sidebar-toggle'); const isOpen = toggle.getAttribute('aria-expanded') === 'true'; setDropdown(name, !isOpen); if(name === 'accounting' && isOpen) setDropdown('transactions', false); });
   window.addEventListener('DOMContentLoaded', initSidebarDropdowns);
 })();
+
+
+/* Clean browser title guard */
+document.title = 'TadbirTech - Budgeting';
+
+
+/* â•â• ENHANCED RENDERS â•â• */
+
+/* Fix renderSummary to use new IDs + alert */
+const _origRenderSummary = renderSummary;
+renderSummary = function() {
+  const income  = totalForType('income');
+  const expense = totalForType('expense');
+  const surplus = income - expense;
+  document.getElementById('sum-income').textContent  = money(income);
+  document.getElementById('sum-expense').textContent = money(expense);
+  document.getElementById('sum-surplus').textContent = money(surplus);
+  document.getElementById('sum-average').textContent = money(surplus / 12);
+
+  // Alert if expenses exceed income
+  const alert = document.getElementById('plan-alert');
+  const alertText = document.getElementById('plan-alert-text');
+  const alertSub  = document.getElementById('plan-alert-sub');
+  if (expense > income && income > 0) {
+    alert.classList.add('show');
+    alertText.textContent = 'Planned expenses exceed planned income by ' + money(expense - income);
+    alertSub.textContent  = 'Your budget shows a deficit. Review your spending categories.';
+  } else {
+    alert.classList.remove('show');
+  }
+  renderActuals();
+};
+
+/* Fix switchBudgetView to handle 3 tabs */
+const _origSwitch = switchBudgetView;
+switchBudgetView = function(view) {
+  if (view === 'actual' || view === 'forecast') readSheet();
+  document.querySelectorAll('[data-budget-tab]').forEach(tab =>
+    tab.classList.toggle('active', tab.dataset.budgetTab === view)
+  );
+  const views = ['planned','actual','forecast'];
+  views.forEach(v => {
+    const el = document.getElementById(v + '-budget-view');
+    if (el) el.hidden = (v !== view);
+  });
+  if (view === 'actual')   renderActuals();
+  if (view === 'forecast') renderForecast();
+};
+
+/* Forecast tab renderer */
+function renderForecast() {
+  const now = new Date();
+  const currentKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+
+  let totalFcIncome = 0, totalFcSpending = 0;
+
+  const incomeRows  = state.months.map(m => {
+    const isPast = m.key <= currentKey;
+    const actual = actualForMonth(m.key).income;
+    const planned = plannedForMonth(m.key).income;
+    const val = isPast ? actual : planned;
+    totalFcIncome += val;
+    return { label: m.label, val, planned, isPast };
+  });
+
+  const spendingRows = state.months.map(m => {
+    const isPast = m.key <= currentKey;
+    const actual = actualForMonth(m.key).spending;
+    const planned = plannedForMonth(m.key).expense;
+    const val = isPast ? actual : planned;
+    totalFcSpending += val;
+    return { label: m.label, val, planned, isPast };
+  });
+
+  const fcNet = totalFcIncome - totalFcSpending;
+  const plannedNet = totalForType('income') - totalForType('expense');
+  const vsPlanned = fcNet - plannedNet;
+
+  document.getElementById('fc-income').textContent   = money(totalFcIncome);
+  document.getElementById('fc-spending').textContent = money(totalFcSpending);
+  document.getElementById('fc-net').textContent      = money(fcNet);
+  document.getElementById('fc-income-note').textContent   = 'vs planned ' + money(totalForType('income'));
+  document.getElementById('fc-spending-note').textContent = 'vs planned ' + money(totalForType('expense'));
+  document.getElementById('fc-net-note').textContent = (vsPlanned >= 0 ? 'â†‘ ' : 'â†“ ') + money(Math.abs(vsPlanned)) + ' vs plan';
+
+  const maxIncome   = Math.max(...incomeRows.map(r => r.val), 1);
+  const maxSpending = Math.max(...spendingRows.map(r => r.val), 1);
+
+  function buildRows(rows, max) {
+    return rows.map(r => {
+      const pct = Math.round((r.val / max) * 100);
+      const cls = r.isPast ? 'fm-good' : 'fm-neutral';
+      const tag = r.isPast ? 'Actual' : 'Planned';
+      return `<div class="forecast-month-row">
+        <div class="fm-label">${r.label}</div>
+        <div class="fm-bar-wrap"><div class="fm-bar" style="width:${pct}%;background:${r.isPast ? '#1a8fd1' : '#CBD5E1'}"></div></div>
+        <div class="fm-amt">${money(r.val)}</div>
+        <span class="fm-status ${cls}">${tag}</span>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('fc-income-rows').innerHTML  = buildRows(incomeRows, maxIncome);
+  document.getElementById('fc-spending-rows').innerHTML = buildRows(spendingRows, maxSpending);
+}
+
+/* Sidebar toggle */
+function toggleSb(el) {
+  el.classList.toggle('open');
+  const sub = el.nextElementSibling;
+  if (sub && sub.classList.contains('sb-submenu')) sub.classList.toggle('open');
+}
 </script>
 </body>
 </html>
-
-
 
