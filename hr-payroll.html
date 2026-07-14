@@ -4,26 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TadbirTech - HR & Payroll</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C}
+body{font-family:'Inter',system-ui,sans-serif;background:#F0F4F9;color:#0D1F3C;-webkit-font-smoothing:antialiased;font-feature-settings:'cv02','cv03','cv04','cv11'}
 .app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-.sidebar{background:#0D1F3C;display:flex;flex-direction:column}
-.sb-logo{padding:18px 12px 14px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;min-height:92px;background:#0D1F3C}
-.tt-brand-logo-img{display:block;width:188px;max-width:100%;height:auto;object-fit:contain}
-.sb-user{padding:14px 16px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
-.sb-avatar{width:32px;height:32px;border-radius:50%;background:#1a8fd1;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-.sb-user-name{font-size:12px;font-weight:600;color:#fff}.sb-user-role{font-size:10px;color:rgba(255,255,255,.45)}
-.sb-nav{padding:12px 10px;flex:1}.sb-nav::-webkit-scrollbar{width:14px}.sb-nav::-webkit-scrollbar-track{background:transparent}.sb-nav::-webkit-scrollbar-thumb{background:transparent;border:none}.sb-section{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:12px 0 6px}
-.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;margin-bottom:2px;color:rgba(255,255,255,.68);font-size:13px;font-weight:500}
-.sb-item:hover,.sb-item.active{background:rgba(26,143,209,.2);color:#fff}
-.main{display:flex;flex-direction:column}.topbar{height:56px;background:#fff;border-bottom:.5px solid #DDE6EF;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
-.topbar-title{font-size:15px;font-weight:700}.topbar-sub{font-size:11px;color:#5B7594}
-.content{padding:24px}.panel{background:#fff;border:.5px solid #DDE6EF;border-radius:12px;padding:28px;max-width:720px}
-.panel h1{font-size:24px;margin-bottom:8px}.panel p{color:#5B7594;line-height:1.6;margin-bottom:18px}
-.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;background:#1a8fd1;color:#fff;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;text-decoration:none}.btn.secondary{background:#EEF3F8;color:#0D1F3C}
-
+.main{display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:.5px solid #dde6ef;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.topbar-title{font-size:15px;font-weight:800;color:#0D1F3C}.topbar-sub{font-size:11px;color:#7a93ae;margin-top:2px}
+.topbar-actions{display:flex;gap:8px;align-items:center}.content{padding:22px 28px 36px}
+.btn{border:none;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:all .2s}
+.btn.primary{background:#1a8fd1;color:#fff}.btn.primary:hover{background:#1476b0;box-shadow:0 4px 14px rgba(26,143,209,.25);transform:translateY(-1px)}
+.btn.secondary{background:#fff;color:#0D1F3C;border:.5px solid #dde6ef}.btn.secondary:hover{border-color:#1a8fd1;color:#1a8fd1}
+.btn.ghost{background:#EEF3F8;color:#38536F}.btn.danger{background:#FEF2F2;color:#B42318;border:.5px solid #FDA29B}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:18px}
+.kpi{background:#fff;border:.5px solid #e2eaf2;border-radius:13px;padding:17px 18px;box-shadow:0 1px 8px rgba(13,31,60,.04);position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}.kpi.blue::after{background:#1a8fd1}.kpi.green::after{background:#22c55e}.kpi.amber::after{background:#f59e0b}.kpi.red::after{background:#ef4444}
+.kpi-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#7a93ae;margin-bottom:10px}.kpi-value{font-size:24px;font-weight:700;color:#0D1F3C;letter-spacing:-.4px}.kpi-note{font-size:11px;color:#94a3b8;margin-top:5px}
+.tabs{display:flex;gap:4px;width:max-content;background:#E8EEF6;border:.5px solid #D4DCE8;border-radius:12px;padding:4px;margin-bottom:16px;max-width:100%;overflow:auto}
+.tab{border:0;background:transparent;color:#607896;border-radius:9px;height:36px;padding:0 14px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}.tab.active{background:#fff;color:#0D1F3C;box-shadow:0 2px 10px rgba(13,31,60,.1)}
+.view[hidden]{display:none!important}.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.85fr);gap:14px}
+.surface{background:#fff;border:.5px solid #e2eaf2;border-radius:13px;box-shadow:0 1px 8px rgba(13,31,60,.04);overflow:hidden;margin-bottom:14px}
+.surface-head{padding:15px 18px;border-bottom:.5px solid #f0f4f8;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:#FAFBFD}
+.surface-title{font-size:14px;font-weight:800}.surface-sub{font-size:11px;color:#7a93ae;margin-top:3px}.surface-body{padding:16px 18px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.field label{font-size:10px;font-weight:800;color:#7a93ae;text-transform:uppercase;letter-spacing:.07em}.field input,.field select,.field textarea{height:36px;border:.5px solid #dde6ef;border-radius:9px;background:#fff;padding:0 10px;font-size:12px;font-weight:600;color:#0D1F3C;font-family:inherit;outline:none}.field textarea{height:76px;padding-top:9px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field.span-2{grid-column:span 2}
+table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;padding:0 0 10px;border-bottom:.5px solid #f0f4f8;text-align:left}td{font-size:12px;color:#0D1F3C;padding:11px 0;border-bottom:.5px solid #f8fafd;vertical-align:middle}tr:last-child td{border-bottom:none}
+.td-main{font-weight:800}.td-sub{font-size:11px;color:#94a3b8;margin-top:2px}.right{text-align:right}.pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;padding:4px 8px;border-radius:999px}.pill.good{background:#dcfce7;color:#166534}.pill.warn{background:#fef9c3;color:#854d0e}.pill.bad{background:#fee2e2;color:#991b1b}.pill.neutral{background:#EEF3F8;color:#38536F}
+.empty{padding:22px;text-align:center;color:#7a93ae;font-size:12px;background:#FAFBFD;border:.5px dashed #DDE6EF;border-radius:10px}.notice{display:none;margin-bottom:14px;padding:12px 14px;border-radius:11px;border:.5px solid #FECACA;background:#FEF2F2;color:#991b1b;font-size:12px;font-weight:700}.notice.show{display:block}
+.calc-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:.5px solid #f0f4f8;font-size:12px}.calc-row:last-child{border-bottom:0}.calc-row strong{font-weight:800}.calc-row.net strong{font-size:16px;color:#1a8fd1}
+.modal{position:fixed;inset:0;background:rgba(13,31,60,.42);display:none;align-items:center;justify-content:center;padding:20px;z-index:200}.modal.show{display:flex}.modal-card{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;border:.5px solid #dbe5ef;box-shadow:0 20px 60px rgba(13,31,60,.25)}.modal-head{padding:16px 18px;border-bottom:.5px solid #eef3f8;display:flex;justify-content:space-between;gap:12px}.modal-title{font-size:16px;font-weight:800}.modal-body{padding:18px}.modal-foot{padding:14px 18px;border-top:.5px solid #eef3f8;display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:1100px){.grid,.kpi-strip{grid-template-columns:1fr 1fr}}@media(max-width:720px){.grid,.kpi-strip,.form-grid{grid-template-columns:1fr}.field.span-2{grid-column:auto}.content{padding:16px}}
 /* Global sidebar consistency lock */
 .app{grid-template-columns:220px 1fr!important}
 .sidebar{width:220px!important;background:#0D1F3C!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important}
@@ -44,9 +57,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;col
 .sb-foot{padding:10px!important;border-top:.5px solid rgba(255,255,255,.08)!important}
 .sb-logout{display:flex!important;align-items:center!important;gap:8px!important;font-size:12px!important;color:rgba(255,255,255,.4)!important;padding:8px 10px!important;border-radius:8px!important;cursor:pointer!important;border:none!important;background:none!important;width:100%!important;transition:all .2s!important;font-family:inherit!important}
 .sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
-@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
-
-/* Sidebar dropdown behavior */
+@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}} /* Sidebar dropdown behavior */
 .sb-dropdown-toggle{width:100%!important;border:0!important;background:transparent!important;font-family:inherit!important}
 .sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.16)!important;border:.5px solid rgba(26,143,209,.28)!important}
 .sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;border-right:1.5px solid rgba(255,255,255,.55)!important;border-bottom:1.5px solid rgba(255,255,255,.55)!important;transform:rotate(45deg)!important;transition:transform .18s ease,border-color .18s ease!important}
@@ -59,146 +70,243 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;col
 .sb-sub-toggle{background:rgba(255,255,255,.04)!important}
 .sb-submenu-nested{margin:2px 0 6px 14px!important}
 .sb-dot{width:6px!important;height:6px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;display:inline-block!important;flex:0 0 6px!important;margin-left:4px!important}
-.sb-item.active .sb-dot{background:#1a8fd1!important}
-
-/* Restored TadbirTech sidebar logo */
+.sb-item.active .sb-dot{background:#1a8fd1!important} /* Restored TadbirTech sidebar logo */
 .sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
-.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important} 
 </style>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-        <div class="sb-logo">
-      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-sidebar.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
-    </div>
-    <div class="sb-user"><div class="sb-avatar">D</div><div><div class="sb-user-name">demo</div><div class="sb-user-role">Administrator</div></div></div>
-    <nav class="sb-nav">
-      <div class="sb-sec">Main</div>
-      <a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span class="sb-item-text">Dashboard</span>
-      </a>
-
-      <div class="sb-sec">Modules</div>
-      <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
-        <span class="sb-item-text">Accounting</span>
-        <span class="sb-chevron" aria-hidden="true"></span>
-      </button>
-      <div class="sb-submenu" id="sidebar-accounting-menu" hidden>
-        <button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
-          <span class="sb-item-text">Transactions</span>
-          <span class="sb-chevron" aria-hidden="true"></span>
-        </button>
-        <div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
-          <a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
-          <a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
-          <a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
-          <a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
-        </div>
-        <a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
-        <a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
-        <a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
-        <a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
-        <a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
-      </div>
-
-      <a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
-      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
-
-      <div class="sb-sec">Account</div>
-      <a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
-      <a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
-      <a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
-    </nav>
-  </aside>
-  <main class="main">
-    <div class="topbar"><div><div class="topbar-title">HR & Payroll</div><div class="topbar-sub">TadbirTech connected workspace</div></div></div>
-    <div class="content">
-      <section class="panel">
-        <h1>HR & Payroll</h1>
-        <p>Soon</p>
-        <div class="actions">
-          <a class="btn" href="dashboard.html">Back to Dashboard</a>
-          
-<a class="btn secondary" href="settings.html">Open Settings</a>
-        </div>
-      </section>
-    </div>
-  </main>
+<div class="sidebar">
+<div class="sb-logo">
+<img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-light.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
 </div>
+<div class="sb-user">
+<div class="sb-avatar" id="sb-av">T</div>
+<div><div class="sb-user-name" id="sb-name">Team</div><div class="sb-user-role">Administrator</div></div>
+</div>
+<nav class="sb-nav">
+<div class="sb-sec">Main</div>
+<a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+<span class="sb-item-text">Dashboard</span>
+</a>
+<div class="sb-sec">Modules</div>
+<button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+<span class="sb-item-text">Accounting</span>
+<span class="sb-chevron" aria-hidden="true"></span>
+</button>
+<div class="sb-submenu" id="sidebar-accounting-menu" hidden>
+<button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+<span class="sb-item-text">Transactions</span>
+<span class="sb-chevron" aria-hidden="true"></span>
+</button>
+<div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
+<a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
+<a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
+<a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
+<a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
+</div>
+<a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
+<a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
+<a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
+<a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
+<a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
+</div>
+<a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
+<a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
+<div class="sb-sec">Account</div>
+<a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
+<a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
+<a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
+</nav>
+<div class="sb-bottom">
+<button class="sb-logout" onclick="handleLogout()">
+<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:14px;height:14px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+<span>Sign out</span>
+</button>
+</div>
+</div>
+
+<main class="main">
+  <div class="topbar">
+    <div><div class="topbar-title">HR & Payroll</div><div class="topbar-sub" id="company-label">Employees, attendance, leave, payroll, and HR reports.</div></div>
+    <div class="topbar-actions">
+      <button class="btn secondary" id="refresh-btn">Refresh</button>
+      <button class="btn primary" id="new-employee-btn">New employee</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="notice" id="schema-notice">HR tables are not available yet. Run supabase_hr_payroll.sql in Supabase, then refresh this page.</div>
+    <section class="kpi-strip">
+      <div class="kpi blue"><div class="kpi-label">Employees</div><div class="kpi-value" id="kpi-employees">0</div><div class="kpi-note">Active records</div></div>
+      <div class="kpi green"><div class="kpi-label">Present Today</div><div class="kpi-value" id="kpi-present">0</div><div class="kpi-note">Attendance marked</div></div>
+      <div class="kpi amber"><div class="kpi-label">Pending Leave</div><div class="kpi-value" id="kpi-leave">0</div><div class="kpi-note">Awaiting approval</div></div>
+      <div class="kpi red"><div class="kpi-label">Payroll Net</div><div class="kpi-value" id="kpi-payroll">0 DA</div><div class="kpi-note">Latest run</div></div>
+    </section>
+    <nav class="tabs" aria-label="HR sections">
+      <button class="tab active" data-tab="employees">Employees</button>
+      <button class="tab" data-tab="attendance">Attendance</button>
+      <button class="tab" data-tab="leave">Leave Management</button>
+      <button class="tab" data-tab="payroll">Payroll</button>
+      <button class="tab" data-tab="reports">HR Reports</button>
+    </nav>
+
+    <section class="view" id="view-employees">
+      <div class="grid">
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Employee records</div><div class="surface-sub">Core employee data, contracts, departments, and salary basis.</div></div><button class="btn primary" onclick="openEmployeeModal()">Add employee</button></div><div class="surface-body"><table><thead><tr><th>Employee</th><th>Department</th><th>Status</th><th class="right">Base salary</th></tr></thead><tbody id="employee-rows"></tbody></table></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Departments</div><div class="surface-sub">Teams and active headcount.</div></div></div><div class="surface-body" id="department-list"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-attendance" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Attendance</div><div class="surface-sub">Daily presence, absence, late arrivals, and worked hours.</div></div></div><div class="surface-body"><table><thead><tr><th>Date</th><th>Employee</th><th>Status</th><th>Check in</th><th>Check out</th><th class="right">Hours</th></tr></thead><tbody id="attendance-rows"></tbody></table></div></div>
+    </section>
+
+    <section class="view" id="view-leave" hidden>
+      <div class="grid">
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Leave requests</div><div class="surface-sub">Annual, sick, maternity, unpaid, and approval status.</div></div></div><div class="surface-body"><table><thead><tr><th>Employee</th><th>Type</th><th>Period</th><th>Status</th></tr></thead><tbody id="leave-rows"></tbody></table></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Leave balances</div><div class="surface-sub">Entitled, used, and remaining days.</div></div></div><div class="surface-body" id="leave-balance-list"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-payroll" hidden>
+      <div class="grid">
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Payroll runs</div><div class="surface-sub">Monthly payroll batches and accounting status.</div></div><button class="btn secondary" onclick="renderPayrollPreview()">Preview current month</button></div><div class="surface-body"><table><thead><tr><th>Period</th><th>Status</th><th class="right">Gross</th><th class="right">Net</th></tr></thead><tbody id="payroll-run-rows"></tbody></table></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Algeria payroll calculator</div><div class="surface-sub">CNAS 9%, employer CNAS 26%, and IRG brackets.</div></div></div><div class="surface-body">
+          <div class="form-grid">
+            <div class="field"><label>Base salary</label><input id="calc-base" type="number" value="80000"></div>
+            <div class="field"><label>Allowances</label><input id="calc-allowances" type="number" value="10000"></div>
+            <div class="field"><label>Overtime</label><input id="calc-overtime" type="number" value="0"></div>
+            <div class="field"><label>Bonuses</label><input id="calc-bonuses" type="number" value="0"></div>
+            <div class="field"><label>Absence deduction</label><input id="calc-absence" type="number" value="0"></div>
+            <div class="field"><label>Advance deduction</label><input id="calc-advance" type="number" value="0"></div>
+          </div>
+          <div id="payroll-calc"></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-reports" hidden>
+      <div class="grid">
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">HR reports</div><div class="surface-sub">Management signals for headcount, attendance, leave, and payroll.</div></div></div><div class="surface-body" id="hr-report-list"></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Payroll accounting entry</div><div class="surface-sub">Posting structure for the payroll run.</div></div></div><div class="surface-body">
+          <div class="calc-row"><span>DR Salary expense</span><strong>Gross salary</strong></div>
+          <div class="calc-row"><span>CR CNAS payable</span><strong>Employee 9% + employer 26%</strong></div>
+          <div class="calc-row"><span>CR IRG payable</span><strong>Income tax</strong></div>
+          <div class="calc-row"><span>CR Employee advances</span><strong>Advance deduction</strong></div>
+          <div class="calc-row net"><span>CR Bank / Cash</span><strong>Net paid</strong></div>
+        </div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+
+<div class="modal" id="employee-modal">
+  <div class="modal-card">
+    <div class="modal-head"><div><div class="modal-title">New employee</div><div class="surface-sub">Create the core employee record.</div></div><button class="btn ghost" onclick="closeEmployeeModal()">Close</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Employee number</label><input id="emp-number" placeholder="EMP-001"></div>
+        <div class="field"><label>Full name</label><input id="emp-name" placeholder="Employee name"></div>
+        <div class="field"><label>Email</label><input id="emp-email" type="email"></div>
+        <div class="field"><label>Phone</label><input id="emp-phone"></div>
+        <div class="field"><label>National ID</label><input id="emp-national-id"></div>
+        <div class="field"><label>Hire date</label><input id="emp-hire-date" type="date"></div>
+        <div class="field"><label>Contract</label><select id="emp-contract"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="intern">Intern</option></select></div>
+        <div class="field"><label>Status</label><select id="emp-status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="terminated">Terminated</option></select></div>
+        <div class="field"><label>Base salary</label><input id="emp-salary" type="number" value="0"></div>
+        <div class="field"><label>Currency</label><input id="emp-currency" value="DZD"></div>
+        <div class="field"><label>Bank name</label><input id="emp-bank-name"></div>
+        <div class="field"><label>Bank account</label><input id="emp-bank-account"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn secondary" onclick="closeEmployeeModal()">Cancel</button><button class="btn primary" onclick="saveEmployee()">Save employee</button></div>
+  </div>
+</div>
+
 <script>
-window.addEventListener('storage', function(event){
-  if(event.key === 'tt_currency' || event.key === 'tt_company_id') window.location.reload();
-});
+const SUPABASE_URL='https://gqmpqpnboenmshuuopnp.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxbXBxcG5ib2VubXNodXVvcG5wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExNDY2NzUsImV4cCI6MjA2NjcyMjY3NX0.p6I_F8xNF4kEGtuj37pRQhCNvwyphkITa6QGmdfpaNE';
+let sb = null;
+function showSchemaNotice(message){
+  const el=document.getElementById('schema-notice');
+  if(!el)return;
+  el.textContent=message||'HR tables are not available yet. Run supabase_hr_payroll.sql in Supabase, then refresh this page.';
+  el.classList.add('show');
+}
+function getSupabase(){
+  if(sb)return sb;
+  if(!window.supabase||!window.supabase.createClient){
+    state.schemaReady=false;
+    showSchemaNotice('Supabase library did not load yet. Check your connection, then refresh this page.');
+    return null;
+  }
+  sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return sb;
+}
+const fmt = new Intl.NumberFormat('en-DZ',{maximumFractionDigits:0});
+const state={companyId:null,employees:[],departments:[],positions:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],schemaReady:true,loadErrors:[]};
+function money(v,c='DZD'){return fmt.format(Number(v||0))+' '+c}
+function text(v){return String(v ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function today(){return new Date().toISOString().slice(0,10)}
+function monthKey(){return new Date().toISOString().slice(0,7)}
+function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
+async function resolveCompany(){const client=getSupabase();if(!client)return null;const {data:{session}}=await client.auth.getSession();let raw=localStorage.getItem('tt_company_id');let stored=raw&&raw!=='null'&&raw!=='undefined'?raw:null;if(!session){state.companyId=stored;return state.companyId}const {data}=await client.from('company_members').select('company_id').eq('user_id',session.user.id).limit(1);state.companyId=data?.[0]?.company_id||stored;if(state.companyId)localStorage.setItem('tt_company_id',state.companyId);return state.companyId}
+async function safeLoad(table,select='*',order){
+  const client=getSupabase();
+  if(!client)return[];
+  try{
+    let q=client.from(table).select(select).eq('company_id',state.companyId);
+    if(order)q=q.order(order,{ascending:true});
+    const {data,error}=await q;
+    if(error)throw error;
+    return data||[];
+  }catch(e){
+    state.loadErrors.push({table,code:e?.code,message:e?.message});
+    console.warn('HR load skipped',table,e?.code||'',e?.message||e);
+    const msg=String(e?.message||'').toLowerCase();
+    if(e?.code==='42P01'||msg.includes('does not exist')||msg.includes('could not find the table')){
+      state.schemaReady=false;
+    }
+    return[];
+  }
+}
+async function loadAll(){state.schemaReady=true;state.loadErrors=[];await resolveCompany();if(!state.companyId){renderAll();return}const [employees,departments,positions,attendance,leaveRequests,leaveBalances,payrollRuns]=await Promise.all([
+safeLoad('employees','*','full_name'),safeLoad('departments','*','name'),safeLoad('positions','*','title'),safeLoad('attendance','*','date'),safeLoad('leave_requests','*','start_date'),safeLoad('leave_balances','*','year'),safeLoad('payroll_runs','*','period_month')]);
+Object.assign(state,{employees,departments,positions,attendance,leaveRequests,leaveBalances,payrollRuns});renderAll()}
+function depName(id){return state.departments.find(d=>d.id===id)?.name||'Unassigned'}
+function empName(id){return state.employees.find(e=>e.id===id)?.full_name||'Employee'}
+function statusPill(s){const cls=s==='active'||s==='approved'||s==='paid'||s==='present'?'good':s==='pending'||s==='draft'||s==='late'?'warn':s==='terminated'||s==='rejected'||s==='absent'?'bad':'neutral';return '<span class="pill '+cls+'">'+text(s||'unknown')+'</span>'}
+function renderEmployees(){const rows=document.getElementById('employee-rows');if(!state.employees.length){rows.innerHTML='<tr><td colspan="4"><div class="empty">No employees yet. Add your first employee after running the HR database script.</div></td></tr>';return}rows.innerHTML=state.employees.map(e=>'<tr><td><div class="td-main">'+text(e.full_name)+'</div><div class="td-sub">'+text(e.employee_number||'')+' Â· '+text(e.email||'No email')+'</div></td><td>'+text(depName(e.department_id))+'</td><td>'+statusPill(e.status)+'</td><td class="right"><strong>'+money(e.base_salary,e.currency||'DZD')+'</strong></td></tr>').join('')}
+function renderDepartments(){const host=document.getElementById('department-list');if(!state.departments.length){host.innerHTML='<div class="empty">Departments will appear here.</div>';return}host.innerHTML=state.departments.map(d=>{const n=state.employees.filter(e=>e.department_id===d.id).length;return '<div class="calc-row"><span>'+text(d.name)+'</span><strong>'+n+' employee(s)</strong></div>'}).join('')}
+function renderAttendance(){const rows=document.getElementById('attendance-rows');if(!state.attendance.length){rows.innerHTML='<tr><td colspan="6"><div class="empty">No attendance records yet.</div></td></tr>';return}rows.innerHTML=state.attendance.slice(-20).reverse().map(a=>'<tr><td>'+text(a.date)+'</td><td>'+text(empName(a.employee_id))+'</td><td>'+statusPill(a.status)+'</td><td>'+text(a.check_in||'-')+'</td><td>'+text(a.check_out||'-')+'</td><td class="right">'+Number(a.hours_worked||0).toFixed(1)+'</td></tr>').join('')}
+function renderLeave(){const rows=document.getElementById('leave-rows');if(!state.leaveRequests.length){rows.innerHTML='<tr><td colspan="4"><div class="empty">No leave requests yet.</div></td></tr>'}else{rows.innerHTML=state.leaveRequests.map(r=>'<tr><td>'+text(empName(r.employee_id))+'</td><td>'+text(r.leave_type_id||'Leave')+'</td><td>'+text(r.start_date)+' to '+text(r.end_date)+'</td><td>'+statusPill(r.status)+'</td></tr>').join('')}const host=document.getElementById('leave-balance-list');host.innerHTML=state.leaveBalances.length?state.leaveBalances.map(b=>'<div class="calc-row"><span>'+text(empName(b.employee_id))+'</span><strong>'+Number(b.remaining||0)+' day(s)</strong></div>').join(''):'<div class="empty">Leave balances will appear here.</div>'}
+function irg(taxable){let s=Math.max(Number(taxable||0),0),tax=0;if(s>80000){tax+=(s-80000)*.35;s=80000}if(s>40000){tax+=(s-40000)*.27;s=40000}if(s>20000){tax+=(s-20000)*.23}return Math.round(tax)}
+function calcPayroll(base,allowances,overtime,bonuses,absence,advance){const gross=Math.max(base+allowances+overtime+bonuses-absence-advance,0);const cnas=Math.round(gross*.09);const employer=Math.round(gross*.26);const tax=irg(gross-cnas);const net=Math.max(gross-cnas-tax,0);return{gross,cnas,employer,tax,net}}
+function renderCalculator(){const v=id=>Number(document.getElementById(id).value||0);const r=calcPayroll(v('calc-base'),v('calc-allowances'),v('calc-overtime'),v('calc-bonuses'),v('calc-absence'),v('calc-advance'));document.getElementById('payroll-calc').innerHTML='<div class="calc-row"><span>Gross salary</span><strong>'+money(r.gross)+'</strong></div><div class="calc-row"><span>CNAS employee 9%</span><strong>'+money(r.cnas)+'</strong></div><div class="calc-row"><span>CNAS employer 26%</span><strong>'+money(r.employer)+'</strong></div><div class="calc-row"><span>IRG</span><strong>'+money(r.tax)+'</strong></div><div class="calc-row net"><span>Net salary</span><strong>'+money(r.net)+'</strong></div>'}
+function renderPayroll(){const rows=document.getElementById('payroll-run-rows');if(!state.payrollRuns.length){rows.innerHTML='<tr><td colspan="4"><div class="empty">No payroll runs yet. Use the preview to estimate this month.</div></td></tr>'}else{rows.innerHTML=state.payrollRuns.map(r=>'<tr><td>'+text(r.period_month)+'</td><td>'+statusPill(r.status)+'</td><td class="right">'+money(r.total_gross)+'</td><td class="right"><strong>'+money(r.total_net)+'</strong></td></tr>').join('')}renderCalculator()}
+function renderPayrollPreview(){const gross=state.employees.reduce((s,e)=>s+Number(e.base_salary||0),0);const cnas=Math.round(gross*.09);const tax=irg(gross-cnas);const net=gross-cnas-tax;document.getElementById('payroll-run-rows').innerHTML='<tr><td>'+monthKey()+'</td><td>'+statusPill('draft')+'</td><td class="right">'+money(gross)+'</td><td class="right"><strong>'+money(net)+'</strong></td></tr>'}
+function renderReports(){const active=state.employees.filter(e=>e.status==='active').length;const absent=state.attendance.filter(a=>a.date===today()&&a.status==='absent').length;const pending=state.leaveRequests.filter(r=>r.status==='pending').length;document.getElementById('hr-report-list').innerHTML='<div class="calc-row"><span>Active headcount</span><strong>'+active+'</strong></div><div class="calc-row"><span>Absences today</span><strong>'+absent+'</strong></div><div class="calc-row"><span>Pending leave requests</span><strong>'+pending+'</strong></div><div class="calc-row"><span>Average base salary</span><strong>'+money(active?state.employees.reduce((s,e)=>s+Number(e.base_salary||0),0)/active:0)+'</strong></div>'}
+function renderKpis(){setText('kpi-employees',state.employees.filter(e=>e.status!=='terminated').length);setText('kpi-present',state.attendance.filter(a=>a.date===today()&&a.status==='present').length);setText('kpi-leave',state.leaveRequests.filter(r=>r.status==='pending').length);const latest=state.payrollRuns[state.payrollRuns.length-1];setText('kpi-payroll',money(latest?.total_net||0))}
+function renderAll(){document.getElementById('schema-notice').classList.toggle('show',!state.schemaReady);renderKpis();renderEmployees();renderDepartments();renderAttendance();renderLeave();renderPayroll();renderReports()}
+function openEmployeeModal(){document.getElementById('emp-hire-date').value=today();document.getElementById('employee-modal').classList.add('show')}
+function closeEmployeeModal(){document.getElementById('employee-modal').classList.remove('show')}
+async function saveEmployee(){if(!state.schemaReady){alert('Run supabase_hr_payroll.sql first.');return}const full_name=document.getElementById('emp-name').value.trim();if(!full_name){alert('Employee name is required.');return}const payload={company_id:state.companyId,employee_number:document.getElementById('emp-number').value.trim()||('EMP-'+String(state.employees.length+1).padStart(3,'0')),full_name,email:document.getElementById('emp-email').value.trim()||null,phone:document.getElementById('emp-phone').value.trim()||null,national_id:document.getElementById('emp-national-id').value.trim()||null,hire_date:document.getElementById('emp-hire-date').value||null,contract_type:document.getElementById('emp-contract').value,status:document.getElementById('emp-status').value,base_salary:Number(document.getElementById('emp-salary').value||0),currency:document.getElementById('emp-currency').value||'DZD',bank_name:document.getElementById('emp-bank-name').value.trim()||null,bank_account:document.getElementById('emp-bank-account').value.trim()||null};const client=getSupabase();if(!client){alert('Supabase library did not load. Refresh the page.');return}const{error}=await client.from('employees').insert(payload);if(error){alert(error.message);return}closeEmployeeModal();await loadAll()}
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.view').forEach(v=>v.hidden=true);document.getElementById('view-'+btn.dataset.tab).hidden=false}));
+['calc-base','calc-allowances','calc-overtime','calc-bonuses','calc-absence','calc-advance'].forEach(id=>document.addEventListener('input',e=>{if(e.target&&e.target.id===id)renderCalculator()}));
+document.getElementById('new-employee-btn').addEventListener('click',openEmployeeModal);
+document.getElementById('refresh-btn').addEventListener('click',loadAll);
+window.addEventListener('load',loadAll);
 </script>
 <script>
-(function(){
-  const transactionPages = ['invoices.html','customers.html','expenses.html','suppliers.html'];
-  const accountingPages = transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);
-
-  function pageName(){
-    const raw = window.location.pathname.split('/').pop() || 'dashboard.html';
-    return decodeURIComponent(raw).toLowerCase();
-  }
-
-  function setDropdown(name, open){
-    const button = document.querySelector('[data-sidebar-toggle="' + name + '"]');
-    if(!button) return;
-    const menu = document.getElementById(button.getAttribute('aria-controls'));
-    if(!menu) return;
-    button.classList.toggle('open', open);
-    button.setAttribute('aria-expanded', open ? 'true' : 'false');
-    menu.hidden = !open;
-  }
-
-  function initSidebarDropdowns(){
-    const current = pageName();
-    document.querySelectorAll('.sb-nav a[href]').forEach(link => {
-      const href = (link.getAttribute('href') || '').split('?')[0].toLowerCase();
-      link.classList.toggle('active', href === current);
-    });
-
-    const isTransaction = transactionPages.includes(current);
-    const isAccounting = accountingPages.includes(current);
-    setDropdown('accounting', isAccounting);
-    setDropdown('transactions', isTransaction);
-
-    const accountingToggle = document.querySelector('[data-sidebar-toggle="accounting"]');
-    const transactionsToggle = document.querySelector('[data-sidebar-toggle="transactions"]');
-    if(accountingToggle) accountingToggle.classList.toggle('active', isAccounting);
-    if(transactionsToggle) transactionsToggle.classList.toggle('active', isTransaction);
-  }
-
-  document.addEventListener('click', event => {
-    const toggle = event.target.closest('[data-sidebar-toggle]');
-    if(!toggle) return;
-    event.preventDefault();
-    const name = toggle.getAttribute('data-sidebar-toggle');
-    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-    setDropdown(name, !isOpen);
-    if(name === 'accounting' && isOpen){
-      setDropdown('transactions', false);
-    }
-  });
-
-  window.addEventListener('DOMContentLoaded', initSidebarDropdowns);
-  window.initSidebarDropdowns = initSidebarDropdowns;
-})();
+(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
 
 
 
