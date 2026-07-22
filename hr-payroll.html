@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TadbirTech - HR & Payroll</title>
+<title>TadbirTech - Employee List</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -35,8 +35,46 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;colo
 .td-main{font-weight:800}.td-sub{font-size:11px;color:#94a3b8;margin-top:2px}.right{text-align:right}.pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;padding:4px 8px;border-radius:999px}.pill.good{background:#dcfce7;color:#166534}.pill.warn{background:#fef9c3;color:#854d0e}.pill.bad{background:#fee2e2;color:#991b1b}.pill.neutral{background:#EEF3F8;color:#38536F}
 .empty{padding:22px;text-align:center;color:#7a93ae;font-size:12px;background:#FAFBFD;border:.5px dashed #DDE6EF;border-radius:10px}.notice{display:none;margin-bottom:14px;padding:12px 14px;border-radius:11px;border:.5px solid #FECACA;background:#FEF2F2;color:#991b1b;font-size:12px;font-weight:700}.notice.show{display:block}
 .calc-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:.5px solid #f0f4f8;font-size:12px}.calc-row:last-child{border-bottom:0}.calc-row strong{font-weight:800}.calc-row.net strong{font-size:16px;color:#1a8fd1}
-.modal{position:fixed;inset:0;background:rgba(13,31,60,.42);display:none;align-items:center;justify-content:center;padding:20px;z-index:200}.modal.show{display:flex}.modal-card{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;border:.5px solid #dbe5ef;box-shadow:0 20px 60px rgba(13,31,60,.25)}.modal-head{padding:16px 18px;border-bottom:.5px solid #eef3f8;display:flex;justify-content:space-between;gap:12px}.modal-title{font-size:16px;font-weight:800}.modal-body{padding:18px}.modal-foot{padding:14px 18px;border-top:.5px solid #eef3f8;display:flex;justify-content:flex-end;gap:8px}
+.modal{position:fixed;inset:0;background:rgba(13,31,60,.42);display:none;align-items:center;justify-content:center;padding:20px;z-index:200}.modal.show{display:flex}.modal-card{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;border:.5px solid #dbe5ef;box-shadow:0 20px 60px rgba(13,31,60,.25)}.modal-card.wide{width:min(980px,100%)}.modal-head{padding:16px 18px;border-bottom:.5px solid #eef3f8;display:flex;justify-content:space-between;gap:12px}.modal-title{font-size:16px;font-weight:800}.modal-body{padding:18px}.modal-foot{padding:14px 18px;border-top:.5px solid #eef3f8;display:flex;justify-content:flex-end;gap:8px}.row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}.link-btn{border:.5px solid #dde6ef;background:#fff;color:#38536F;border-radius:8px;padding:6px 8px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer}.link-btn:hover{border-color:#1a8fd1;color:#1a8fd1}.link-btn.danger{border-color:#fecaca;color:#b42318}.history-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.timeline-item{padding:10px 0;border-bottom:.5px solid #eef3f8}.timeline-item:last-child{border-bottom:0}.timeline-title{font-size:12px;font-weight:800;color:#0D1F3C}.timeline-meta{font-size:11px;color:#7a93ae;margin-top:3px}.mini-section-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#7a93ae;margin:12px 0 8px}@media(max-width:820px){.history-grid{grid-template-columns:1fr}}
 @media(max-width:1100px){.grid,.kpi-strip{grid-template-columns:1fr 1fr}}@media(max-width:720px){.grid,.kpi-strip,.form-grid{grid-template-columns:1fr}.field.span-2{grid-column:auto}.content{padding:16px}}
+
+
+/* HR three-module navigation */
+.module-tabs{margin-bottom:8px}
+.module-tab{border:0;background:transparent;color:#607896;border-radius:9px;height:38px;padding:0 16px;font-family:inherit;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap}
+.module-tab.active{background:#fff;color:#0D1F3C;box-shadow:0 2px 10px rgba(13,31,60,.1)}
+.subnav{display:flex;gap:4px;width:max-content;background:#F6F9FC;border:.5px solid #DDE6EF;border-radius:12px;padding:4px;margin-bottom:16px;max-width:100%;overflow:auto}
+.subnav[hidden]{display:none!important}
+.subnav .tab{height:34px;font-size:11px}
+.legal-tag{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:#EEF3F8;color:#38536F;font-size:9px;font-weight:900;padding:3px 7px;margin-left:6px}
+.module-empty{padding:22px;text-align:center;color:#7a93ae;font-size:12px;background:#FAFBFD;border:.5px dashed #DDE6EF;border-radius:10px}
+.compact-list{display:grid;gap:9px}.compact-item{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:11px 0;border-bottom:.5px solid #eef3f8}.compact-item:last-child{border-bottom:0}.compact-title{font-size:12px;font-weight:900}.compact-meta{font-size:11px;color:#7a93ae;margin-top:3px}.compact-value{font-size:12px;font-weight:900;color:#0D1F3C;text-align:right}
+/* Employee Records MVP: list, org chart, and document vault */
+.mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.mini-card{background:#fff;border:.5px solid #e2eaf2;border-radius:12px;padding:14px 15px;box-shadow:0 1px 8px rgba(13,31,60,.04)}
+.mini-kicker{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#7a93ae}
+.mini-value{font-size:22px;font-weight:900;color:#0D1F3C;margin-top:7px}
+.mini-note{font-size:11px;color:#6b84a0;margin-top:4px}
+.org-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.org-team{background:#fff;border:.5px solid #e2eaf2;border-radius:13px;box-shadow:0 1px 8px rgba(13,31,60,.04);overflow:hidden}
+.org-head{padding:14px 16px;background:#FAFBFD;border-bottom:.5px solid #eef3f8}
+.org-title{font-size:14px;font-weight:900}
+.org-sub{font-size:11px;color:#7a93ae;margin-top:3px}
+.org-body{padding:12px 16px}
+.org-person{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:.5px solid #eef3f8}
+.org-person:last-child{border-bottom:0}
+.org-name{font-size:12px;font-weight:900}
+.org-role{font-size:11px;color:#7a93ae;margin-top:2px}
+.doc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.doc-card{background:#fff;border:.5px solid #e2eaf2;border-radius:12px;padding:14px 15px;box-shadow:0 1px 8px rgba(13,31,60,.04)}
+.doc-type{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#1a8fd1}
+.doc-title{font-size:13px;font-weight:900;margin-top:7px}
+.doc-meta{font-size:11px;color:#7a93ae;margin-top:5px;line-height:1.45}
+.doc-owner{font-size:12px;font-weight:800;margin-top:10px;color:#0D1F3C}
+.demo-banner{display:none;margin-bottom:14px;padding:12px 14px;border-radius:11px;border:.5px solid #bfdbfe;background:#eff6ff;color:#1e3a8a;font-size:12px;font-weight:800}
+.demo-banner.show{display:block}
+@media(max-width:1100px){.mini-grid,.doc-grid,.org-board{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.mini-grid,.doc-grid,.org-board{grid-template-columns:1fr}}
 /* Global sidebar consistency lock */
 .app{grid-template-columns:220px 1fr!important}
 .sidebar{width:220px!important;background:#0D1F3C!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important}
@@ -57,7 +95,17 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;colo
 .sb-foot{padding:10px!important;border-top:.5px solid rgba(255,255,255,.08)!important}
 .sb-logout{display:flex!important;align-items:center!important;gap:8px!important;font-size:12px!important;color:rgba(255,255,255,.4)!important;padding:8px 10px!important;border-radius:8px!important;cursor:pointer!important;border:none!important;background:none!important;width:100%!important;transition:all .2s!important;font-family:inherit!important}
 .sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
-@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}} /* Sidebar dropdown behavior */
+@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}} 
+/* Positions and grades */
+.grade-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grade-card{background:#fff;border:.5px solid #e2eaf2;border-radius:12px;padding:14px 15px;box-shadow:0 1px 8px rgba(13,31,60,.04)}
+.grade-title{font-size:13px;font-weight:900;color:#0D1F3C}
+.grade-meta{font-size:11px;color:#7a93ae;margin-top:5px;line-height:1.45}
+.grade-band{display:flex;justify-content:space-between;gap:10px;margin-top:11px;padding-top:10px;border-top:.5px solid #eef3f8;font-size:11px;color:#38536F}
+.grade-band strong{font-size:12px;color:#0D1F3C}
+@media(max-width:1100px){.grade-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.grade-grid{grid-template-columns:1fr}}
+/* Sidebar dropdown behavior */
 .sb-dropdown-toggle{width:100%!important;border:0!important;background:transparent!important;font-family:inherit!important}
 .sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.16)!important;border:.5px solid rgba(26,143,209,.28)!important}
 .sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;border-right:1.5px solid rgba(255,255,255,.55)!important;border-bottom:1.5px solid rgba(255,255,255,.55)!important;transform:rotate(45deg)!important;transition:transform .18s ease,border-color .18s ease!important}
@@ -73,94 +121,261 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;colo
 .sb-item.active .sb-dot{background:#1a8fd1!important} /* Restored TadbirTech sidebar logo */
 .sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
 .sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important} 
+
+
+/* TadbirTech HR Employees features */
+body{font-family:'Inter',system-ui,sans-serif!important;background:#F4F7FB!important;color:#0D1F3C!important}
+.main.employee-command{background:#F4F7FB!important}
+.employee-command .topbar{height:62px!important;padding:0 28px!important;background:#fff!important;border-bottom:.5px solid #DDE6EF!important}
+.employee-command .content{padding:22px 28px 36px!important}
+.employee-command .kpi-strip,.employee-command .module-tabs,.employee-command .subnav{display:none!important}
+.employee-feature-panel{background:#fff;border:.5px solid #E2EAF2;border-radius:8px;box-shadow:0 1px 8px rgba(13,31,60,.04);overflow:hidden}
+.employee-feature-panel .surface-head{background:#fff;border-bottom:.5px solid #DDE6EF}
+.employee-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.employee-search{position:relative;flex:1;min-width:240px;max-width:520px}
+.employee-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:#5B7594}
+.employee-search input{width:100%;height:38px;border:.5px solid #DDE6EF;border-radius:8px;background:#fff;padding:0 12px 0 36px;font-family:inherit;font-size:13px;color:#0D1F3C;outline:none}
+.employee-search input:focus{border-color:#1a8fd1;box-shadow:0 0 0 3px rgba(26,143,209,.08)}
+.employee-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.employee-create,.employee-options{border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;height:38px;padding:0 14px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:all .2s}
+.employee-create{background:#1a8fd1;color:#fff}
+.employee-create:hover{background:#1476b0;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,143,209,.3)}
+.employee-options{background:#fff;color:#0D1F3C;border:.5px solid #DDE6EF}
+.employee-options:hover{border-color:#1a8fd1;color:#1a8fd1}
+.employee-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;color:#5B7594}
+.employee-filters strong{font-size:12px;color:#0D1F3C}
+.filter-chip{height:28px;border:.5px solid #DDE6EF;border-radius:8px;background:#fff;color:#5B7594;font-size:12px;font-weight:700;padding:0 10px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit}
+.filter-chip.active{background:#EAF8EF;color:#117A43;border-color:#B7E1C8}
+.filter-box{width:13px;height:13px;border:.5px solid #9FB0C2;border-radius:3px;background:#fff;display:inline-block}
+.filter-chip.active .filter-box{border-color:#117A43;background:#fff}
+.employee-table-wrap{overflow:auto;border:.5px solid #EEF3F8;border-radius:8px}
+.employee-table{width:100%;border-collapse:collapse;min-width:940px}
+.employee-table th{font-size:10px;font-weight:700;color:#5B7594;text-transform:uppercase;letter-spacing:.08em;padding:11px 14px;text-align:left;border-bottom:.5px solid #DDE6EF;background:#FAFBFC;white-space:nowrap}
+.employee-table td{font-size:13px;color:#0D1F3C;padding:13px 14px;border-bottom:.5px solid #F4F7FB;vertical-align:middle}
+.employee-table tr:last-child td{border-bottom:none}
+.employee-table tr:hover td{background:#FAFCFE}
+.employee-table .select-col{width:34px;text-align:center}
+.row-check{width:15px;height:15px;border:.5px solid #B7C3D0;border-radius:4px;background:#fff;display:inline-block}
+.job-cell{max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.email-cell{color:#5B7594}
+.status-active{font-weight:700;color:#0D1F3C}
+.employee-menu{border:.5px solid #DDE6EF;background:#fff;color:#38536F;border-radius:8px;height:30px;padding:0 9px;font-family:inherit;font-size:11px;font-weight:800;cursor:pointer}
+.employee-menu:hover{border-color:#1a8fd1;color:#1a8fd1}
+.employee-empty{padding:28px 18px;text-align:center;color:#5B7594;background:#FAFBFC;border:.5px dashed #DDE6EF;border-radius:8px}
+
+/* Accounting-style sidebar lock */
+.app{grid-template-columns:220px 1fr!important}
+.sidebar{width:220px!important;background:#0D1F3C!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important;color:#fff!important}
+.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+.sb-user{padding:12px 14px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;gap:10px!important}
+.sb-avatar{width:32px!important;height:32px!important;border-radius:50%!important;background:#1a8fd1!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;font-weight:700!important;color:#fff!important;flex-shrink:0!important}
+.sb-name,.sb-user-name{font-size:12px!important;font-weight:600!important;color:#fff!important}
+.sb-role,.sb-user-role{font-size:10px!important;color:rgba(255,255,255,.4)!important}
+.sb-nav{padding:10px 40px 10px 10px!important;flex:1!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important;margin-right:-32px!important}
+.sb-nav::-webkit-scrollbar{width:18px!important}.sb-nav::-webkit-scrollbar-track,.sb-nav::-webkit-scrollbar-thumb{background:transparent!important;border:none!important}
+.sb-sec,.sb-section{font-size:9px!important;font-weight:700!important;color:rgba(255,255,255,.25)!important;text-transform:uppercase!important;letter-spacing:1px!important;padding:0 8px!important;margin:10px 0 4px!important}
+.sb-item{display:flex!important;align-items:center!important;gap:10px!important;width:100%!important;padding:9px 10px!important;border-radius:8px!important;cursor:pointer!important;margin-bottom:2px!important;text-decoration:none!important;transition:all .2s!important;color:rgba(255,255,255,.65)!important;background:transparent!important;border:0!important;font-family:inherit!important;text-align:left!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important}
+.sb-item.active{background:rgba(26,143,209,.2)!important;border:.5px solid rgba(26,143,209,.3)!important;color:#fff!important}
+.sb-item svg{width:15px!important;height:15px!important;flex-shrink:0!important;opacity:.7!important}
+.sb-item.active svg{opacity:1!important}
+.sb-item-text,.sb-item span{font-size:13px!important;color:rgba(255,255,255,.65)!important;font-weight:500!important}
+.sb-item.active .sb-item-text,.sb-item.active span{color:#fff!important}
+.sb-dropdown-toggle{width:100%!important;border:0!important;background:transparent!important;font-family:inherit!important}
+.sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.16)!important;border:.5px solid rgba(26,143,209,.28)!important}
+.sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;border-right:1.5px solid rgba(255,255,255,.55)!important;border-bottom:1.5px solid rgba(255,255,255,.55)!important;transform:rotate(45deg)!important;transition:transform .18s ease,border-color .18s ease!important;flex:0 0 7px!important}
+.sb-dropdown-toggle.open .sb-chevron{transform:rotate(225deg)!important;border-color:#fff!important}
+.sb-submenu{display:grid!important;gap:2px!important;margin:2px 0 6px 16px!important}
+.sb-submenu[hidden]{display:none!important}
+.sb-submenu .sb-item{padding:7px 10px!important}
+.sb-submenu .sb-item svg{width:13px!important;height:13px!important}
+.sb-submenu .sb-item-text{font-size:12px!important}
+.sb-sub-toggle{background:rgba(255,255,255,.04)!important}
+.sb-submenu-nested{margin:2px 0 6px 14px!important}
+.sb-dot{width:6px!important;height:6px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;display:inline-block!important;flex:0 0 6px!important;margin-left:4px!important}
+.sb-item.active .sb-dot{background:#1a8fd1!important}
+.sb-foot{padding:10px!important;border-top:.5px solid rgba(255,255,255,.08)!important}
+.sb-bottom{display:none!important}
+.sb-logout{display:flex!important;align-items:center!important;gap:8px!important;font-size:12px!important;color:rgba(255,255,255,.4)!important;padding:8px 10px!important;border-radius:8px!important;cursor:pointer!important;border:none!important;background:none!important;width:100%!important;transition:all .2s!important;font-family:inherit!important}
+.sb-logout svg{width:16px!important;height:16px!important;min-width:16px!important;min-height:16px!important;flex:0 0 16px!important;display:block!important;opacity:.8!important}
+.sb-logout span{font-size:12px!important;line-height:1!important;color:inherit!important}
+.sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
+@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="sidebar">
-<div class="sb-logo">
-<img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-light.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
-</div>
-<div class="sb-user">
-<div class="sb-avatar" id="sb-av">T</div>
-<div><div class="sb-user-name" id="sb-name">Team</div><div class="sb-user-role">Administrator</div></div>
-</div>
-<nav class="sb-nav">
-<div class="sb-sec">Main</div>
-<a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-<span class="sb-item-text">Dashboard</span>
-</a>
-<div class="sb-sec">Modules</div>
-<button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
-<span class="sb-item-text">Accounting</span>
-<span class="sb-chevron" aria-hidden="true"></span>
-</button>
-<div class="sb-submenu" id="sidebar-accounting-menu" hidden>
-<button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
-<span class="sb-item-text">Transactions</span>
-<span class="sb-chevron" aria-hidden="true"></span>
-</button>
-<div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
-<a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
-<a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
-<a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
-<a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
-</div>
-<a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
-<a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
-<a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
-<a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
-<a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
-</div>
-<a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
-<a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
-<div class="sb-sec">Account</div>
-<a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
-<a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
-<a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
-</nav>
-<div class="sb-bottom">
-<button class="sb-logout" onclick="handleLogout()">
-<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" style="width:14px;height:14px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-<span>Sign out</span>
-</button>
-</div>
-</div>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-light.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
+  </div>
+  <div class="sb-user">
+    <div class="sb-avatar" id="sb-av">T</div>
+    <div><div class="sb-name" id="sb-name">Team</div><div class="sb-role">Administrator</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Main</div>
+    <a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span class="sb-item-text">Dashboard</span>
+    </a>
 
-<main class="main">
+    <div class="sb-sec">Modules</div>
+    <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+      <span class="sb-item-text">Accounting</span>
+      <span class="sb-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="sb-submenu" id="sidebar-accounting-menu" hidden>
+      <button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+        <span class="sb-item-text">Transactions</span>
+        <span class="sb-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
+        <a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
+        <a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
+        <a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
+        <a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
+      </div>
+      <a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
+      <a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
+      <a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
+      <a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
+      <a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
+    </div>
+
+    <a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
+
+    <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="hrm" aria-expanded="false" aria-controls="sidebar-hrm-menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span class="sb-item-text">Human Resources Management</span>
+      <span class="sb-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="sb-submenu" id="sidebar-hrm-menu" hidden>
+      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><span class="sb-dot"></span><span class="sb-item-text">Employees</span></a>
+    </div>
+
+    <div class="sb-sec">Account</div>
+    <a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
+    <a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
+    <a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
+  </nav>
+  <div class="sb-foot">
+    <button class="sb-logout" onclick="handleLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Log out</span>
+    </button>
+  </div>
+</aside>
+<main class="main employee-command">
   <div class="topbar">
-    <div><div class="topbar-title">HR & Payroll</div><div class="topbar-sub" id="company-label">Employees, attendance, leave, payroll, and HR reports.</div></div>
+    <div><div class="topbar-title">Employee List</div><div class="topbar-sub" id="company-label">Search, filter, create, and open complete employee records.</div></div>
     <div class="topbar-actions">
       <button class="btn secondary" id="refresh-btn">Refresh</button>
-      <button class="btn primary" id="new-employee-btn">New employee</button>
+      <button class="btn primary" id="new-employee-btn">Create employee</button>
     </div>
   </div>
   <div class="content">
-    <div class="notice" id="schema-notice">HR tables are not available yet. Run supabase_hr_payroll.sql in Supabase, then refresh this page.</div>
+    <div class="notice" id="schema-notice">Showing demo Employee List until Supabase HR tables are connected.</div>
     <section class="kpi-strip">
       <div class="kpi blue"><div class="kpi-label">Employees</div><div class="kpi-value" id="kpi-employees">0</div><div class="kpi-note">Active records</div></div>
       <div class="kpi green"><div class="kpi-label">Present Today</div><div class="kpi-value" id="kpi-present">0</div><div class="kpi-note">Attendance marked</div></div>
       <div class="kpi amber"><div class="kpi-label">Pending Leave</div><div class="kpi-value" id="kpi-leave">0</div><div class="kpi-note">Awaiting approval</div></div>
       <div class="kpi red"><div class="kpi-label">Payroll Net</div><div class="kpi-value" id="kpi-payroll">0 DA</div><div class="kpi-note">Latest run</div></div>
     </section>
-    <nav class="tabs" aria-label="HR sections">
-      <button class="tab active" data-tab="employees">Employees</button>
-      <button class="tab" data-tab="attendance">Attendance</button>
-      <button class="tab" data-tab="leave">Leave Management</button>
-      <button class="tab" data-tab="payroll">Payroll</button>
-      <button class="tab" data-tab="reports">HR Reports</button>
+    <nav class="tabs module-tabs" aria-label="HR modules">
+      <button class="module-tab active" data-module="employee-records">Employee List</button>
+      <button class="module-tab" data-module="payroll-compensation">Payroll &amp; Compensation</button>
+      <button class="module-tab" data-module="time-attendance">Time &amp; Attendance</button>
+    </nav>
+
+    <nav class="subnav" data-module-menu="employee-records" aria-label="Employee List sub-pages">
+      <button class="tab active" data-tab="employees">Employee list <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="orgchart">Organisation chart <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="documents">Document vault <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="positions">Positions &amp; grades</button>
+    </nav>
+
+    <nav class="subnav" data-module-menu="payroll-compensation" aria-label="Payroll and Compensation sub-pages" hidden>
+      <button class="tab" data-tab="payroll">Payroll run <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="payslips">Pay slips <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="irg">IRG calculation <span class="legal-tag">DZ</span></button>
+      <button class="tab" data-tab="cnas">CNAS / CASNOS <span class="legal-tag">DZ</span></button>
+      <button class="tab" data-tab="livrepaie">Livre de paie <span class="legal-tag">DZ</span></button>
+      <button class="tab" data-tab="advances">Advances &amp; loans <span class="legal-tag">Later</span></button>
+      <button class="tab" data-tab="endservice">End-of-service calc</button>
+    </nav>
+
+    <nav class="subnav" data-module-menu="time-attendance" aria-label="Time and Attendance sub-pages" hidden>
+      <button class="tab" data-tab="leave">Leave requests <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="attendance">Absence log <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="holidays">Holiday calendar <span class="legal-tag">DZ</span></button>
+      <button class="tab" data-tab="schedules">Work schedules <span class="legal-tag">Core</span></button>
+      <button class="tab" data-tab="attestations">Attestations <span class="legal-tag">DZ</span></button>
+      <button class="tab" data-tab="biometric">Biometric sync</button>
     </nav>
 
     <section class="view" id="view-employees">
-      <div class="grid">
-        <div class="surface"><div class="surface-head"><div><div class="surface-title">Employee records</div><div class="surface-sub">Core employee data, contracts, departments, and salary basis.</div></div><button class="btn primary" onclick="openEmployeeModal()">Add employee</button></div><div class="surface-body"><table><thead><tr><th>Employee</th><th>Department</th><th>Status</th><th class="right">Base salary</th></tr></thead><tbody id="employee-rows"></tbody></table></div></div>
-        <div class="surface"><div class="surface-head"><div><div class="surface-title">Departments</div><div class="surface-sub">Teams and active headcount.</div></div></div><div class="surface-body" id="department-list"></div></div>
+      <div class="demo-banner" id="demo-banner">Demo employees are loaded until Supabase HR tables are connected.</div>
+      <div class="employee-feature-panel">
+        <div class="surface-head">
+          <div>
+            <div class="surface-title">Employees</div>
+            <div class="surface-sub">Search, filter, create, and open complete employee records.</div>
+          </div>
+          <div class="employee-actions">
+            <button class="employee-options" type="button">Options</button>
+            <button class="employee-create" type="button" onclick="location.href='add-employee.html'">Create employee +</button>
+          </div>
+        </div>
+        <div class="surface-body">
+          <div class="employee-toolbar">
+            <label class="employee-search" aria-label="Search employees">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input id="employee-search" type="search" placeholder="Search employees">
+            </label>
+          </div>
+          <div class="employee-filters">
+            <strong>Filters:</strong>
+            <button class="filter-chip active" type="button" data-employee-filter="active"><span class="filter-box"></span> Active</button>
+            <button class="filter-chip" type="button" data-employee-filter="archived"><span class="filter-box"></span> Archived</button>
+          </div>
+          <div class="employee-table-wrap">
+            <table class="employee-table">
+              <thead>
+                <tr>
+                  <th class="select-col"><span class="row-check"></span></th>
+                  <th>Last name</th>
+                  <th>First name</th>
+                  <th>Job position</th>
+                  <th>Phone number</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="employee-rows"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
+      <div id="department-list" hidden></div>
     </section>
 
+    <section class="view" id="view-orgchart" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Organizational chart</div><div class="surface-sub">Departments, reporting lines, managers, and employee profile access.</div></div></div><div class="surface-body"><div class="org-board" id="org-chart"></div></div></div>
+    </section>
+
+    <section class="view" id="view-documents" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Document vault</div><div class="surface-sub">CVs, diplomas, contracts, work certificates, and HR files by employee.</div></div></div><div class="surface-body"><div class="doc-grid" id="document-vault"></div></div></div>
+    </section>
+
+
+    <section class="view" id="view-positions" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Positions &amp; grades</div><div class="surface-sub">Job titles, grades, salary bands, departments, and current headcount.</div></div></div><div class="surface-body"><div class="grade-grid" id="positions-grade-list"></div></div></div>
+    </section>
     <section class="view" id="view-attendance" hidden>
       <div class="surface"><div class="surface-head"><div><div class="surface-title">Attendance</div><div class="surface-sub">Daily presence, absence, late arrivals, and worked hours.</div></div></div><div class="surface-body"><table><thead><tr><th>Date</th><th>Employee</th><th>Status</th><th>Check in</th><th>Check out</th><th class="right">Hours</th></tr></thead><tbody id="attendance-rows"></tbody></table></div></div>
     </section>
@@ -172,6 +387,25 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;colo
       </div>
     </section>
 
+
+    <section class="view" id="view-holidays" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Holiday calendar <span class="legal-tag">DZ</span></div><div class="surface-sub">National, religious, and company holidays.</div></div></div><div class="surface-body"><div class="compact-list"><div class="compact-item"><div><div class="compact-title">Independence Day</div><div class="compact-meta">National holiday</div></div><div class="compact-value">2026-07-05</div></div><div class="compact-item"><div><div class="compact-title">Revolution Day</div><div class="compact-meta">National holiday</div></div><div class="compact-value">2026-11-01</div></div><div class="compact-item"><div><div class="compact-title">Company annual closure</div><div class="compact-meta">Company day</div></div><div class="compact-value">2026-12-31</div></div></div></div></div>
+    </section>
+
+    <section class="view" id="view-schedules" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Work schedules</div><div class="surface-sub">Shifts, rotations, and overtime rules.</div></div></div><div class="surface-body"><div class="compact-list"><div class="compact-item"><div><div class="compact-title">Standard office</div><div class="compact-meta">Sunday to Thursday, 08:30 to 17:00, 60 min break.</div></div><div class="compact-value">Core</div></div><div class="compact-item"><div><div class="compact-title">Operations shift</div><div class="compact-meta">Rotating early/late schedule for operations team.</div></div><div class="compact-value">Core</div></div><div class="compact-item"><div><div class="compact-title">Overtime rule</div><div class="compact-meta">Hours beyond planned schedule flagged for payroll review.</div></div><div class="compact-value">Draft</div></div></div></div></div>
+    </section>
+
+    <section class="view" id="view-attestations" hidden>
+      <div class="grid">
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Attestations <span class="legal-tag">DZ</span></div><div class="surface-sub">Work, leave, and salary certificates.</div></div><button class="btn secondary">Generate draft</button></div><div class="surface-body"><div class="compact-list"><div class="compact-item"><div><div class="compact-title">Work attestation</div><div class="compact-meta">Certificate of employment from employee record.</div></div><div class="compact-value">Ready</div></div><div class="compact-item"><div><div class="compact-title">Leave attestation</div><div class="compact-meta">Based on approved leave requests.</div></div><div class="compact-value">Draft</div></div><div class="compact-item"><div><div class="compact-title">Salary certificate</div><div class="compact-meta">Based on confirmed payroll data.</div></div><div class="compact-value">Draft</div></div></div></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Document vault link</div><div class="surface-sub">Generated attestations should be archived per employee.</div></div></div><div class="surface-body"><div class="module-empty">Generated attestations will save into the employee document vault.</div></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-biometric" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Biometric sync</div><div class="surface-sub">Import from fingerprint devices. Later integration.</div></div></div><div class="surface-body"><div class="module-empty">Later: CSV/device import, employee code mapping, duplicate detection, and import error report.</div></div></div>
+    </section>
     <section class="view" id="view-payroll" hidden>
       <div class="grid">
         <div class="surface"><div class="surface-head"><div><div class="surface-title">Payroll runs</div><div class="surface-sub">Monthly payroll batches and accounting status.</div></div><button class="btn secondary" onclick="renderPayrollPreview()">Preview current month</button></div><div class="surface-body"><table><thead><tr><th>Period</th><th>Status</th><th class="right">Gross</th><th class="right">Net</th></tr></thead><tbody id="payroll-run-rows"></tbody></table></div></div>
@@ -189,6 +423,36 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;colo
       </div>
     </section>
 
+
+    <section class="view" id="view-payslips" hidden>
+      <div class="grid">
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Pay slips</div><div class="surface-sub">Generate PDF pay slips and prepare email sending later.</div></div><button class="btn secondary">Generate PDF preview</button></div><div class="surface-body"><div class="compact-list" id="payslip-list"></div></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Payslip content</div><div class="surface-sub">What the generated document should include.</div></div></div><div class="surface-body"><div class="compact-list"><div class="compact-item"><div><div class="compact-title">Employee identity</div><div class="compact-meta">Name, employee number, position, period.</div></div><div class="compact-value">Core</div></div><div class="compact-item"><div><div class="compact-title">Salary lines</div><div class="compact-meta">Gross, CNAS, IRG, deductions, net payable.</div></div><div class="compact-value">Core</div></div><div class="compact-item"><div><div class="compact-title">Distribution</div><div class="compact-meta">Email sending after PDF generation is stable.</div></div><div class="compact-value">Later</div></div></div></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-irg" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">IRG calculation <span class="legal-tag">DZ</span></div><div class="surface-sub">Algerian income tax brackets used in payroll calculation.</div></div></div><div class="surface-body"><div class="compact-list"><div class="compact-item"><div><div class="compact-title">0 to 20,000 DZD</div><div class="compact-meta">Non-taxable bracket.</div></div><div class="compact-value">0%</div></div><div class="compact-item"><div><div class="compact-title">20,001 to 40,000 DZD</div><div class="compact-meta">First taxable bracket.</div></div><div class="compact-value">23%</div></div><div class="compact-item"><div><div class="compact-title">40,001 to 80,000 DZD</div><div class="compact-meta">Middle taxable bracket.</div></div><div class="compact-value">27%</div></div><div class="compact-item"><div><div class="compact-title">Above 80,000 DZD</div><div class="compact-meta">Higher taxable bracket.</div></div><div class="compact-value">35%</div></div></div></div></div>
+    </section>
+
+    <section class="view" id="view-cnas" hidden>
+      <div class="grid">
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">CNAS / CASNOS <span class="legal-tag">DZ</span></div><div class="surface-sub">Social contribution tracking for payroll compliance.</div></div></div><div class="surface-body"><div class="compact-list"><div class="compact-item"><div><div class="compact-title">CNAS employee</div><div class="compact-meta">Deducted from gross salary.</div></div><div class="compact-value">9%</div></div><div class="compact-item"><div><div class="compact-title">CNAS employer</div><div class="compact-meta">Employer social charge tracked separately.</div></div><div class="compact-value">26%</div></div><div class="compact-item"><div><div class="compact-title">CASNOS</div><div class="compact-meta">Later for non-salaried manager/owner situations.</div></div><div class="compact-value">Later</div></div></div></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Declaration totals</div><div class="surface-sub">Demo totals from the current payroll preview.</div></div></div><div class="surface-body" id="cnas-summary"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-livrepaie" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Livre de paie <span class="legal-tag">DZ</span></div><div class="surface-sub">Legal payroll register export from confirmed payroll runs.</div></div><button class="btn secondary">Export register</button></div><div class="surface-body"><table><thead><tr><th>Employee</th><th>Period</th><th class="right">Gross</th><th class="right">Deductions</th><th class="right">Net</th></tr></thead><tbody id="livre-paie-rows"></tbody></table></div></div>
+    </section>
+
+    <section class="view" id="view-advances" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">Advances &amp; loans</div><div class="surface-sub">Track deductions over time. Later module.</div></div></div><div class="surface-body"><div class="module-empty">Later: salary advances, repayment months, loan balance, and automatic payroll deduction schedule.</div></div></div>
+    </section>
+
+    <section class="view" id="view-endservice" hidden>
+      <div class="surface"><div class="surface-head"><div><div class="surface-title">End-of-service calculation</div><div class="surface-sub">Final settlement and end-of-service indemnity.</div></div></div><div class="surface-body"><div class="module-empty">Later: calculate final settlement using contract, salary history, unused leave, and termination/resignation reason.</div></div></div>
+    </section>
     <section class="view" id="view-reports" hidden>
       <div class="grid">
         <div class="surface"><div class="surface-head"><div><div class="surface-title">HR reports</div><div class="surface-sub">Management signals for headcount, attendance, leave, and payroll.</div></div></div><div class="surface-body" id="hr-report-list"></div></div>
@@ -207,7 +471,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;colo
 
 <div class="modal" id="employee-modal">
   <div class="modal-card">
-    <div class="modal-head"><div><div class="modal-title">New employee</div><div class="surface-sub">Create the core employee record.</div></div><button class="btn ghost" onclick="closeEmployeeModal()">Close</button></div>
+    <div class="modal-head"><div><div class="modal-title" id="employee-modal-title">New employee</div><div class="surface-sub" id="employee-modal-subtitle">Create the core employee record.</div></div><button class="btn ghost" onclick="closeEmployeeModal()">Close</button></div>
     <div class="modal-body">
       <div class="form-grid">
         <div class="field"><label>Employee number</label><input id="emp-number" placeholder="EMP-001"></div>
@@ -219,14 +483,20 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:800;colo
         <div class="field span-2"><label>Academic background</label><textarea id="emp-academic-background" placeholder="University, specialization, graduation year, certifications..."></textarea></div>
         <div class="field"><label>Hire date</label><input id="emp-hire-date" type="date"></div>
         <div class="field"><label>Contract</label><select id="emp-contract"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="intern">Intern</option></select></div>
-        <div class="field"><label>Status</label><select id="emp-status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="terminated">Terminated</option></select></div>
+        <div class="field"><label>Department</label><select id="emp-department"></select></div>
+        <div class="field"><label>Position</label><select id="emp-position"></select></div>
+        <div class="field"><label>Manager</label><select id="emp-manager"></select></div>
+        <div class="field"><label>Status</label><select id="emp-status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="sick_leave">Sick leave</option><option value="vacation">Vacation</option><option value="terminated">Terminated</option><option value="resigned">Resigned</option><option value="dismissed">Dismissed</option></select></div>
         <div class="field"><label>Base salary</label><input id="emp-salary" type="number" value="0"></div>
         <div class="field"><label>Currency</label><input id="emp-currency" value="DZD"></div>
         <div class="field"><label>Bank name</label><input id="emp-bank-name"></div>
         <div class="field"><label>Bank account</label><input id="emp-bank-account"></div>
+        <div class="field"><label>Status start</label><input id="emp-status-start" type="date"></div>
+        <div class="field"><label>Expected return</label><input id="emp-status-end" type="date"></div>
+        <div class="field span-2"><label>Status notes</label><textarea id="emp-status-notes" placeholder="Reason, decision, medical note, resignation detail..."></textarea></div>
       </div>
     </div>
-    <div class="modal-foot"><button class="btn secondary" onclick="closeEmployeeModal()">Cancel</button><button class="btn primary" onclick="saveEmployee()">Save employee</button></div>
+    <div class="modal-foot"><button class="btn danger" id="delete-employee-btn" onclick="deleteCurrentEmployee()" style="display:none;margin-right:auto">Delete employee</button><button class="btn secondary" onclick="closeEmployeeModal()">Cancel</button><button class="btn primary" onclick="saveEmployee()">Save employee</button></div>
   </div>
 </div>
 
@@ -251,12 +521,74 @@ function getSupabase(){
   return sb;
 }
 const fmt = new Intl.NumberFormat('en-DZ',{maximumFractionDigits:0});
-const state={companyId:null,employees:[],departments:[],positions:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],schemaReady:true,loadErrors:[]};
+const state={companyId:null,employees:[],departments:[],positions:[],documents:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],statusEvents:[],promotions:[],schemaReady:true,loadErrors:[],editingEmployeeId:null,historyEmployeeId:null,demoMode:false};
 function money(v,c='DZD'){return fmt.format(Number(v||0))+' '+c}
 function text(v){return String(v ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function today(){return new Date().toISOString().slice(0,10)}
 function monthKey(){return new Date().toISOString().slice(0,7)}
 function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
+function demoDataset(){
+  const departments=[
+    {id:'dep-fin',company_id:'demo-company',name:'Finance',manager_id:'emp-001'},
+    {id:'dep-ops',company_id:'demo-company',name:'Operations',manager_id:'emp-004'},
+    {id:'dep-hr',company_id:'demo-company',name:'HR & Administration',manager_id:'emp-005'}
+  ];
+  const positions=[
+    {id:'pos-cfo',department_id:'dep-fin',title:'Finance Manager',grade:'M2',salary_min:160000,salary_max:230000},
+    {id:'pos-accountant',department_id:'dep-fin',title:'Senior Accountant',grade:'S2',salary_min:120000,salary_max:165000},
+    {id:'pos-ap',department_id:'dep-fin',title:'Accounts Payable Officer',grade:'S1',salary_min:85000,salary_max:120000},
+    {id:'pos-ops',department_id:'dep-ops',title:'Operations Manager',grade:'M2',salary_min:150000,salary_max:220000},
+    {id:'pos-hr',department_id:'dep-hr',title:'HR Officer',grade:'S2',salary_min:105000,salary_max:150000},
+    {id:'pos-admin',department_id:'dep-hr',title:'Administrative Assistant',grade:'J1',salary_min:65000,salary_max:90000}
+  ];
+  const employees=[
+    {id:'emp-001',company_id:'demo-company',employee_number:'EMP-001',full_name:'Wafaa Mohammed Hadidi',email:'wafaa.hadidi@tadbirtech.demo',phone:'+213 555 100 101',national_id:'199012345678',social_security_number:'CNAS-2024-001',department_id:'dep-fin',position_id:'pos-cfo',manager_id:null,hire_date:'2023-01-15',contract_type:'permanent',status:'active',base_salary:185000,currency:'DZD',bank_name:'CPA Bank',bank_account:'DZ12 0010 0001 2244',diplomas:'Master in Finance',academic_background:'University of Algiers - Finance and Accounting, 2018',cv_text:'Finance manager with 7 years of Algerian SME accounting and payroll experience.',certificates_text:'Payroll compliance, CNAS declaration, IFRS basics.'},
+    {id:'emp-002',company_id:'demo-company',employee_number:'EMP-002',full_name:'Nadir Benali',email:'nadir.benali@tadbirtech.demo',phone:'+213 555 100 102',national_id:'198711112222',social_security_number:'CNAS-2024-002',department_id:'dep-fin',position_id:'pos-accountant',manager_id:'emp-001',hire_date:'2023-03-01',contract_type:'permanent',status:'active',base_salary:142000,currency:'DZD',bank_name:'BDL',bank_account:'DZ12 0020 3322',diplomas:'Bachelor in Accounting',academic_background:'EHEC Algiers - Accounting, 2016',cv_text:'Senior accountant focused on suppliers, bank reconciliation, and payroll posting.',certificates_text:'Excel for finance, Algerian tax basics.'},
+    {id:'emp-003',company_id:'demo-company',employee_number:'EMP-003',full_name:'Meriem Ait Saadi',email:'meriem.saadi@tadbirtech.demo',phone:'+213 555 100 103',national_id:'199402223333',social_security_number:'CNAS-2024-003',department_id:'dep-fin',position_id:'pos-ap',manager_id:'emp-001',hire_date:'2024-02-10',contract_type:'permanent',status:'vacation',base_salary:98000,currency:'DZD',bank_name:'BNA',bank_account:'DZ12 0030 8899',diplomas:'Licence in Management',academic_background:'Mouloud Mammeri University - Management, 2020',cv_text:'Accounts payable officer handling supplier invoices and payment files.',certificates_text:'Supplier relationship management.'},
+    {id:'emp-004',company_id:'demo-company',employee_number:'EMP-004',full_name:'Karim Mansouri',email:'karim.mansouri@tadbirtech.demo',phone:'+213 555 100 104',national_id:'198509998888',social_security_number:'CNAS-2024-004',department_id:'dep-ops',position_id:'pos-ops',manager_id:null,hire_date:'2022-09-12',contract_type:'permanent',status:'active',base_salary:165000,currency:'DZD',bank_name:'AGB',bank_account:'DZ12 0040 4455',diplomas:'Engineering degree',academic_background:'USTHB - Industrial Engineering, 2014',cv_text:'Operations manager coordinating warehouse, purchasing, and service delivery.',certificates_text:'Lean operations, procurement planning.'},
+    {id:'emp-005',company_id:'demo-company',employee_number:'EMP-005',full_name:'Sara Boudiaf',email:'sara.boudiaf@tadbirtech.demo',phone:'+213 555 100 105',national_id:'199601234567',social_security_number:'CNAS-2024-005',department_id:'dep-hr',position_id:'pos-hr',manager_id:null,hire_date:'2024-05-05',contract_type:'permanent',status:'sick_leave',base_salary:118000,currency:'DZD',bank_name:'CPA Bank',bank_account:'DZ12 0050 6677',diplomas:'Master in HR Management',academic_background:'University of Oran - HR Management, 2021',cv_text:'HR officer managing employee files, leave requests, and contracts.',certificates_text:'HR administration, labor law introduction.'},
+    {id:'emp-006',company_id:'demo-company',employee_number:'EMP-006',full_name:'Ilyes Rahmani',email:'ilyes.rahmani@tadbirtech.demo',phone:'+213 555 100 106',national_id:'200002223333',social_security_number:'CNAS-2024-006',department_id:'dep-hr',position_id:'pos-admin',manager_id:'emp-005',hire_date:'2025-01-08',contract_type:'temporary',status:'active',base_salary:78000,currency:'DZD',bank_name:'BDL',bank_account:'DZ12 0060 1111',diplomas:'BTS Administration',academic_background:'INSFP - Administration, 2022',cv_text:'Administrative assistant supporting employee documents and office records.',certificates_text:'Office administration.'}
+  ];
+  const documents=[
+    {id:'doc-001',company_id:'demo-company',employee_id:'emp-001',document_type:'cv',title:'CV - Wafaa Hadidi',content_text:'Finance leadership CV with payroll and reporting experience.',created_at:'2026-01-04'},
+    {id:'doc-002',company_id:'demo-company',employee_id:'emp-001',document_type:'diploma',title:'Master degree diploma',content_text:'Master in Finance diploma copy.',created_at:'2026-01-04'},
+    {id:'doc-003',company_id:'demo-company',employee_id:'emp-002',document_type:'contract',title:'Permanent employment contract',content_text:'Signed permanent contract.',created_at:'2026-02-12'},
+    {id:'doc-004',company_id:'demo-company',employee_id:'emp-003',document_type:'work_certificate',title:'Work certificate draft',content_text:'Certificate generated for bank file.',created_at:'2026-03-18'},
+    {id:'doc-005',company_id:'demo-company',employee_id:'emp-005',document_type:'certificate',title:'Medical leave certificate',content_text:'Medical leave certificate for July absence.',created_at:'2026-07-02'},
+    {id:'doc-006',company_id:'demo-company',employee_id:'emp-006',document_type:'diploma',title:'BTS administration diploma',content_text:'Diploma copy and school details.',created_at:'2026-04-22'}
+  ];
+  const attendance=[
+    {id:'att-001',company_id:'demo-company',employee_id:'emp-001',date:today(),status:'present',check_in:'08:42',check_out:'17:10',hours_worked:8.2},
+    {id:'att-002',company_id:'demo-company',employee_id:'emp-002',date:today(),status:'present',check_in:'08:55',check_out:'17:03',hours_worked:8.0},
+    {id:'att-003',company_id:'demo-company',employee_id:'emp-003',date:today(),status:'absent',check_in:null,check_out:null,hours_worked:0},
+    {id:'att-004',company_id:'demo-company',employee_id:'emp-004',date:today(),status:'late',check_in:'09:28',check_out:'17:15',hours_worked:7.6},
+    {id:'att-005',company_id:'demo-company',employee_id:'emp-006',date:today(),status:'present',check_in:'08:47',check_out:'16:58',hours_worked:8.0}
+  ];
+  const leaveRequests=[
+    {id:'lv-001',company_id:'demo-company',employee_id:'emp-003',leave_type_id:'Annual vacation',start_date:'2026-07-14',end_date:'2026-07-21',days:6,status:'approved'},
+    {id:'lv-002',company_id:'demo-company',employee_id:'emp-005',leave_type_id:'Sick leave',start_date:'2026-07-15',end_date:'2026-07-20',days:4,status:'pending'}
+  ];
+  const leaveBalances=[
+    {id:'bal-001',company_id:'demo-company',employee_id:'emp-001',year:2026,remaining:22},
+    {id:'bal-002',company_id:'demo-company',employee_id:'emp-003',year:2026,remaining:13},
+    {id:'bal-003',company_id:'demo-company',employee_id:'emp-005',year:2026,remaining:18}
+  ];
+  const payrollRuns=[{id:'pr-001',company_id:'demo-company',period_month:monthKey(),status:'draft',total_gross:786000,total_net:593355,total_deductions:192645}];
+  const statusEvents=[
+    {id:'se-001',company_id:'demo-company',employee_id:'emp-003',event_type:'vacation',start_date:'2026-07-14',end_date:'2026-07-21',notes:'Annual leave approved by Finance Manager.'},
+    {id:'se-002',company_id:'demo-company',employee_id:'emp-005',event_type:'sick_leave',start_date:'2026-07-15',end_date:'2026-07-20',notes:'Medical certificate received.'}
+  ];
+  const promotions=[
+    {id:'pm-001',company_id:'demo-company',employee_id:'emp-002',previous_title:'Accountant',new_title:'Senior Accountant',previous_salary:118000,new_salary:142000,effective_date:'2026-01-01',notes:'Promotion after annual review.'}
+  ];
+  return {departments,positions,employees,documents,attendance,leaveRequests,leaveBalances,payrollRuns,statusEvents,promotions};
+}
+function applyDemoData(){
+  const demo=demoDataset();
+  state.companyId='demo-company';
+  state.demoMode=true;
+  Object.assign(state,demo);
+}
 async function resolveCompany(){const client=getSupabase();if(!client)return null;const {data:{session}}=await client.auth.getSession();let raw=localStorage.getItem('tt_company_id');let stored=raw&&raw!=='null'&&raw!=='undefined'?raw:null;if(!session){state.companyId=stored;return state.companyId}const {data}=await client.from('company_members').select('company_id').eq('user_id',session.user.id).limit(1);state.companyId=data?.[0]?.company_id||stored;if(state.companyId)localStorage.setItem('tt_company_id',state.companyId);return state.companyId}
 async function safeLoad(table,select='*',order){
   const client=getSupabase();
@@ -277,14 +609,27 @@ async function safeLoad(table,select='*',order){
     return[];
   }
 }
-async function loadAll(){state.schemaReady=true;state.loadErrors=[];await resolveCompany();if(!state.companyId){renderAll();return}const [employees,departments,positions,attendance,leaveRequests,leaveBalances,payrollRuns]=await Promise.all([
-safeLoad('employees','*','full_name'),safeLoad('departments','*','name'),safeLoad('positions','*','title'),safeLoad('attendance','*','date'),safeLoad('leave_requests','*','start_date'),safeLoad('leave_balances','*','year'),safeLoad('payroll_runs','*','period_month')]);
-Object.assign(state,{employees,departments,positions,attendance,leaveRequests,leaveBalances,payrollRuns});renderAll()}
+async function loadAll(){state.schemaReady=true;state.loadErrors=[];state.demoMode=false;await resolveCompany();if(!state.companyId){applyDemoData();renderAll();return}const [employees,departments,positions,documents,attendance,leaveRequests,leaveBalances,payrollRuns,statusEvents,promotions]=await Promise.all([
+safeLoad('employees','*','full_name'),safeLoad('departments','*','name'),safeLoad('positions','*','title'),safeLoad('employee_documents','*','created_at'),safeLoad('attendance','*','date'),safeLoad('leave_requests','*','start_date'),safeLoad('leave_balances','*','year'),safeLoad('payroll_runs','*','period_month'),safeLoad('employee_status_events','*','start_date'),safeLoad('employee_promotions','*','effective_date')]);
+if(!state.schemaReady){applyDemoData();renderAll();return}
+Object.assign(state,{employees,departments,positions,documents,attendance,leaveRequests,leaveBalances,payrollRuns,statusEvents,promotions});renderAll()}
 function depName(id){return state.departments.find(d=>d.id===id)?.name||'Unassigned'}
 function empName(id){return state.employees.find(e=>e.id===id)?.full_name||'Employee'}
 function statusPill(s){const cls=s==='active'||s==='approved'||s==='paid'||s==='present'?'good':s==='pending'||s==='draft'||s==='late'?'warn':s==='terminated'||s==='rejected'||s==='absent'?'bad':'neutral';return '<span class="pill '+cls+'">'+text(s||'unknown')+'</span>'}
-function renderEmployees(){const rows=document.getElementById('employee-rows');if(!state.employees.length){rows.innerHTML='<tr><td colspan="4"><div class="empty">No employees yet. Add your first employee after running the HR database script.</div></td></tr>';return}rows.innerHTML=state.employees.map(e=>{const education=[e.diplomas,e.academic_background].filter(Boolean).join(' | ');return '<tr><td><div class="td-main">'+text(e.full_name)+'</div><div class="td-sub">'+text(e.employee_number||'')+' &middot; '+text(e.email||'No email')+(education?' &middot; '+text(education):'')+'</div></td><td>'+text(depName(e.department_id))+'</td><td>'+statusPill(e.status)+'</td><td class="right"><strong>'+money(e.base_salary,e.currency||'DZD')+'</strong></td></tr>'}).join('')}
-function renderDepartments(){const host=document.getElementById('department-list');if(!state.departments.length){host.innerHTML='<div class="empty">Departments will appear here.</div>';return}host.innerHTML=state.departments.map(d=>{const n=state.employees.filter(e=>e.department_id===d.id).length;return '<div class="calc-row"><span>'+text(d.name)+'</span><strong>'+n+' employee(s)</strong></div>'}).join('')}
+function nameParts(fullName){const parts=String(fullName||'').trim().split(/\s+/).filter(Boolean);if(!parts.length)return{first:'',last:''};return{first:parts[0],last:parts.slice(1).join(' ')||parts[0]}}
+let employeeFilter='active';
+function renderEmployees(){
+  const rows=document.getElementById('employee-rows');
+  const search=(document.getElementById('employee-search')?.value||'').toLowerCase().trim();
+  let employees=state.employees.slice();
+  if(employeeFilter==='active')employees=employees.filter(e=>!['terminated','resigned','dismissed','archived'].includes(String(e.status||'').toLowerCase()));
+  if(employeeFilter==='archived')employees=employees.filter(e=>['terminated','resigned','dismissed','archived'].includes(String(e.status||'').toLowerCase()));
+  if(search)employees=employees.filter(e=>[e.full_name,e.email,e.phone,posName(e.position_id),e.status].some(v=>String(v||'').toLowerCase().includes(search)));
+  employees.sort((a,b)=>String(a.full_name||'').localeCompare(String(b.full_name||'')));
+  if(!employees.length){rows.innerHTML='<tr><td colspan="8"><div class="employee-empty">No employees match this view.</div></td></tr>';return}
+  rows.innerHTML=employees.map(e=>{const n=nameParts(e.full_name);return '<tr ondblclick="location.href=\'employee-profile.html?id='+e.id+'\'"><td class="select-col"><span class="row-check"></span></td><td><button class="link-btn" type="button" onclick="event.stopPropagation();location.href=\'employee-profile.html?id='+e.id+'\'">'+text(n.last)+'</button></td><td>'+text(n.first)+'</td><td class="job-cell">'+text(posName(e.position_id))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeModal(\''+e.id+'\')">Edit</button></td></tr>'}).join('')
+}
+function renderDepartments(){const host=document.getElementById('department-list');if(!state.departments.length){host.innerHTML='<div class="empty">Departments will appear here.</div>';return}host.innerHTML=state.departments.map(d=>{const team=state.employees.filter(e=>e.department_id===d.id);const manager=state.employees.find(e=>e.id===d.manager_id);return '<div class="calc-row"><span><strong>'+text(d.name)+'</strong><br><small style="color:#7a93ae">'+text(manager?manager.full_name:'No manager')+'</small></span><strong>'+team.length+' employee(s)</strong></div>'}).join('')}
 function renderAttendance(){const rows=document.getElementById('attendance-rows');if(!state.attendance.length){rows.innerHTML='<tr><td colspan="6"><div class="empty">No attendance records yet.</div></td></tr>';return}rows.innerHTML=state.attendance.slice(-20).reverse().map(a=>'<tr><td>'+text(a.date)+'</td><td>'+text(empName(a.employee_id))+'</td><td>'+statusPill(a.status)+'</td><td>'+text(a.check_in||'-')+'</td><td>'+text(a.check_out||'-')+'</td><td class="right">'+Number(a.hours_worked||0).toFixed(1)+'</td></tr>').join('')}
 function renderLeave(){const rows=document.getElementById('leave-rows');if(!state.leaveRequests.length){rows.innerHTML='<tr><td colspan="4"><div class="empty">No leave requests yet.</div></td></tr>'}else{rows.innerHTML=state.leaveRequests.map(r=>'<tr><td>'+text(empName(r.employee_id))+'</td><td>'+text(r.leave_type_id||'Leave')+'</td><td>'+text(r.start_date)+' to '+text(r.end_date)+'</td><td>'+statusPill(r.status)+'</td></tr>').join('')}const host=document.getElementById('leave-balance-list');host.innerHTML=state.leaveBalances.length?state.leaveBalances.map(b=>'<div class="calc-row"><span>'+text(empName(b.employee_id))+'</span><strong>'+Number(b.remaining||0)+' day(s)</strong></div>').join(''):'<div class="empty">Leave balances will appear here.</div>'}
 function irg(taxable){let s=Math.max(Number(taxable||0),0),tax=0;if(s>80000){tax+=(s-80000)*.35;s=80000}if(s>40000){tax+=(s-40000)*.27;s=40000}if(s>20000){tax+=(s-20000)*.23}return Math.round(tax)}
@@ -292,23 +637,71 @@ function calcPayroll(base,allowances,overtime,bonuses,absence,advance){const gro
 function renderCalculator(){const v=id=>Number(document.getElementById(id).value||0);const r=calcPayroll(v('calc-base'),v('calc-allowances'),v('calc-overtime'),v('calc-bonuses'),v('calc-absence'),v('calc-advance'));document.getElementById('payroll-calc').innerHTML='<div class="calc-row"><span>Gross salary</span><strong>'+money(r.gross)+'</strong></div><div class="calc-row"><span>CNAS employee 9%</span><strong>'+money(r.cnas)+'</strong></div><div class="calc-row"><span>CNAS employer 26%</span><strong>'+money(r.employer)+'</strong></div><div class="calc-row"><span>IRG</span><strong>'+money(r.tax)+'</strong></div><div class="calc-row net"><span>Net salary</span><strong>'+money(r.net)+'</strong></div>'}
 function renderPayroll(){const rows=document.getElementById('payroll-run-rows');if(!state.payrollRuns.length){rows.innerHTML='<tr><td colspan="4"><div class="empty">No payroll runs yet. Use the preview to estimate this month.</div></td></tr>'}else{rows.innerHTML=state.payrollRuns.map(r=>'<tr><td>'+text(r.period_month)+'</td><td>'+statusPill(r.status)+'</td><td class="right">'+money(r.total_gross)+'</td><td class="right"><strong>'+money(r.total_net)+'</strong></td></tr>').join('')}renderCalculator()}
 function renderPayrollPreview(){const gross=state.employees.reduce((s,e)=>s+Number(e.base_salary||0),0);const cnas=Math.round(gross*.09);const tax=irg(gross-cnas);const net=gross-cnas-tax;document.getElementById('payroll-run-rows').innerHTML='<tr><td>'+monthKey()+'</td><td>'+statusPill('draft')+'</td><td class="right">'+money(gross)+'</td><td class="right"><strong>'+money(net)+'</strong></td></tr>'}
+function renderPayslips(){const host=document.getElementById('payslip-list');if(!host)return;host.innerHTML=state.employees.slice(0,6).map(e=>{const r=calcPayroll(Number(e.base_salary||0),15000,5000,0,0,0);return '<div class="compact-item"><div><div class="compact-title">'+text(e.full_name)+'</div><div class="compact-meta">'+text(e.employee_number||'')+' | '+monthKey()+' | PDF draft</div></div><div class="compact-value">'+money(r.net,e.currency||'DZD')+'</div></div>'}).join('')}
+function renderCnasSummary(){const host=document.getElementById('cnas-summary');if(!host)return;const gross=state.employees.reduce((s,e)=>s+Number(e.base_salary||0),0);host.innerHTML='<div class="compact-list"><div class="compact-item"><div><div class="compact-title">Total gross base</div><div class="compact-meta">Demo monthly base.</div></div><div class="compact-value">'+money(gross)+'</div></div><div class="compact-item"><div><div class="compact-title">Employee CNAS 9%</div><div class="compact-meta">Payroll deduction.</div></div><div class="compact-value">'+money(Math.round(gross*.09))+'</div></div><div class="compact-item"><div><div class="compact-title">Employer CNAS 26%</div><div class="compact-meta">Employer contribution.</div></div><div class="compact-value">'+money(Math.round(gross*.26))+'</div></div></div>'}
+function renderLivrePaie(){const rows=document.getElementById('livre-paie-rows');if(!rows)return;rows.innerHTML=state.employees.slice(0,8).map(e=>{const r=calcPayroll(Number(e.base_salary||0),15000,5000,0,0,0);return '<tr><td>'+text(e.full_name)+'</td><td>'+monthKey()+'</td><td class="right">'+money(r.gross,e.currency||'DZD')+'</td><td class="right">'+money(r.cnas+r.tax,e.currency||'DZD')+'</td><td class="right"><strong>'+money(r.net,e.currency||'DZD')+'</strong></td></tr>'}).join('')}
 function renderReports(){const active=state.employees.filter(e=>e.status==='active').length;const absent=state.attendance.filter(a=>a.date===today()&&a.status==='absent').length;const pending=state.leaveRequests.filter(r=>r.status==='pending').length;document.getElementById('hr-report-list').innerHTML='<div class="calc-row"><span>Active headcount</span><strong>'+active+'</strong></div><div class="calc-row"><span>Absences today</span><strong>'+absent+'</strong></div><div class="calc-row"><span>Pending leave requests</span><strong>'+pending+'</strong></div><div class="calc-row"><span>Average base salary</span><strong>'+money(active?state.employees.reduce((s,e)=>s+Number(e.base_salary||0),0)/active:0)+'</strong></div>'}
 function renderKpis(){setText('kpi-employees',state.employees.filter(e=>e.status!=='terminated').length);setText('kpi-present',state.attendance.filter(a=>a.date===today()&&a.status==='present').length);setText('kpi-leave',state.leaveRequests.filter(r=>r.status==='pending').length);const latest=state.payrollRuns[state.payrollRuns.length-1];setText('kpi-payroll',money(latest?.total_net||0))}
-function renderAll(){document.getElementById('schema-notice').classList.toggle('show',!state.schemaReady);renderKpis();renderEmployees();renderDepartments();renderAttendance();renderLeave();renderPayroll();renderReports()}
-function openEmployeeModal(){document.getElementById('emp-hire-date').value=today();document.getElementById('employee-modal').classList.add('show')}
-function closeEmployeeModal(){document.getElementById('employee-modal').classList.remove('show')}
-async function saveEmployee(){if(!state.schemaReady){alert('Run supabase_hr_payroll.sql first.');return}const full_name=document.getElementById('emp-name').value.trim();if(!full_name){alert('Employee name is required.');return}const payload={company_id:state.companyId,employee_number:document.getElementById('emp-number').value.trim()||('EMP-'+String(state.employees.length+1).padStart(3,'0')),full_name,email:document.getElementById('emp-email').value.trim()||null,phone:document.getElementById('emp-phone').value.trim()||null,national_id:document.getElementById('emp-national-id').value.trim()||null,diplomas:document.getElementById('emp-diplomas').value.trim()||null,academic_background:document.getElementById('emp-academic-background').value.trim()||null,hire_date:document.getElementById('emp-hire-date').value||null,contract_type:document.getElementById('emp-contract').value,status:document.getElementById('emp-status').value,base_salary:Number(document.getElementById('emp-salary').value||0),currency:document.getElementById('emp-currency').value||'DZD',bank_name:document.getElementById('emp-bank-name').value.trim()||null,bank_account:document.getElementById('emp-bank-account').value.trim()||null};const client=getSupabase();if(!client){alert('Supabase library did not load. Refresh the page.');return}const{error}=await client.from('employees').insert(payload);if(error){alert(error.message);return}closeEmployeeModal();await loadAll()}
-document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.view').forEach(v=>v.hidden=true);document.getElementById('view-'+btn.dataset.tab).hidden=false}));
+function renderMiniStats(){setText('mini-total',state.employees.length);setText('mini-departments',state.departments.length);setText('mini-documents',state.documents.length);const banner=document.getElementById('demo-banner');if(banner)banner.classList.toggle('show',state.demoMode)}
+function renderOrgChart(){const host=document.getElementById('org-chart');if(!host)return;if(!state.departments.length){host.innerHTML='<div class="empty">No departments yet.</div>';return}host.innerHTML=state.departments.map(d=>{const team=state.employees.filter(e=>e.department_id===d.id);const manager=state.employees.find(e=>e.id===d.manager_id);return '<article class="org-team"><div class="org-head"><div class="org-title">'+text(d.name)+'</div><div class="org-sub">Manager: '+text(manager?manager.full_name:'Not assigned')+'</div></div><div class="org-body">'+(team.length?team.map(e=>'<div class="org-person"><div><div class="org-name">'+text(e.full_name)+'</div><div class="org-role">'+text(posName(e.position_id))+' &middot; Reports to '+text(managerName(e.manager_id))+'</div></div><button class="link-btn" onclick="location.href=\'employee-profile.html?id='+e.id+'\'">Profile</button></div>').join(''):'<div class="empty">No employees in this team.</div>')+'</div></article>'}).join('')}
+function renderDocumentVault(){const host=document.getElementById('document-vault');if(!host)return;if(!state.documents.length){host.innerHTML='<div class="empty">No documents yet.</div>';return}host.innerHTML=state.documents.map(d=>'<article class="doc-card"><div class="doc-type">'+text(d.document_type||'document')+'</div><div class="doc-title">'+text(d.title||'Untitled document')+'</div><div class="doc-meta">'+text((d.content_text||'').slice(0,120))+'</div><div class="doc-owner">'+text(empName(d.employee_id))+'</div>'+(d.file_url?'<a class="link-btn" href="'+text(d.file_url)+'" target="_blank" style="margin-top:10px;display:inline-flex">Open file</a>':'<div class="doc-meta">Demo/written record</div>')+'</article>').join('')}
+function renderPositionsGrades(){const host=document.getElementById('positions-grade-list');if(!host)return;if(!state.positions.length){host.innerHTML='<div class="empty">No positions or grades yet.</div>';return}host.innerHTML=state.positions.map(p=>{const n=state.employees.filter(e=>e.position_id===p.id).length;return '<article class="grade-card"><div class="grade-title">'+text(p.title)+'</div><div class="grade-meta">Department: '+text(depName(p.department_id))+'<br>Grade: '+text(p.grade||'Not graded')+'<br>Current headcount: '+n+'</div><div class="grade-band"><span>Salary band</span><strong>'+money(p.salary_min||0)+' - '+money(p.salary_max||0)+'</strong></div></article>'}).join('')}
+function renderAll(){document.getElementById('schema-notice').classList.toggle('show',!state.schemaReady&&!state.demoMode);renderKpis();renderMiniStats();renderEmployees();renderDepartments();renderOrgChart();renderDocumentVault();renderPositionsGrades();renderAttendance();renderLeave();renderPayroll();renderPayslips();renderCnasSummary();renderLivrePaie();renderReports();populateEmployeeSelects()}
+function fieldValue(id){return document.getElementById(id)?.value||''}
+function setField(id,value){const el=document.getElementById(id);if(el)el.value=value??''}
+function populateEmployeeSelects(){
+  const dep=document.getElementById('emp-department'),pos=document.getElementById('emp-position'),mgr=document.getElementById('emp-manager');
+  if(dep)dep.innerHTML='<option value="">Unassigned</option>'+state.departments.map(d=>'<option value="'+text(d.id)+'">'+text(d.name)+'</option>').join('');
+  if(pos)pos.innerHTML='<option value="">Unassigned</option>'+state.positions.map(p=>'<option value="'+text(p.id)+'">'+text(p.title)+'</option>').join('');
+  if(mgr)mgr.innerHTML='<option value="">No manager</option>'+state.employees.filter(e=>e.id!==state.editingEmployeeId).map(e=>'<option value="'+text(e.id)+'">'+text(e.full_name)+'</option>').join('');
+}
+function resetEmployeeForm(){['emp-number','emp-name','emp-email','emp-phone','emp-national-id','emp-diplomas','emp-academic-background','emp-hire-date','emp-salary','emp-currency','emp-bank-name','emp-bank-account','emp-status-start','emp-status-end','emp-status-notes'].forEach(id=>setField(id,''));setField('emp-contract','permanent');setField('emp-status','active');setField('emp-currency','DZD');populateEmployeeSelects()}
+function openEmployeeModal(id=null){state.editingEmployeeId=id;resetEmployeeForm();const isEdit=Boolean(id);document.getElementById('employee-modal-title').textContent=isEdit?'Edit employee':'New employee';document.getElementById('employee-modal-subtitle').textContent=isEdit?'Update employee record, status, and HR details.':'Create the core employee record.';document.getElementById('delete-employee-btn').style.display=isEdit?'inline-flex':'none';if(isEdit){const e=state.employees.find(x=>x.id===id);if(e){setField('emp-number',e.employee_number);setField('emp-name',e.full_name);setField('emp-email',e.email);setField('emp-phone',e.phone);setField('emp-national-id',e.national_id);setField('emp-diplomas',e.diplomas);setField('emp-academic-background',e.academic_background);setField('emp-hire-date',e.hire_date);setField('emp-contract',e.contract_type||'permanent');setField('emp-department',e.department_id||'');setField('emp-position',e.position_id||'');setField('emp-manager',e.manager_id||'');setField('emp-status',e.status||'active');setField('emp-salary',e.base_salary||0);setField('emp-currency',e.currency||'DZD');setField('emp-bank-name',e.bank_name);setField('emp-bank-account',e.bank_account)}}else{setField('emp-hire-date',today())}document.getElementById('employee-modal').classList.add('show')}
+function closeEmployeeModal(){document.getElementById('employee-modal').classList.remove('show');state.editingEmployeeId=null}
+async function saveEmployee(){if(state.demoMode){alert('Demo data is read-only. Run the Supabase SQL and login to save real employees.');return}if(!state.schemaReady){alert('Run supabase_hr_payroll.sql first.');return}const full_name=fieldValue('emp-name').trim();if(!full_name){alert('Employee name is required.');return}const payload={company_id:state.companyId,employee_number:fieldValue('emp-number').trim()||('EMP-'+String(state.employees.length+1).padStart(3,'0')),full_name,email:fieldValue('emp-email').trim()||null,phone:fieldValue('emp-phone').trim()||null,national_id:fieldValue('emp-national-id').trim()||null,diplomas:fieldValue('emp-diplomas').trim()||null,academic_background:fieldValue('emp-academic-background').trim()||null,hire_date:fieldValue('emp-hire-date')||null,contract_type:fieldValue('emp-contract'),department_id:fieldValue('emp-department')||null,position_id:fieldValue('emp-position')||null,manager_id:fieldValue('emp-manager')||null,status:fieldValue('emp-status'),base_salary:Number(fieldValue('emp-salary')||0),currency:fieldValue('emp-currency')||'DZD',bank_name:fieldValue('emp-bank-name').trim()||null,bank_account:fieldValue('emp-bank-account').trim()||null};const client=getSupabase();if(!client){alert('Supabase library did not load. Refresh the page.');return}let savedId=state.editingEmployeeId;if(savedId){const{error}=await client.from('employees').update(payload).eq('id',savedId).eq('company_id',state.companyId);if(error){alert(error.message);return}}else{const{data,error}=await client.from('employees').insert(payload).select('id').single();if(error){alert(error.message);return}savedId=data?.id}const statusStart=fieldValue('emp-status-start');const statusEnd=fieldValue('emp-status-end');const statusNotes=fieldValue('emp-status-notes').trim();if(savedId&&(payload.status!=='active'||statusStart||statusEnd||statusNotes)){await client.from('employee_status_events').insert({company_id:state.companyId,employee_id:savedId,event_type:payload.status==='active'?'returned':payload.status,start_date:statusStart||today(),end_date:statusEnd||null,notes:statusNotes||null})}closeEmployeeModal();await loadAll()}
+
+async function deleteEmployee(id){if(state.demoMode){alert('Demo data is read-only. Run the Supabase SQL and login to delete real employees.');return}const e=state.employees.find(x=>x.id===id);if(!e)return;if(!confirm('Delete '+e.full_name+'? This will remove the employee record and related HR history.'))return;const client=getSupabase();const{error}=await client.from('employees').delete().eq('id',id).eq('company_id',state.companyId);if(error){alert(error.message);return}await loadAll()}
+async function deleteCurrentEmployee(){if(state.editingEmployeeId)await deleteEmployee(state.editingEmployeeId);closeEmployeeModal()}
+function closeHistoryModal(){document.getElementById('employee-history-modal').classList.remove('show');state.historyEmployeeId=null}
+function openHistoryModal(id){state.historyEmployeeId=id;const e=state.employees.find(x=>x.id===id);document.getElementById('history-title').textContent=e?e.full_name+' history':'Employee history';setField('hist-start',today());setField('hist-end','');setField('hist-notes','');setField('promo-date',today());setField('promo-prev-title','');setField('promo-new-title','');setField('promo-prev-salary',e?.base_salary||'');setField('promo-new-salary','');setField('promo-notes','');renderHistoryModal();document.getElementById('employee-history-modal').classList.add('show')}
+function renderHistoryModal(){const events=state.statusEvents.filter(x=>x.employee_id===state.historyEmployeeId).slice().sort((a,b)=>String(b.start_date||b.created_at).localeCompare(String(a.start_date||a.created_at)));document.getElementById('status-history-list').innerHTML=events.length?events.map(x=>'<div class="timeline-item"><div class="timeline-title">'+text(x.event_type)+'</div><div class="timeline-meta">'+text(x.start_date||'-')+(x.end_date?' to '+text(x.end_date):'')+'</div><div class="td-sub">'+text(x.notes||'')+'</div></div>').join(''):'<div class="empty">No status history yet.</div>';const promotions=state.promotions.filter(x=>x.employee_id===state.historyEmployeeId).slice().sort((a,b)=>String(b.effective_date||b.created_at).localeCompare(String(a.effective_date||a.created_at)));document.getElementById('promotion-history-list').innerHTML=promotions.length?promotions.map(x=>'<div class="timeline-item"><div class="timeline-title">'+text(x.previous_title||'Previous role')+' -> '+text(x.new_title)+'</div><div class="timeline-meta">'+text(x.effective_date||'-')+' &middot; '+money(x.previous_salary||0)+' -> '+money(x.new_salary||0)+'</div><div class="td-sub">'+text(x.notes||'')+'</div></div>').join(''):'<div class="empty">No promotions yet.</div>'}
+async function saveStatusEvent(){if(!state.historyEmployeeId)return;const client=getSupabase();const event_type=fieldValue('hist-event-type');const payload={company_id:state.companyId,employee_id:state.historyEmployeeId,event_type,start_date:fieldValue('hist-start')||today(),end_date:fieldValue('hist-end')||null,notes:fieldValue('hist-notes').trim()||null};const{error}=await client.from('employee_status_events').insert(payload);if(error){alert(error.message);return}if(event_type!=='returned'){await client.from('employees').update({status:event_type}).eq('id',state.historyEmployeeId).eq('company_id',state.companyId)}else{await client.from('employees').update({status:'active'}).eq('id',state.historyEmployeeId).eq('company_id',state.companyId)}await loadAll();renderHistoryModal()}
+async function savePromotion(){if(!state.historyEmployeeId)return;const newTitle=fieldValue('promo-new-title').trim();if(!newTitle){alert('New title is required.');return}const client=getSupabase();const payload={company_id:state.companyId,employee_id:state.historyEmployeeId,previous_title:fieldValue('promo-prev-title').trim()||null,new_title:newTitle,previous_salary:Number(fieldValue('promo-prev-salary')||0)||null,new_salary:Number(fieldValue('promo-new-salary')||0)||null,effective_date:fieldValue('promo-date')||today(),notes:fieldValue('promo-notes').trim()||null};const{error}=await client.from('employee_promotions').insert(payload);if(error){alert(error.message);return}if(payload.new_salary){await client.from('employees').update({base_salary:payload.new_salary}).eq('id',state.historyEmployeeId).eq('company_id',state.companyId)}await loadAll();renderHistoryModal()}
+function openHrView(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.querySelectorAll('.view').forEach(v=>v.hidden=true);const view=document.getElementById('view-'+tab);if(view)view.hidden=false}
+function openHrModule(module){const defaults={'employee-records':'employees','payroll-compensation':'payroll','time-attendance':'leave'};document.querySelectorAll('.module-tab').forEach(b=>b.classList.toggle('active',b.dataset.module===module));document.querySelectorAll('[data-module-menu]').forEach(menu=>{menu.hidden=menu.getAttribute('data-module-menu')!==module});openHrView(defaults[module]||'employees')}
+document.querySelectorAll('.module-tab').forEach(btn=>btn.addEventListener('click',()=>openHrModule(btn.dataset.module)));
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>openHrView(btn.dataset.tab)));
 ['calc-base','calc-allowances','calc-overtime','calc-bonuses','calc-absence','calc-advance'].forEach(id=>document.addEventListener('input',e=>{if(e.target&&e.target.id===id)renderCalculator()}));
-document.getElementById('new-employee-btn').addEventListener('click',openEmployeeModal);
+document.getElementById('new-employee-btn').addEventListener('click',()=>location.href='add-employee.html');
 document.getElementById('refresh-btn').addEventListener('click',loadAll);
 window.addEventListener('load',loadAll);
 </script>
 <script>
-(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
+(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);const hrPages=['hr-payroll.html','employee-profile.html','add-employee.html'];function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);const isHr=hrPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);setDropdown('hrm',isHr);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction);const hrToggle=document.querySelector('[data-sidebar-toggle="hrm"]');if(hrToggle)hrToggle.classList.toggle('active',isHr)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
+</script>
+<script>
+async function handleLogout(){
+  try{
+    const client = window.supabase && window.supabase.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    if(client && client.auth) await client.auth.signOut();
+  }catch(e){}
+  localStorage.removeItem('tt_company_id');
+  window.location.href='login.html';
+}
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
