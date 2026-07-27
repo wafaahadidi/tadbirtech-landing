@@ -202,6 +202,83 @@ body{font-family:'Inter',system-ui,sans-serif!important;background:#F4F7FB!impor
 .sb-logout span{font-size:12px!important;line-height:1!important;color:inherit!important}
 .sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
 @media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
+
+/* Final TadbirTech sidebar parity with accounting pages */
+.app{grid-template-columns:220px 1fr!important}
+.sidebar{width:220px!important;background:#0D1F3C!important;color:#fff!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important}
+.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+.sb-user{display:none!important}
+.sb-nav{padding:12px 40px 12px 10px!important;flex:1!important;overflow-y:auto!important;overflow-x:hidden!important;margin-right:-32px!important}
+.sb-sec{font-size:9px!important;font-weight:700!important;color:rgba(255,255,255,.25)!important;text-transform:uppercase!important;letter-spacing:1px!important;padding:0 8px!important;margin:10px 0 4px!important}
+.sb-item{display:flex!important;align-items:center!important;gap:10px!important;width:100%!important;min-height:34px!important;padding:9px 10px!important;border-radius:8px!important;margin:0 0 2px!important;text-decoration:none!important;color:rgba(255,255,255,.65)!important;font-size:13px!important;font-weight:600!important;line-height:1.2!important;background:transparent!important;border:.5px solid transparent!important;font-family:inherit!important;text-align:left!important;cursor:pointer!important;transition:background .18s ease,border-color .18s ease,color .18s ease!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
+.sb-item.active,.sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.2)!important;border-color:rgba(26,143,209,.3)!important;color:#fff!important}
+.sb-item svg{width:15px!important;height:15px!important;flex:0 0 15px!important;opacity:.75!important}
+.sb-item-text{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.sb-dropdown-toggle .sb-item-text{white-space:normal!important;line-height:1.25!important}
+.sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;flex:0 0 7px!important;border-right:1.5px solid rgba(255,255,255,.55)!important;border-bottom:1.5px solid rgba(255,255,255,.55)!important;transform:rotate(45deg)!important;transition:transform .18s ease,border-color .18s ease!important}
+.sb-dropdown-toggle.open .sb-chevron{transform:rotate(225deg)!important;border-color:#fff!important}
+.sb-submenu{margin:2px 0 6px 14px!important;padding:0!important}
+.sb-submenu-nested{margin:2px 0 6px 14px!important}
+.sb-submenu .sb-item{font-size:12px!important;min-height:30px!important;padding:7px 10px!important;color:rgba(255,255,255,.58)!important}
+.sb-dot{width:6px!important;height:6px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;display:inline-block!important;flex:0 0 6px!important;margin-left:4px!important}
+.sb-item.active .sb-dot{background:#1a8fd1!important}
+.sb-foot,.sb-bottom{padding:10px!important;border-top:.5px solid rgba(255,255,255,.08)!important;flex:0 0 auto!important}
+.sb-logout{display:flex!important;align-items:center!important;gap:8px!important;width:100%!important;padding:8px 10px!important;border:0!important;border-radius:8px!important;background:transparent!important;color:rgba(255,255,255,.4)!important;font-size:12px!important;font-weight:600!important;font-family:inherit!important;cursor:pointer!important}
+.sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
+@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
+
+/* HR sidebar polish: match accounting typography and submenu active style */
+.sb-item{font-weight:500!important}
+.sb-item-text,.sb-item span{font-size:13px!important;color:rgba(255,255,255,.65)!important;font-weight:500!important}
+.sb-item.active .sb-item-text,.sb-item.active span{color:#fff!important}
+.sb-submenu{display:grid!important;gap:2px!important;margin:2px 0 6px 16px!important}
+.sb-submenu[hidden]{display:none!important}
+.sb-submenu .sb-item{padding:7px 10px!important;min-height:30px!important;background:transparent!important;border-color:transparent!important;color:rgba(255,255,255,.58)!important}
+.sb-submenu .sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
+.sb-submenu .sb-item.active{background:transparent!important;border-color:transparent!important;color:#fff!important}
+.sb-submenu .sb-item.active .sb-item-text{color:#fff!important;font-weight:500!important}
+.sb-submenu .sb-item-text{font-size:12px!important;font-weight:500!important}
+.sb-submenu .sb-dot{background:rgba(255,255,255,.35)!important}
+.sb-submenu .sb-item.active .sb-dot{background:#1a8fd1!important}
+
+/* HR sidebar text normalization: keep active state, reduce text brightness/weight */
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"] .sb-item-text,
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].active .sb-item-text,
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].open .sb-item-text{
+  color:rgba(255,255,255,.65)!important;
+  font-weight:500!important;
+}
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].active svg,
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].open svg{
+  opacity:.7!important;
+}
+#sidebar-hrm-menu .sb-item,
+#sidebar-hrm-menu .sb-item.active{
+  background:transparent!important;
+  border-color:transparent!important;
+}
+#sidebar-hrm-menu .sb-item .sb-item-text,
+#sidebar-hrm-menu .sb-item.active .sb-item-text{
+  color:rgba(255,255,255,.65)!important;
+  font-size:12px!important;
+  font-weight:500!important;
+}
+#sidebar-hrm-menu .sb-item.active .sb-dot{
+  background:#1a8fd1!important;
+}
+
+/* HR Employees item uses an icon, not a submenu dot */
+#sidebar-hrm-menu .hr-employee-link svg{
+  width:14px!important;
+  height:14px!important;
+  flex:0 0 14px!important;
+  opacity:.7!important;
+}
+#sidebar-hrm-menu .hr-employee-link.active svg{
+  opacity:.9!important;
+}
 </style>
 </head>
 <body>
@@ -254,7 +331,7 @@ body{font-family:'Inter',system-ui,sans-serif!important;background:#F4F7FB!impor
       <span class="sb-chevron" aria-hidden="true"></span>
     </button>
     <div class="sb-submenu" id="sidebar-hrm-menu" hidden>
-      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><span class="sb-dot"></span><span class="sb-item-text">Employees</span></a>
+      <a class="sb-item hr-employee-link" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sb-item-text">Employees</span></a>
     </div>
 
     <div class="sb-sec">Account</div>
@@ -691,6 +768,10 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
+
+
+
 
 
 

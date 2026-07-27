@@ -119,6 +119,83 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
 .btn{border-radius:8px!important}
 .wizard-step{animation:sectionFade .18s ease-out}
 @keyframes sectionFade{from{opacity:.35;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Final TadbirTech sidebar parity with accounting pages */
+.app{grid-template-columns:220px 1fr!important}
+.sidebar{width:220px!important;background:#0D1F3C!important;color:#fff!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important}
+.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
+.sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+.sb-user{display:none!important}
+.sb-nav{padding:12px 40px 12px 10px!important;flex:1!important;overflow-y:auto!important;overflow-x:hidden!important;margin-right:-32px!important}
+.sb-sec{font-size:9px!important;font-weight:700!important;color:rgba(255,255,255,.25)!important;text-transform:uppercase!important;letter-spacing:1px!important;padding:0 8px!important;margin:10px 0 4px!important}
+.sb-item{display:flex!important;align-items:center!important;gap:10px!important;width:100%!important;min-height:34px!important;padding:9px 10px!important;border-radius:8px!important;margin:0 0 2px!important;text-decoration:none!important;color:rgba(255,255,255,.65)!important;font-size:13px!important;font-weight:600!important;line-height:1.2!important;background:transparent!important;border:.5px solid transparent!important;font-family:inherit!important;text-align:left!important;cursor:pointer!important;transition:background .18s ease,border-color .18s ease,color .18s ease!important}
+.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
+.sb-item.active,.sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.2)!important;border-color:rgba(26,143,209,.3)!important;color:#fff!important}
+.sb-item svg{width:15px!important;height:15px!important;flex:0 0 15px!important;opacity:.75!important}
+.sb-item-text{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.sb-dropdown-toggle .sb-item-text{white-space:normal!important;line-height:1.25!important}
+.sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;flex:0 0 7px!important;border-right:1.5px solid rgba(255,255,255,.55)!important;border-bottom:1.5px solid rgba(255,255,255,.55)!important;transform:rotate(45deg)!important;transition:transform .18s ease,border-color .18s ease!important}
+.sb-dropdown-toggle.open .sb-chevron{transform:rotate(225deg)!important;border-color:#fff!important}
+.sb-submenu{margin:2px 0 6px 14px!important;padding:0!important}
+.sb-submenu-nested{margin:2px 0 6px 14px!important}
+.sb-submenu .sb-item{font-size:12px!important;min-height:30px!important;padding:7px 10px!important;color:rgba(255,255,255,.58)!important}
+.sb-dot{width:6px!important;height:6px!important;border-radius:50%!important;background:rgba(255,255,255,.35)!important;display:inline-block!important;flex:0 0 6px!important;margin-left:4px!important}
+.sb-item.active .sb-dot{background:#1a8fd1!important}
+.sb-foot,.sb-bottom{padding:10px!important;border-top:.5px solid rgba(255,255,255,.08)!important;flex:0 0 auto!important}
+.sb-logout{display:flex!important;align-items:center!important;gap:8px!important;width:100%!important;padding:8px 10px!important;border:0!important;border-radius:8px!important;background:transparent!important;color:rgba(255,255,255,.4)!important;font-size:12px!important;font-weight:600!important;font-family:inherit!important;cursor:pointer!important}
+.sb-logout:hover{background:rgba(220,38,38,.1)!important;color:#f87171!important}
+@media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
+
+/* HR sidebar polish: match accounting typography and submenu active style */
+.sb-item{font-weight:500!important}
+.sb-item-text,.sb-item span{font-size:13px!important;color:rgba(255,255,255,.65)!important;font-weight:500!important}
+.sb-item.active .sb-item-text,.sb-item.active span{color:#fff!important}
+.sb-submenu{display:grid!important;gap:2px!important;margin:2px 0 6px 16px!important}
+.sb-submenu[hidden]{display:none!important}
+.sb-submenu .sb-item{padding:7px 10px!important;min-height:30px!important;background:transparent!important;border-color:transparent!important;color:rgba(255,255,255,.58)!important}
+.sb-submenu .sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
+.sb-submenu .sb-item.active{background:transparent!important;border-color:transparent!important;color:#fff!important}
+.sb-submenu .sb-item.active .sb-item-text{color:#fff!important;font-weight:500!important}
+.sb-submenu .sb-item-text{font-size:12px!important;font-weight:500!important}
+.sb-submenu .sb-dot{background:rgba(255,255,255,.35)!important}
+.sb-submenu .sb-item.active .sb-dot{background:#1a8fd1!important}
+
+/* HR sidebar text normalization: keep active state, reduce text brightness/weight */
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"] .sb-item-text,
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].active .sb-item-text,
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].open .sb-item-text{
+  color:rgba(255,255,255,.65)!important;
+  font-weight:500!important;
+}
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].active svg,
+.sb-dropdown-toggle[data-sidebar-toggle="hrm"].open svg{
+  opacity:.7!important;
+}
+#sidebar-hrm-menu .sb-item,
+#sidebar-hrm-menu .sb-item.active{
+  background:transparent!important;
+  border-color:transparent!important;
+}
+#sidebar-hrm-menu .sb-item .sb-item-text,
+#sidebar-hrm-menu .sb-item.active .sb-item-text{
+  color:rgba(255,255,255,.65)!important;
+  font-size:12px!important;
+  font-weight:500!important;
+}
+#sidebar-hrm-menu .sb-item.active .sb-dot{
+  background:#1a8fd1!important;
+}
+
+/* HR Employees item uses an icon, not a submenu dot */
+#sidebar-hrm-menu .hr-employee-link svg{
+  width:14px!important;
+  height:14px!important;
+  flex:0 0 14px!important;
+  opacity:.7!important;
+}
+#sidebar-hrm-menu .hr-employee-link.active svg{
+  opacity:.9!important;
+}
 </style>
 </head>
 <body>
@@ -171,7 +248,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
       <span class="sb-chevron" aria-hidden="true"></span>
     </button>
     <div class="sb-submenu" id="sidebar-hrm-menu" hidden>
-      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><span class="sb-dot"></span><span class="sb-item-text">Employees</span></a>
+      <a class="sb-item hr-employee-link" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sb-item-text">Employees</span></a>
     </div>
 
     <div class="sb-sec">Account</div>
@@ -218,7 +295,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
               <div class="form-grid">
                 <div class="field"><label>Employee ID</label><input id="employee-number" class="employee-number-preview" placeholder="Auto generated" readonly></div>
                 <div class="field"><label>Full name*</label><input id="full-name" autocomplete="name" required></div>
-                <div class="field"><label>Profile photo URL</label><input id="profile-photo-url" placeholder="Paste image URL for now"></div>
+                <div class="field"><label>Profile photo</label><input id="profile-photo-file" type="file" accept="image/*"><small class="field-hint">Upload JPG, PNG, or WebP. It will be attached to the employee profile.</small></div>
                 <div class="field"><label>Gender</label><select id="gender"><option value="">Select</option><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div>
                 <div class="field"><label>Birth date</label><input id="birth-date" type="date"></div>
                 <div class="field"><label>Marital status</label><select id="marital-status"><option value="">Select</option><option value="single">Single</option><option value="married">Married</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div>
@@ -301,12 +378,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
             </section>
 
             <section class="wizard-step" data-step="documents" hidden>
-              <div class="step-head"><div><div class="step-kicker">Document vault</div><div class="step-title">Documents, diplomas, and skills</div><p class="step-copy">For the MVP, files are saved as URLs/text. Storage upload can be added after the bucket is configured.</p></div><span class="step-count">6 / 8</span></div>
+              <div class="step-head"><div><div class="step-kicker">Document vault</div><div class="step-title">Documents, diplomas, and skills</div><p class="step-copy">Upload employee files directly, then complete diplomas, education, languages, and skills.</p></div><span class="step-count">6 / 8</span></div>
               <div class="form-grid">
-                <div class="field"><label>CV URL</label><input id="cv-url" placeholder="Paste uploaded file URL"></div>
-                <div class="field"><label>Contract URL</label><input id="contract-url" placeholder="Paste uploaded file URL"></div>
-                <div class="field"><label>ID card URL</label><input id="id-card-url"></div>
-                <div class="field"><label>Medical certificate URL</label><input id="medical-certificate-url"></div>
+                <div class="field"><label>CV</label><input id="cv-file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></div>
+                <div class="field"><label>Employment contract</label><input id="contract-file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></div>
+                <div class="field"><label>ID card</label><input id="id-card-file" type="file" accept=".pdf,.png,.jpg,.jpeg"></div>
+                <div class="field"><label>Medical certificate</label><input id="medical-certificate-file" type="file" accept=".pdf,.png,.jpg,.jpeg"></div>
                 <div class="field"><label>Diplomas</label><input id="diplomas" placeholder="Bachelor, Master, BTS..."></div>
                 <div class="field"><label>Professional certificates</label><input id="professional-certifications"></div>
                 <div class="field span-2"><label>Academic background</label><textarea id="academic-background" placeholder="School, specialization, graduation year..."></textarea></div>
@@ -373,9 +450,21 @@ async function init(){if(window.lucide)window.lucide.createIcons();initCompletio
 function validateStep(step=currentStep){if(step==='personal'&&!value('full-name')){showNotice('Full name is required before moving to the next step.','error');return false}return true}
 function goNext(){if(!validateStep(currentStep))return;const idx=steps.indexOf(currentStep);if(idx<steps.length-1)setStep(steps[idx+1])}
 function goPrev(){const idx=steps.indexOf(currentStep);if(idx>0)setStep(steps[idx-1])}
-function corePayload(){return {company_id:companyId,employee_number:value('employee-number')||('EMP-'+String(employeeCount+1).padStart(3,'0')),full_name:value('full-name'),email:value('email'),phone:value('phone')||null,national_id:value('national-id')||null,hire_date:value('hire-date')||null,birth_date:value('birth-date')||null,contract_type:value('contract-type')||'permanent',department_id:value('department-id')||null,position_id:value('position-id')||null,manager_id:value('manager-id')||null,status:value('status')||'active',base_salary:numberValue('base-salary'),currency:value('currency')||'DZD',bank_name:value('bank-name')||null,bank_account:value('bank-account')||null,diplomas:value('diplomas')||null,academic_background:value('academic-background')||null,profile_photo_url:value('profile-photo-url')||null,social_security_number:value('social-security-number')||null,gender:value('gender')||null,marital_status:value('marital-status')||null,secondary_phone:value('secondary-phone')||null,address:value('address')||null,city:value('city')||null,state_region:value('state-region')||null,postal_code:value('postal-code')||null,country:value('country')||null,contract_end_date:value('contract-end-date')||null,workplace:value('workplace')||null,payment_method:value('payment-method')||null,allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),deductions:numberValue('deductions'),work_system:value('work-system')||null,work_hours_per_week:numberValue('work-hours-per-week'),work_days:checkedDays(),shift_schedule:value('shift-schedule')||null,emergency_contact_name:value('emergency-contact-name')||null,emergency_contact_relationship:value('emergency-contact-relationship')||null,emergency_contact_phone:value('emergency-contact-phone')||null,languages:value('languages')||null,skills:value('skills')||null,professional_certifications:value('professional-certifications')||null,system_username:value('system-username')||null,login_email:value('login-email')||value('email')||null,system_role:value('system-role')||'employee',hr_notes:value('hr-notes')||null}}
-async function insertOptionalRecords(client,employeeId){const docs=[['cv','CV',value('cv-url')],['contract','Employment contract',value('contract-url')],['other','ID card',value('id-card-url')],['certificate','Medical certificate',value('medical-certificate-url')]].filter(x=>x[2]);if(docs.length){await client.from('employee_documents').insert(docs.map(d=>({company_id:companyId,employee_id:employeeId,document_type:d[0],title:d[1],file_url:d[2]})))}if(value('academic-background')||value('diplomas')){await client.from('employee_education').insert({company_id:companyId,employee_id:employeeId,degree:value('diplomas')||null,notes:value('academic-background')||null})}if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){const gross=numberValue('base-salary')+numberValue('allowances')+numberValue('bonuses')-numberValue('deductions');await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:gross,net_salary:gross,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form'})}}
-async function submitEmployee(event){event.preventDefault();if(!value('full-name')){setStep('personal');showNotice('Full name is required before saving the employee.','error');return}const client=getSupabase();if(!client||!companyId){showNotice('Demo preview only. Run the HR SQL, login, and select a company to save employees.','error');return}const payload=corePayload();let result=await client.from('employees').insert(payload).select('id').single();if(result.error&&/column .* does not exist/i.test(result.error.message)){const safe={company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,national_id:payload.national_id,hire_date:payload.hire_date,birth_date:payload.birth_date,contract_type:payload.contract_type,department_id:payload.department_id,position_id:payload.position_id,manager_id:payload.manager_id,status:payload.status,base_salary:payload.base_salary,currency:payload.currency,bank_name:payload.bank_name,bank_account:payload.bank_account,diplomas:payload.diplomas,academic_background:payload.academic_background,profile_photo_url:payload.profile_photo_url,social_security_number:payload.social_security_number};result=await client.from('employees').insert(safe).select('id').single();showNotice('Employee saved with core fields. Run the updated HR SQL to enable every new tab field.')}if(result.error){showNotice(result.error.message,'error');return}await insertOptionalRecords(client,result.data.id);window.location.href='employee-profile.html?id='+(result.data?.id||'')}
+function corePayload(){return {company_id:companyId,employee_number:value('employee-number')||('EMP-'+String(employeeCount+1).padStart(3,'0')),full_name:value('full-name'),email:value('email'),phone:value('phone')||null,national_id:value('national-id')||null,hire_date:value('hire-date')||null,birth_date:value('birth-date')||null,contract_type:value('contract-type')||'permanent',department_id:value('department-id')||null,position_id:value('position-id')||null,manager_id:value('manager-id')||null,status:value('status')||'active',base_salary:numberValue('base-salary'),currency:value('currency')||'DZD',bank_name:value('bank-name')||null,bank_account:value('bank-account')||null,diplomas:value('diplomas')||null,academic_background:value('academic-background')||null,profile_photo_url:null,social_security_number:value('social-security-number')||null,gender:value('gender')||null,marital_status:value('marital-status')||null,secondary_phone:value('secondary-phone')||null,address:value('address')||null,city:value('city')||null,state_region:value('state-region')||null,postal_code:value('postal-code')||null,country:value('country')||null,contract_end_date:value('contract-end-date')||null,workplace:value('workplace')||null,payment_method:value('payment-method')||null,allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),deductions:numberValue('deductions'),work_system:value('work-system')||null,work_hours_per_week:numberValue('work-hours-per-week'),work_days:checkedDays(),shift_schedule:value('shift-schedule')||null,emergency_contact_name:value('emergency-contact-name')||null,emergency_contact_relationship:value('emergency-contact-relationship')||null,emergency_contact_phone:value('emergency-contact-phone')||null,languages:value('languages')||null,skills:value('skills')||null,professional_certifications:value('professional-certifications')||null,system_username:value('system-username')||null,login_email:value('login-email')||value('email')||null,system_role:value('system-role')||'employee',hr_notes:value('hr-notes')||null}}
+function isMissingColumnError(error){return /schema cache|could not find .*column|column .*does not exist/i.test(error?.message||'')}
+function fileValue(id){return document.getElementById(id)?.files?.[0]||null}
+function cleanFileName(name){return String(name||'file').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/-+/g,'-')}
+async function uploadEmployeeFile(client,employeeId,type,file){if(!file)return null;const key=[companyId,employeeId,type,Date.now()+'-'+cleanFileName(file.name)].join('/');const upload=await client.storage.from('employee-files').upload(key,file,{cacheControl:'3600',upsert:false});if(upload.error)throw upload.error;const publicUrl=client.storage.from('employee-files').getPublicUrl(key)?.data?.publicUrl;return {url:publicUrl,path:key,name:file.name,size:file.size}}
+async function tryInsertEmployee(client,payload){const attempts=[payload,{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,national_id:payload.national_id,hire_date:payload.hire_date,contract_type:payload.contract_type,department_id:payload.department_id,position_id:payload.position_id,manager_id:payload.manager_id,status:payload.status,base_salary:payload.base_salary,currency:payload.currency,bank_name:payload.bank_name,bank_account:payload.bank_account},{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,hire_date:payload.hire_date,status:payload.status,base_salary:payload.base_salary,currency:payload.currency}];let last=null;for(let i=0;i<attempts.length;i++){const result=await client.from('employees').insert(attempts[i]).select('id').single();if(!result.error){if(i>0)showNotice('Employee saved with core fields. Run the updated HR SQL to enable every new tab field.');return result}last=result;if(!isMissingColumnError(result.error))return result}return last}
+async function insertOptionalRecords(client,employeeId){
+  const photo=fileValue('profile-photo-file');
+  if(photo){try{const uploaded=await uploadEmployeeFile(client,employeeId,'profile-photo',photo);if(uploaded?.url){const update=await client.from('employees').update({profile_photo_url:uploaded.url}).eq('id',employeeId);if(update.error&&!isMissingColumnError(update.error))console.warn(update.error)}}catch(error){console.warn('Profile photo upload skipped:',error.message||error)}}
+  const docInputs=[['cv','CV','cv-file'],['contract','Employment contract','contract-file'],['other','ID card','id-card-file'],['certificate','Medical certificate','medical-certificate-file']];
+  for(const [document_type,title,inputId] of docInputs){const file=fileValue(inputId);if(!file)continue;try{const uploaded=await uploadEmployeeFile(client,employeeId,document_type,file);const insert=await client.from('employee_documents').insert({company_id:companyId,employee_id:employeeId,document_type,title,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});if(insert.error&&!isMissingColumnError(insert.error))console.warn(insert.error)}catch(error){console.warn(title+' upload skipped:',error.message||error)}}
+  if(value('academic-background')||value('diplomas')){try{const result=await client.from('employee_education').insert({company_id:companyId,employee_id:employeeId,degree:value('diplomas')||null,notes:value('academic-background')||null});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
+  if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){try{const gross=numberValue('base-salary')+numberValue('allowances')+numberValue('bonuses')-numberValue('deductions');const result=await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:gross,net_salary:gross,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form'});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
+}
+async function submitEmployee(event){event.preventDefault();if(!value('full-name')){setStep('personal');showNotice('Full name is required before saving the employee.','error');return}const client=getSupabase();if(!client||!companyId){showNotice('Demo preview only. Run the HR SQL, login, and select a company to save employees.','error');return}const payload=corePayload();const result=await tryInsertEmployee(client,payload);if(result.error){showNotice(result.error.message,'error');return}await insertOptionalRecords(client,result.data.id);window.location.href='employee-profile.html?id='+(result.data?.id||'')}
 document.querySelectorAll('[data-step-tab]').forEach(tab=>tab.addEventListener('click',()=>setStep(tab.dataset.stepTab)));
 document.getElementById('next-btn').addEventListener('click',goNext);
 document.getElementById('prev-btn').addEventListener('click',goPrev);
@@ -388,4 +477,10 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
+
+
+
+
 
