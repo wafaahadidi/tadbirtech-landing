@@ -196,6 +196,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
 #sidebar-hrm-menu .hr-employee-link.active svg{
   opacity:.9!important;
 }
+
+/* Algerian payroll compliance preview */
+.payroll-preview{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:4px}
+.payroll-chip{border:.5px solid #DDE6EF;background:#F8FAFC;border-radius:8px;padding:11px 12px}
+.payroll-chip span{display:block;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#7a93ae;margin-bottom:5px}
+.payroll-chip strong{font-size:15px;font-weight:900;color:#0D1F3C}
+.field-hint.strong{color:#0D1F3C;font-weight:800}
+@media(max-width:1100px){.payroll-preview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.payroll-preview{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -299,8 +308,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
                 <div class="field"><label>Gender</label><select id="gender"><option value="">Select</option><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div>
                 <div class="field"><label>Birth date</label><input id="birth-date" type="date"></div>
                 <div class="field"><label>Marital status</label><select id="marital-status"><option value="">Select</option><option value="single">Single</option><option value="married">Married</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div>
-                <div class="field"><label>National ID / Passport</label><input id="national-id"></div>
-                <div class="field"><label>Social security number</label><input id="social-security-number"></div>
+                <div class="field"><label>National Identification Number (NIN)</label><input id="national-id" inputmode="numeric" maxlength="18" pattern="\d{18}" placeholder="18 digits"><small class="field-hint">Algerian NIN must contain exactly 18 digits.</small></div>
+                <div class="field"><label>CNAS number</label><input id="social-security-number" inputmode="numeric" maxlength="12" pattern="\d{12}" placeholder="12 digits"><small class="field-hint">CNAS number must contain exactly 12 digits.</small></div>
               </div>
             </section>
 
@@ -313,7 +322,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
                 <div class="field"><label>Country</label><input id="country" value="Algeria"></div>
                 <div class="field span-2"><label>Address</label><input id="address"></div>
                 <div class="field"><label>City</label><input id="city"></div>
-                <div class="field"><label>Wilaya / State</label><input id="state-region"></div>
+                <div class="field"><label>Wilaya</label><select id="state-region"><option value="">Select wilaya</option><option value="01 Adrar">01 Adrar</option><option value="02 Chlef">02 Chlef</option><option value="03 Laghouat">03 Laghouat</option><option value="04 Oum El Bouaghi">04 Oum El Bouaghi</option><option value="05 Batna">05 Batna</option><option value="06 Bejaia">06 Bejaia</option><option value="07 Biskra">07 Biskra</option><option value="08 Bechar">08 Bechar</option><option value="09 Blida">09 Blida</option><option value="10 Bouira">10 Bouira</option><option value="11 Tamanrasset">11 Tamanrasset</option><option value="12 Tebessa">12 Tebessa</option><option value="13 Tlemcen">13 Tlemcen</option><option value="14 Tiaret">14 Tiaret</option><option value="15 Tizi Ouzou">15 Tizi Ouzou</option><option value="16 Alger">16 Alger</option><option value="17 Djelfa">17 Djelfa</option><option value="18 Jijel">18 Jijel</option><option value="19 Setif">19 Setif</option><option value="20 Saida">20 Saida</option><option value="21 Skikda">21 Skikda</option><option value="22 Sidi Bel Abbes">22 Sidi Bel Abbes</option><option value="23 Annaba">23 Annaba</option><option value="24 Guelma">24 Guelma</option><option value="25 Constantine">25 Constantine</option><option value="26 Medea">26 Medea</option><option value="27 Mostaganem">27 Mostaganem</option><option value="28 MSila">28 MSila</option><option value="29 Mascara">29 Mascara</option><option value="30 Ouargla">30 Ouargla</option><option value="31 Oran">31 Oran</option><option value="32 El Bayadh">32 El Bayadh</option><option value="33 Illizi">33 Illizi</option><option value="34 Bordj Bou Arreridj">34 Bordj Bou Arreridj</option><option value="35 Boumerdes">35 Boumerdes</option><option value="36 El Tarf">36 El Tarf</option><option value="37 Tindouf">37 Tindouf</option><option value="38 Tissemsilt">38 Tissemsilt</option><option value="39 El Oued">39 El Oued</option><option value="40 Khenchela">40 Khenchela</option><option value="41 Souk Ahras">41 Souk Ahras</option><option value="42 Tipaza">42 Tipaza</option><option value="43 Mila">43 Mila</option><option value="44 Ain Defla">44 Ain Defla</option><option value="45 Naama">45 Naama</option><option value="46 Ain Temouchent">46 Ain Temouchent</option><option value="47 Ghardaia">47 Ghardaia</option><option value="48 Relizane">48 Relizane</option><option value="49 Timimoun">49 Timimoun</option><option value="50 Bordj Badji Mokhtar">50 Bordj Badji Mokhtar</option><option value="51 Ouled Djellal">51 Ouled Djellal</option><option value="52 Beni Abbes">52 Beni Abbes</option><option value="53 In Salah">53 In Salah</option><option value="54 In Guezzam">54 In Guezzam</option><option value="55 Touggourt">55 Touggourt</option><option value="56 Djanet">56 Djanet</option><option value="57 El Meghaier">57 El Meghaier</option><option value="58 El Meniaa">58 El Meniaa</option></select></div>
                 <div class="field"><label>Postal code</label><input id="postal-code"></div>
               </div>
               <div class="form-section">
@@ -332,7 +341,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
                 <div class="field"><label>Job position</label><select id="position-id"></select></div>
                 <div class="field"><label>Department</label><select id="department-id"></select></div>
                 <div class="field"><label>Direct manager</label><select id="manager-id"></select></div>
-                <div class="field"><label>Contract type</label><select id="contract-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="intern">Intern</option><option value="contractor">Contractor</option></select></div>
+                <div class="field"><label>Contract type</label><select id="contract-type"><option value="cdi">CDI - indefinite term</option><option value="cdd">CDD - fixed term</option><option value="internship">Internship / trainee</option><option value="apprenticeship">Apprenticeship</option><option value="contractor">Contractor / consultant</option></select></div>
                 <div class="field"><label>Employee status</label><select id="status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="sick_leave">Sick leave</option><option value="terminated">Suspended / Terminated</option><option value="resigned">Resigned</option></select></div>
                 <div class="field"><label>Hire date</label><input id="hire-date" type="date"></div>
                 <div class="field"><label>Contract end date</label><input id="contract-end-date" type="date"></div>
@@ -344,13 +353,13 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
               <div class="step-head"><div><div class="step-kicker">Compensation</div><div class="step-title">Payroll information</div><p class="step-copy">Salary basis, payment method, bank, bonuses, allowances, and deductions.</p></div><span class="step-count">4 / 8</span></div>
               <div class="form-grid">
                 <div class="field"><label>Base salary</label><input id="base-salary" type="number" min="0" step="1000"></div>
-                <div class="field"><label>Currency</label><input id="currency" value="DZD"></div>
+                <div class="field"><label>Currency</label><input id="currency" value="DZD" readonly><small class="field-hint strong">Locked for Algerian payroll.</small></div>
                 <div class="field"><label>Payment method</label><select id="payment-method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="cheque">Cheque</option></select></div>
                 <div class="field"><label>Bank</label><input id="bank-name"></div>
                 <div class="field"><label>Bank account / IBAN</label><input id="bank-account"></div>
                 <div class="field"><label>Bonuses</label><input id="bonuses" type="number" min="0" step="1000"></div>
                 <div class="field"><label>Allowances</label><input id="allowances" type="number" min="0" step="1000"></div>
-                <div class="field"><label>Deductions</label><input id="deductions" type="number" min="0" step="1000"></div>
+                <div class="field"><label>Deductions</label><input id="deductions" type="number" min="0" step="1000"></div><div class="payroll-preview" aria-label="Algerian payroll preview"><div class="payroll-chip"><span>Gross salary</span><strong id="payroll-gross">0 DZD</strong></div><div class="payroll-chip"><span>CNAS employee 9%</span><strong id="payroll-cnas">0 DZD</strong></div><div class="payroll-chip"><span>IRG estimate</span><strong id="payroll-irg">0 DZD</strong></div><div class="payroll-chip"><span>Employer CNAS 26%</span><strong id="payroll-employer-cnas">0 DZD</strong></div><div class="payroll-chip"><span>Net salary</span><strong id="payroll-net">0 DZD</strong></div></div>
               </div>
             </section>
 
@@ -384,6 +393,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
                 <div class="field"><label>Employment contract</label><input id="contract-file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></div>
                 <div class="field"><label>ID card</label><input id="id-card-file" type="file" accept=".pdf,.png,.jpg,.jpeg"></div>
                 <div class="field"><label>Medical certificate</label><input id="medical-certificate-file" type="file" accept=".pdf,.png,.jpg,.jpeg"></div>
+                <div class="field"><label>Scanned diploma paper</label><input id="diploma-scan-file" type="file" accept=".pdf,.png,.jpg,.jpeg"></div>
+                <div class="field"><label>Other documents folder</label><select id="other-doc-category"><option value="personal">Personal documents</option><option value="education">Education</option><option value="experience">Previous professional experience</option><option value="employment">Contracts, promotion decisions & work certificates</option></select></div><div class="field"><label>Other documents</label><input id="other-certificate-files" type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" multiple><small class="field-hint">Upload birth certificate, casier judiciaire, fiche familiale, experience certificates, decisions, or any HR file.</small></div>
                 <div class="field"><label>Diplomas</label><input id="diplomas" placeholder="Bachelor, Master, BTS..."></div>
                 <div class="field"><label>Professional certificates</label><input id="professional-certifications"></div>
                 <div class="field span-2"><label>Academic background</label><textarea id="academic-background" placeholder="School, specialization, graduation year..."></textarea></div>
@@ -444,27 +455,88 @@ function initCompletionChart(){const canvas=document.getElementById('completion-
 function setStep(step){currentStep=step;document.querySelectorAll('[data-step]').forEach(s=>s.hidden=s.dataset.step!==step);document.querySelectorAll('[data-step-tab]').forEach(t=>t.classList.toggle('active',t.dataset.stepTab===step));const idx=steps.indexOf(step);document.getElementById('prev-btn').hidden=idx===0;document.getElementById('next-btn').hidden=idx===steps.length-1;document.getElementById('submit-btn').disabled=idx!==steps.length-1;updateCompletion();clearNotice()}
 async function resolveCompany(){const client=getSupabase();let raw=localStorage.getItem('tt_company_id');let stored=raw&&raw!=='null'&&raw!=='undefined'?raw:null;if(!client){companyId=stored;return companyId}const {data:{session}}=await client.auth.getSession();if(!session){companyId=stored;return companyId}const {data}=await client.from('company_members').select('company_id').eq('user_id',session.user.id).limit(1);companyId=data?.[0]?.company_id||stored;if(companyId)localStorage.setItem('tt_company_id',companyId);return companyId}
 async function safeLoad(table,order){const client=getSupabase();if(!client||!companyId)return[];try{let q=client.from(table).select('*').eq('company_id',companyId);if(order)q=q.order(order,{ascending:true});const {data,error}=await q;if(error)throw error;return data||[]}catch(e){return[]}}
-function fillSelect(id,items,labelFn){const el=document.getElementById(id);if(!el)return;el.innerHTML='<option value="">Unassigned</option>'+items.map(item=>'<option value="'+String(item.id).replace(/"/g,'&quot;')+'">'+labelFn(item)+'</option>').join('')}
+function fillSelect(id,items,labelFn,emptyLabel='Unassigned'){const el=document.getElementById(id);if(!el)return;el.innerHTML='<option value="">'+emptyLabel+'</option>'+items.map(item=>'<option value="'+String(item.id).replace(/"/g,'&quot;')+'">'+labelFn(item)+'</option>').join('')}
 function setEmployeeNumber(){const el=document.getElementById('employee-number');if(el&&!el.value)el.value='EMP-'+String(employeeCount+1).padStart(3,'0')}
-async function init(){if(window.lucide)window.lucide.createIcons();initCompletionChart();document.getElementById('hire-date').value=today();await resolveCompany();if(!companyId)showNotice('Preview mode: login and select a company before saving real employee records.');const [departments,positions,employees]=await Promise.all([safeLoad('departments','name'),safeLoad('positions','title'),safeLoad('employees','full_name')]);employeeCount=employees.length;setEmployeeNumber();fillSelect('department-id',departments,d=>d.name||'Department');fillSelect('position-id',positions,p=>p.title||'Position');fillSelect('manager-id',employees,e=>e.full_name||'Employee')}
-function validateStep(step=currentStep){if(step==='personal'&&!value('full-name')){showNotice('Full name is required before moving to the next step.','error');return false}return true}
+function demoHrDropdownData(){
+  const departments=[
+    {id:'',name:'Finance & Accounting'},
+    {id:'',name:'Human Resources'},
+    {id:'',name:'Sales & Customer Success'},
+    {id:'',name:'Operations'},
+    {id:'',name:'Administration'}
+  ];
+  const positions=[
+    {id:'',title:'Finance Manager'},
+    {id:'',title:'Senior Accountant'},
+    {id:'',title:'HR Manager'},
+    {id:'',title:'Payroll Officer'},
+    {id:'',title:'Sales Manager'},
+    {id:'',title:'Sales Representative'},
+    {id:'',title:'Operations Manager'},
+    {id:'',title:'Administrative Assistant'}
+  ];
+  const employees=[
+    {id:'',full_name:'Wafaa Mohammed Hadidi'},
+    {id:'',full_name:'Nadir Benali'},
+    {id:'',full_name:'Samira Ait Kaci'},
+    {id:'',full_name:'Karim Bouchareb'}
+  ];
+  return {departments,positions,employees};
+}
+async function init(){
+  if(window.lucide)window.lucide.createIcons();
+  initCompletionChart();
+  document.getElementById('hire-date').value=today();
+  document.getElementById('currency').value='DZD';
+  await resolveCompany();
+  if(!companyId)showNotice('Preview mode: login and select a company before saving real employee records.');
+  let departments=await safeLoad('departments','name');
+  let positions=await safeLoad('positions','title');
+  let employees=await safeLoad('employees','full_name');
+  const demo=demoHrDropdownData();
+  if(!departments.length){departments=demo.departments;showNotice('Demo dropdowns loaded. Run the updated HR SQL in Supabase to save real department, position, and manager links.');}
+  if(!positions.length)positions=demo.positions;
+  if(!employees.length)employees=demo.employees;
+  employeeCount=employees.length;
+  setEmployeeNumber();
+  fillSelect('department-id',departments,d=>d.name||'Department','Select department');
+  fillSelect('position-id',positions,p=>p.title||'Position','Select job position');
+  fillSelect('manager-id',employees,e=>e.full_name||'Employee','No direct manager');
+  ['base-salary','allowances','bonuses','deductions'].forEach(id=>document.getElementById(id)?.addEventListener('input',updatePayrollPreview));
+  ['national-id','social-security-number'].forEach(id=>document.getElementById(id)?.addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'')}));
+  updatePayrollPreview();
+}
+function isValidNin(v){return !v||/^\d{18}$/.test(v)}
+function isValidCnas(v){return !v||/^\d{12}$/.test(v)}
+function irgMonthly(taxable){taxable=Math.max(0,Number(taxable||0));let tax=0;if(taxable>80000)tax+=(taxable-80000)*.35;if(taxable>40000)tax+=(Math.min(taxable,80000)-40000)*.27;if(taxable>20000)tax+=(Math.min(taxable,40000)-20000)*.23;return Math.round(tax)}
+function payrollCalc(){const gross=Math.max(0,numberValue('base-salary')+numberValue('allowances')+numberValue('bonuses')-numberValue('deductions'));const employeeCnas=Math.round(gross*.09);const taxable=Math.max(0,gross-employeeCnas);const incomeTax=irgMonthly(taxable);const employerCnas=Math.round(gross*.26);const totalDeductions=employeeCnas+incomeTax+numberValue('deductions');const net=Math.max(0,gross-employeeCnas-incomeTax);return {gross,employeeCnas,incomeTax,employerCnas,totalDeductions,net}}
+function updatePayrollPreview(){const r=payrollCalc();const m=v=>new Intl.NumberFormat('en-DZ',{maximumFractionDigits:0}).format(v)+' DZD';const pairs={'payroll-gross':r.gross,'payroll-cnas':r.employeeCnas,'payroll-irg':r.incomeTax,'payroll-employer-cnas':r.employerCnas,'payroll-net':r.net};Object.keys(pairs).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=m(pairs[id])})}
+function validateStep(step=currentStep){
+  if(step==='personal'&&!value('full-name')){showNotice('Full name is required before moving to the next step.','error');return false}
+  if(step==='personal'&&!isValidNin(value('national-id'))){showNotice('National Identification Number must contain exactly 18 digits.','error');return false}
+  if(step==='personal'&&!isValidCnas(value('social-security-number'))){showNotice('CNAS number must contain exactly 12 digits.','error');return false}
+  return true
+}
 function goNext(){if(!validateStep(currentStep))return;const idx=steps.indexOf(currentStep);if(idx<steps.length-1)setStep(steps[idx+1])}
 function goPrev(){const idx=steps.indexOf(currentStep);if(idx>0)setStep(steps[idx-1])}
-function corePayload(){return {company_id:companyId,employee_number:value('employee-number')||('EMP-'+String(employeeCount+1).padStart(3,'0')),full_name:value('full-name'),email:value('email'),phone:value('phone')||null,national_id:value('national-id')||null,hire_date:value('hire-date')||null,birth_date:value('birth-date')||null,contract_type:value('contract-type')||'permanent',department_id:value('department-id')||null,position_id:value('position-id')||null,manager_id:value('manager-id')||null,status:value('status')||'active',base_salary:numberValue('base-salary'),currency:value('currency')||'DZD',bank_name:value('bank-name')||null,bank_account:value('bank-account')||null,diplomas:value('diplomas')||null,academic_background:value('academic-background')||null,profile_photo_url:null,social_security_number:value('social-security-number')||null,gender:value('gender')||null,marital_status:value('marital-status')||null,secondary_phone:value('secondary-phone')||null,address:value('address')||null,city:value('city')||null,state_region:value('state-region')||null,postal_code:value('postal-code')||null,country:value('country')||null,contract_end_date:value('contract-end-date')||null,workplace:value('workplace')||null,payment_method:value('payment-method')||null,allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),deductions:numberValue('deductions'),work_system:value('work-system')||null,work_hours_per_week:numberValue('work-hours-per-week'),work_days:checkedDays(),shift_schedule:value('shift-schedule')||null,emergency_contact_name:value('emergency-contact-name')||null,emergency_contact_relationship:value('emergency-contact-relationship')||null,emergency_contact_phone:value('emergency-contact-phone')||null,languages:value('languages')||null,skills:value('skills')||null,professional_certifications:value('professional-certifications')||null,system_username:value('system-username')||null,login_email:value('login-email')||value('email')||null,system_role:value('system-role')||'employee',hr_notes:value('hr-notes')||null}}
+function corePayload(){return {company_id:companyId,employee_number:value('employee-number')||('EMP-'+String(employeeCount+1).padStart(3,'0')),full_name:value('full-name'),email:value('email'),phone:value('phone')||null,national_id:value('national-id')||null,hire_date:value('hire-date')||null,birth_date:value('birth-date')||null,contract_type:value('contract-type')||'cdi',department_id:value('department-id')||null,position_id:value('position-id')||null,manager_id:value('manager-id')||null,status:value('status')||'active',base_salary:numberValue('base-salary'),currency:'DZD',bank_name:value('bank-name')||null,bank_account:value('bank-account')||null,diplomas:value('diplomas')||null,academic_background:value('academic-background')||null,profile_photo_url:null,social_security_number:value('social-security-number')||null,gender:value('gender')||null,marital_status:value('marital-status')||null,secondary_phone:value('secondary-phone')||null,address:value('address')||null,city:value('city')||null,state_region:value('state-region')||null,postal_code:value('postal-code')||null,country:value('country')||null,contract_end_date:value('contract-end-date')||null,workplace:value('workplace')||null,payment_method:value('payment-method')||null,allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),deductions:numberValue('deductions'),work_system:value('work-system')||null,work_hours_per_week:numberValue('work-hours-per-week'),work_days:checkedDays(),shift_schedule:value('shift-schedule')||null,emergency_contact_name:value('emergency-contact-name')||null,emergency_contact_relationship:value('emergency-contact-relationship')||null,emergency_contact_phone:value('emergency-contact-phone')||null,languages:value('languages')||null,skills:value('skills')||null,professional_certifications:value('professional-certifications')||null,system_username:value('system-username')||null,login_email:value('login-email')||value('email')||null,system_role:value('system-role')||'employee',hr_notes:value('hr-notes')||null}}
 function isMissingColumnError(error){return /schema cache|could not find .*column|column .*does not exist/i.test(error?.message||'')}
 function fileValue(id){return document.getElementById(id)?.files?.[0]||null}
+function fileValues(id){return Array.from(document.getElementById(id)?.files||[])}
 function cleanFileName(name){return String(name||'file').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/-+/g,'-')}
+function documentCategoryForType(type){return {cv:'experience',contract:'employment',work_certificate:'employment',diploma:'education',certificate:'personal',other:'personal'}[type]||'personal'}
 async function uploadEmployeeFile(client,employeeId,type,file){if(!file)return null;const key=[companyId,employeeId,type,Date.now()+'-'+cleanFileName(file.name)].join('/');const upload=await client.storage.from('employee-files').upload(key,file,{cacheControl:'3600',upsert:false});if(upload.error)throw upload.error;const publicUrl=client.storage.from('employee-files').getPublicUrl(key)?.data?.publicUrl;return {url:publicUrl,path:key,name:file.name,size:file.size}}
 async function tryInsertEmployee(client,payload){const attempts=[payload,{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,national_id:payload.national_id,hire_date:payload.hire_date,contract_type:payload.contract_type,department_id:payload.department_id,position_id:payload.position_id,manager_id:payload.manager_id,status:payload.status,base_salary:payload.base_salary,currency:payload.currency,bank_name:payload.bank_name,bank_account:payload.bank_account},{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,hire_date:payload.hire_date,status:payload.status,base_salary:payload.base_salary,currency:payload.currency}];let last=null;for(let i=0;i<attempts.length;i++){const result=await client.from('employees').insert(attempts[i]).select('id').single();if(!result.error){if(i>0)showNotice('Employee saved with core fields. Run the updated HR SQL to enable every new tab field.');return result}last=result;if(!isMissingColumnError(result.error))return result}return last}
 async function insertOptionalRecords(client,employeeId){
   const photo=fileValue('profile-photo-file');
   if(photo){try{const uploaded=await uploadEmployeeFile(client,employeeId,'profile-photo',photo);if(uploaded?.url){const update=await client.from('employees').update({profile_photo_url:uploaded.url}).eq('id',employeeId);if(update.error&&!isMissingColumnError(update.error))console.warn(update.error)}}catch(error){console.warn('Profile photo upload skipped:',error.message||error)}}
-  const docInputs=[['cv','CV','cv-file'],['contract','Employment contract','contract-file'],['other','ID card','id-card-file'],['certificate','Medical certificate','medical-certificate-file']];
-  for(const [document_type,title,inputId] of docInputs){const file=fileValue(inputId);if(!file)continue;try{const uploaded=await uploadEmployeeFile(client,employeeId,document_type,file);const insert=await client.from('employee_documents').insert({company_id:companyId,employee_id:employeeId,document_type,title,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});if(insert.error&&!isMissingColumnError(insert.error))console.warn(insert.error)}catch(error){console.warn(title+' upload skipped:',error.message||error)}}
+  const docInputs=[['cv','CV','cv-file'],['contract','Employment contract','contract-file'],['other','ID card','id-card-file'],['certificate','Medical certificate','medical-certificate-file'],['diploma','Scanned diploma paper','diploma-scan-file']];
+  for(const [document_type,title,inputId] of docInputs){const file=fileValue(inputId);if(!file)continue;try{const uploaded=await uploadEmployeeFile(client,employeeId,document_type,file);const insert=await client.from('employee_documents').insert({company_id:companyId,employee_id:employeeId,document_category:documentCategoryForType(document_type),document_type,title,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});if(insert.error&&!isMissingColumnError(insert.error))console.warn(insert.error)}catch(error){console.warn(title+' upload skipped:',error.message||error)}}
+  for(const file of fileValues('other-certificate-files')){try{const category=value('other-doc-category')||'personal';const uploaded=await uploadEmployeeFile(client,employeeId,category,file);const insert=await client.from('employee_documents').insert({company_id:companyId,employee_id:employeeId,document_category:category,document_type:'other',title:'Other document - '+uploaded.name,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});if(insert.error&&!isMissingColumnError(insert.error))console.warn(insert.error)}catch(error){console.warn('Document upload skipped:',error.message||error)}}
   if(value('academic-background')||value('diplomas')){try{const result=await client.from('employee_education').insert({company_id:companyId,employee_id:employeeId,degree:value('diplomas')||null,notes:value('academic-background')||null});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
-  if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){try{const gross=numberValue('base-salary')+numberValue('allowances')+numberValue('bonuses')-numberValue('deductions');const result=await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:gross,net_salary:gross,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form'});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
+  if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){try{const r=payrollCalc();const result=await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:r.gross,employee_cnas:r.employeeCnas,income_tax:r.incomeTax,total_deductions:r.totalDeductions,employer_contributions:r.employerCnas,net_salary:r.net,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form with Algerian CNAS/IRG preview'});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
 }
-async function submitEmployee(event){event.preventDefault();if(!value('full-name')){setStep('personal');showNotice('Full name is required before saving the employee.','error');return}const client=getSupabase();if(!client||!companyId){showNotice('Demo preview only. Run the HR SQL, login, and select a company to save employees.','error');return}const payload=corePayload();const result=await tryInsertEmployee(client,payload);if(result.error){showNotice(result.error.message,'error');return}await insertOptionalRecords(client,result.data.id);window.location.href='employee-profile.html?id='+(result.data?.id||'')}
+async function submitEmployee(event){event.preventDefault();if(!validateStep('personal')){setStep('personal');return}document.getElementById('currency').value='DZD';updatePayrollPreview();const client=getSupabase();if(!client||!companyId){showNotice('Demo preview only. Run the HR SQL, login, and select a company to save employees.','error');return}const payload=corePayload();const result=await tryInsertEmployee(client,payload);if(result.error){showNotice(result.error.message,'error');return}await insertOptionalRecords(client,result.data.id);window.location.href='employee-profile.html?id='+(result.data?.id||'')}
 document.querySelectorAll('[data-step-tab]').forEach(tab=>tab.addEventListener('click',()=>setStep(tab.dataset.stepTab)));
 document.getElementById('next-btn').addEventListener('click',goNext);
 document.getElementById('prev-btn').addEventListener('click',goPrev);
@@ -477,6 +549,13 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
