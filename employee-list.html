@@ -279,6 +279,14 @@ body{font-family:'Inter',system-ui,sans-serif!important;background:#F4F7FB!impor
 #sidebar-hrm-menu .hr-employee-link.active svg{
   opacity:.9!important;
 }
+
+/* Employee list row identity */
+.employee-identity{display:flex;align-items:center;gap:10px;min-width:220px}
+.employee-avatar{width:34px;height:34px;border-radius:50%;background:#E8F5FD;color:#176FA8;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;overflow:hidden;flex:0 0 34px;border:.5px solid #CFE8F8}
+.employee-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.employee-name-main{font-size:13px;font-weight:900;color:#0D1F3C;line-height:1.2}
+.employee-name-sub{font-size:11px;font-weight:700;color:#7a93ae;margin-top:2px}
+.employee-id-cell{font-size:12px;font-weight:900;color:#38536F}
 </style>
 </head>
 <body>
@@ -424,8 +432,8 @@ body{font-family:'Inter',system-ui,sans-serif!important;background:#F4F7FB!impor
               <thead>
                 <tr>
                   <th class="select-col"><span class="row-check"></span></th>
-                  <th>Last name</th>
-                  <th>First name</th>
+                  <th>Employee</th>
+                  <th>First name</th><th>Employee ID</th>
                   <th>Job position</th>
                   <th>Phone number</th>
                   <th>Email</th>
@@ -686,14 +694,18 @@ async function safeLoad(table,select='*',order){
     return[];
   }
 }
+function cachedEmployees(){
+  try{return JSON.parse(localStorage.getItem('tt_employee_cache')||'[]').filter(Boolean)}catch(e){return[]}
+}
 function mergeRecentEmployee(employees){
-  try{
-    const raw=localStorage.getItem('tt_recent_employee');
-    const recent=raw?JSON.parse(raw):null;
-    if(!recent||recent.company_id!==state.companyId||!recent.id)return employees;
-    if(employees.some(e=>e.id===recent.id)){localStorage.removeItem('tt_recent_employee');return employees}
-    return [recent].concat(employees)
-  }catch(e){return employees}
+  const cached=cachedEmployees().filter(e=>!state.companyId||!e.company_id||e.company_id===state.companyId||e.company_id==='local-preview');
+  const merged=employees.slice();
+  cached.forEach(local=>{
+    const idx=merged.findIndex(e=>e.id===local.id||String(e.employee_number||'')===String(local.employee_number||''));
+    if(idx>=0)merged[idx]=Object.assign({},local,merged[idx]);
+    else merged.unshift(local);
+  });
+  return merged
 }
 async function loadAll(){
   state.schemaReady=true;state.loadErrors=[];state.demoMode=false;
@@ -719,6 +731,9 @@ async function loadAll(){
 function depName(id){return state.departments.find(d=>d.id===id)?.name||'Unassigned'}
 function empName(id){return state.employees.find(e=>e.id===id)?.full_name||'Employee'}
 function statusPill(s){const cls=s==='active'||s==='approved'||s==='paid'||s==='present'?'good':s==='pending'||s==='draft'||s==='late'?'warn':s==='terminated'||s==='rejected'||s==='absent'?'bad':'neutral';return '<span class="pill '+cls+'">'+text(s||'unknown')+'</span>'}
+function employeeInitials(e){return String(e.full_name||'--').split(/\s+/).filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase()||'--'}
+function employeeAvatar(e){return '<span class="employee-avatar">'+(e.profile_photo_url?'<img src="'+text(e.profile_photo_url)+'" alt="">':text(employeeInitials(e)))+'</span>'}
+function employeePosition(e){return posName(e.position_id)==='Unassigned'?(e.job_position_label||'Unassigned'):posName(e.position_id)}
 function nameParts(fullName){const parts=String(fullName||'').trim().split(/\s+/).filter(Boolean);if(!parts.length)return{first:'',last:''};return{first:parts[0],last:parts.slice(1).join(' ')||parts[0]}}
 let employeeFilter='active';
 function renderEmployees(){
@@ -729,8 +744,8 @@ function renderEmployees(){
   if(employeeFilter==='archived')employees=employees.filter(e=>['terminated','resigned','dismissed','archived'].includes(String(e.status||'').toLowerCase()));
   if(search)employees=employees.filter(e=>[e.full_name,e.email,e.phone,posName(e.position_id),e.status].some(v=>String(v||'').toLowerCase().includes(search)));
   employees.sort((a,b)=>String(a.full_name||'').localeCompare(String(b.full_name||'')));
-  if(!employees.length){rows.innerHTML='<tr><td colspan="8"><div class="employee-empty">No employees match this view.</div></td></tr>';return}
-  rows.innerHTML=employees.map(e=>{const n=nameParts(e.full_name);return '<tr ondblclick="openEmployeeModal(\''+e.id+'\')"><td class="select-col"><span class="row-check"></span></td><td><button class="link-btn" type="button" onclick="event.stopPropagation();openEmployeeModal(\''+e.id+'\')">'+text(n.last)+'</button></td><td>'+text(n.first)+'</td><td class="job-cell">'+text(posName(e.position_id))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeModal(\''+e.id+'\')">Edit</button></td></tr>'}).join('')
+  if(!employees.length){rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">No employees match this view.</div></td></tr>';return}
+  rows.innerHTML=employees.map(e=>{const n=nameParts(e.full_name);return '<tr ondblclick="openEmployeeModal(\''+e.id+'\')"><td class="select-col"><span class="row-check"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn" type="button" onclick="event.stopPropagation();openEmployeeModal(\''+e.id+'\')">'+text(n.last||e.full_name)+'</button><div class="employee-name-sub">'+text(e.employee_number||e.id||'-')+'</div></div></div></td><td><span class="employee-name-main">'+text(n.first)+'</span></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeModal(\''+e.id+'\')">Edit</button></td></tr>'}).join('')
 }
 function renderDepartments(){const host=document.getElementById('department-list');if(!state.departments.length){host.innerHTML='<div class="empty">Departments will appear here.</div>';return}host.innerHTML=state.departments.map(d=>{const team=state.employees.filter(e=>e.department_id===d.id);const manager=state.employees.find(e=>e.id===d.manager_id);return '<div class="calc-row"><span><strong>'+text(d.name)+'</strong><br><small style="color:#7a93ae">'+text(manager?manager.full_name:'No manager')+'</small></span><strong>'+team.length+' employee(s)</strong></div>'}).join('')}
 function renderAttendance(){const rows=document.getElementById('attendance-rows');if(!state.attendance.length){rows.innerHTML='<tr><td colspan="6"><div class="empty">No attendance records yet.</div></td></tr>';return}rows.innerHTML=state.attendance.slice(-20).reverse().map(a=>'<tr><td>'+text(a.date)+'</td><td>'+text(empName(a.employee_id))+'</td><td>'+statusPill(a.status)+'</td><td>'+text(a.check_in||'-')+'</td><td>'+text(a.check_out||'-')+'</td><td class="right">'+Number(a.hours_worked||0).toFixed(1)+'</td></tr>').join('')}
@@ -794,6 +809,8 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
+
 
 
 
