@@ -524,6 +524,17 @@ function isMissingColumnError(error){return /schema cache|could not find .*colum
 function fileValue(id){return document.getElementById(id)?.files?.[0]||null}
 function fileValues(id){return Array.from(document.getElementById(id)?.files||[])}
 function cleanFileName(name){return String(name||'file').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/-+/g,'-')}
+function selectedText(id){const el=document.getElementById(id);return el&&el.selectedIndex>=0?el.options[el.selectedIndex].textContent:''}
+function readPhotoDataUrl(file){return new Promise(resolve=>{if(!file){resolve(null);return}const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>resolve(null);reader.readAsDataURL(file)})}
+function cacheEmployeeForList(employee){
+  try{
+    const key='tt_employee_cache';
+    const list=JSON.parse(localStorage.getItem(key)||'[]').filter(x=>x&&x.id!==employee.id);
+    list.unshift(employee);
+    localStorage.setItem(key,JSON.stringify(list.slice(0,100)));
+    localStorage.setItem('tt_recent_employee',JSON.stringify(employee));
+  }catch(e){console.warn('Could not cache employee for list',e)}
+}
 function documentCategoryForType(type){return {cv:'experience',contract:'employment',work_certificate:'employment',diploma:'education',certificate:'personal',other:'personal'}[type]||'personal'}
 async function uploadEmployeeFile(client,employeeId,type,file){if(!file)return null;const key=[companyId,employeeId,type,Date.now()+'-'+cleanFileName(file.name)].join('/');const upload=await client.storage.from('employee-files').upload(key,file,{cacheControl:'3600',upsert:false});if(upload.error)throw upload.error;const publicUrl=client.storage.from('employee-files').getPublicUrl(key)?.data?.publicUrl;return {url:publicUrl,path:key,name:file.name,size:file.size}}
 async function tryInsertEmployee(client,payload){const attempts=[payload,{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,national_id:payload.national_id,hire_date:payload.hire_date,contract_type:payload.contract_type,department_id:payload.department_id,position_id:payload.position_id,manager_id:payload.manager_id,status:payload.status,base_salary:payload.base_salary,currency:payload.currency,bank_name:payload.bank_name,bank_account:payload.bank_account},{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,hire_date:payload.hire_date,status:payload.status,base_salary:payload.base_salary,currency:payload.currency}];let last=null;for(let i=0;i<attempts.length;i++){const result=await client.from('employees').insert(attempts[i]).select('id').single();if(!result.error){if(i>0)showNotice('Employee saved with core fields. Run the updated HR SQL to enable every new tab field.');return result}last=result;if(!isMissingColumnError(result.error))return result}return last}
@@ -544,17 +555,31 @@ async function submitEmployee(event){
   document.getElementById('currency').value='DZD';
   updatePayrollPreview();
   const client=getSupabase();
-  if(!client||!companyId){showNotice('Demo preview only. Run the HR SQL, login, and select a company to save employees.','error');return}
+  if(!client||!companyId){
+    const payload=corePayload();
+    const localId='local-'+Date.now();
+    const photoUrl=await readPhotoDataUrl(fileValue('profile-photo-file'));
+    cacheEmployeeForList(Object.assign({},payload,{id:localId,company_id:companyId||'local-preview',profile_photo_url:photoUrl,job_position_label:selectedText('position-id'),department_label:selectedText('department-id'),manager_label:selectedText('manager-id')}));
+    showNotice('Employee saved locally for preview. Login and run the HR SQL to save it permanently.');
+    window.location.href='employee-list.html?created='+localId;
+    return
+  }
   try{
     if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Saving...'}
     showNotice('Saving employee profile...');
     const payload=corePayload();
     const result=await tryInsertEmployee(client,payload);
-    if(result.error){showNotice(result.error.message,'error');return}
+    if(result.error){
+      const localId='local-'+Date.now();
+      cacheEmployeeForList(Object.assign({},payload,{id:localId,company_id:companyId||'local-preview',profile_photo_url:localPhotoUrl,job_position_label:selectedText('position-id'),department_label:selectedText('department-id'),manager_label:selectedText('manager-id'),sync_error:result.error.message}));
+      showNotice('Supabase did not save permanently: '+result.error.message+'. The employee is shown locally in the list.','error');
+      window.location.href='employee-list.html?created='+localId;
+      return
+    }
     if(!result.data?.id){showNotice('Employee was not saved because Supabase did not return an employee id.','error');return}
     await insertOptionalRecords(client,result.data.id);
     showNotice('Employee saved. Returning to employee list...');
-    localStorage.setItem('tt_recent_employee',JSON.stringify(Object.assign({},payload,{id:result.data.id})));
+    cacheEmployeeForList(Object.assign({},payload,{id:result.data.id,profile_photo_url:localPhotoUrl,job_position_label:selectedText('position-id'),department_label:selectedText('department-id'),manager_label:selectedText('manager-id')}));
     window.location.href='employee-list.html?created='+(result.data.id||'')
   }catch(error){
     console.error(error);
@@ -576,6 +601,8 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
 
 
 
