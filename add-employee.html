@@ -286,7 +286,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
         <div class="surface-sub">Fill the employee file by section. Employee ID is generated automatically if you leave it empty.</div>
       </div>
       <div class="surface-body">
-        <form id="employee-form" class="wizard-shell">
+        <form id="employee-form" class="wizard-shell" novalidate>
           <aside class="wizard-rail" aria-label="Employee form sections">
             <button class="wizard-tab active" type="button" data-step-tab="personal"><span class="tab-icon"><i data-lucide="user-round"></i></span><span>Personal</span></button>
             <button class="wizard-tab" type="button" data-step-tab="contact"><span class="tab-icon"><i data-lucide="mail"></i></span><span>Contact</span></button>
@@ -424,7 +424,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
               <div class="right-actions">
                 <button class="btn secondary" id="prev-btn" type="button" hidden>Back</button>
                 <button class="btn primary" id="next-btn" type="button">Next</button>
-                <button class="btn soft" id="submit-btn" type="submit" disabled>Submit and finish</button>
+                <button class="btn soft" id="submit-btn" type="button" disabled>Submit and finish</button>
               </div>
             </div>
           </div>
@@ -512,9 +512,9 @@ function irgMonthly(taxable){taxable=Math.max(0,Number(taxable||0));let tax=0;if
 function payrollCalc(){const gross=Math.max(0,numberValue('base-salary')+numberValue('allowances')+numberValue('bonuses')-numberValue('deductions'));const employeeCnas=Math.round(gross*.09);const taxable=Math.max(0,gross-employeeCnas);const incomeTax=irgMonthly(taxable);const employerCnas=Math.round(gross*.26);const totalDeductions=employeeCnas+incomeTax+numberValue('deductions');const net=Math.max(0,gross-employeeCnas-incomeTax);return {gross,employeeCnas,incomeTax,employerCnas,totalDeductions,net}}
 function updatePayrollPreview(){const r=payrollCalc();const m=v=>new Intl.NumberFormat('en-DZ',{maximumFractionDigits:0}).format(v)+' DZD';const pairs={'payroll-gross':r.gross,'payroll-cnas':r.employeeCnas,'payroll-irg':r.incomeTax,'payroll-employer-cnas':r.employerCnas,'payroll-net':r.net};Object.keys(pairs).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=m(pairs[id])})}
 function validateStep(step=currentStep){
-  if(step==='personal'&&!value('full-name')){showNotice('Full name is required before moving to the next step.','error');return false}
-  if(step==='personal'&&!isValidNin(value('national-id'))){showNotice('National Identification Number must contain exactly 18 digits.','error');return false}
-  if(step==='personal'&&!isValidCnas(value('social-security-number'))){showNotice('CNAS number must contain exactly 12 digits.','error');return false}
+  if(step==='personal'&&!value('full-name').trim()){showNotice('Full name is required before moving to the next step.','error');return false}
+  if(step==='personal'&&!isValidNin(value('national-id').trim())){showNotice('National Identification Number must contain exactly 18 digits.','error');return false}
+  if(step==='personal'&&!isValidCnas(value('social-security-number').trim())){showNotice('CNAS number must contain exactly 12 digits.','error');return false}
   return true
 }
 function goNext(){if(!validateStep(currentStep))return;const idx=steps.indexOf(currentStep);if(idx<steps.length-1)setStep(steps[idx+1])}
@@ -536,10 +536,36 @@ async function insertOptionalRecords(client,employeeId){
   if(value('academic-background')||value('diplomas')){try{const result=await client.from('employee_education').insert({company_id:companyId,employee_id:employeeId,degree:value('diplomas')||null,notes:value('academic-background')||null});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
   if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){try{const r=payrollCalc();const result=await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:r.gross,employee_cnas:r.employeeCnas,income_tax:r.incomeTax,total_deductions:r.totalDeductions,employer_contributions:r.employerCnas,net_salary:r.net,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form with Algerian CNAS/IRG preview'});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
 }
-async function submitEmployee(event){event.preventDefault();if(!validateStep('personal')){setStep('personal');return}document.getElementById('currency').value='DZD';updatePayrollPreview();const client=getSupabase();if(!client||!companyId){showNotice('Demo preview only. Run the HR SQL, login, and select a company to save employees.','error');return}const payload=corePayload();const result=await tryInsertEmployee(client,payload);if(result.error){showNotice(result.error.message,'error');return}await insertOptionalRecords(client,result.data.id);window.location.href='employee-profile.html?id='+(result.data?.id||'')}
+async function submitEmployee(event){
+  if(event&&event.preventDefault)event.preventDefault();
+  const submitBtn=document.getElementById('submit-btn');
+  const originalText=submitBtn?submitBtn.textContent:'Submit and finish';
+  if(!validateStep('personal')){setStep('personal');return}
+  document.getElementById('currency').value='DZD';
+  updatePayrollPreview();
+  const client=getSupabase();
+  if(!client||!companyId){showNotice('Demo preview only. Run the HR SQL, login, and select a company to save employees.','error');return}
+  try{
+    if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Saving...'}
+    showNotice('Saving employee profile...');
+    const payload=corePayload();
+    const result=await tryInsertEmployee(client,payload);
+    if(result.error){showNotice(result.error.message,'error');return}
+    if(!result.data?.id){showNotice('Employee was not saved because Supabase did not return an employee id.','error');return}
+    await insertOptionalRecords(client,result.data.id);
+    showNotice('Employee saved. Opening profile...');
+    window.location.href='employee-profile.html?id='+(result.data.id||'')
+  }catch(error){
+    console.error(error);
+    showNotice(error?.message||'Could not save employee. Check Supabase connection and SQL setup.','error')
+  }finally{
+    if(submitBtn){submitBtn.textContent=originalText;submitBtn.disabled=currentStep!==steps[steps.length-1]}
+  }
+}
 document.querySelectorAll('[data-step-tab]').forEach(tab=>tab.addEventListener('click',()=>setStep(tab.dataset.stepTab)));
 document.getElementById('next-btn').addEventListener('click',goNext);
 document.getElementById('prev-btn').addEventListener('click',goPrev);
+document.getElementById('submit-btn').addEventListener('click',submitEmployee);
 document.getElementById('employee-form').addEventListener('submit',submitEmployee);
 window.addEventListener('load',init);
 </script>
@@ -549,6 +575,7 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
 
 
 
