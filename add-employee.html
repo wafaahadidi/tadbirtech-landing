@@ -257,7 +257,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
       <span class="sb-chevron" aria-hidden="true"></span>
     </button>
     <div class="sb-submenu" id="sidebar-hrm-menu" hidden>
-      <a class="sb-item hr-employee-link" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sb-item-text">Employees</span></a>
+      <a class="sb-item hr-employee-link" href="employee-list.html" data-sidebar-link="employee-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sb-item-text">Employees</span></a>
     </div>
 
     <div class="sb-sec">Account</div>
@@ -276,7 +276,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
 <main class="main">
   <div class="topbar">
     <div><div class="topbar-title">Human Resources Management</div><div class="topbar-sub">Create a complete employee file.</div></div>
-    <div class="topbar-actions"><a class="btn secondary" href="hr-payroll.html">Back to employees</a></div>
+    <div class="topbar-actions"><a class="btn secondary" href="employee-list.html">Back to employees</a></div>
   </div>
   <div class="content">
     <div class="notice" id="notice"></div>
@@ -420,7 +420,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-
             </section>
 
             <div class="wizard-actions">
-              <a class="btn secondary" href="hr-payroll.html">Cancel</a>
+              <a class="btn secondary" href="employee-list.html">Cancel</a>
               <div class="right-actions">
                 <button class="btn secondary" id="prev-btn" type="button" hidden>Back</button>
                 <button class="btn primary" id="next-btn" type="button">Next</button>
@@ -553,8 +553,9 @@ async function submitEmployee(event){
     if(result.error){showNotice(result.error.message,'error');return}
     if(!result.data?.id){showNotice('Employee was not saved because Supabase did not return an employee id.','error');return}
     await insertOptionalRecords(client,result.data.id);
-    showNotice('Employee saved. Opening profile...');
-    window.location.href='employee-profile.html?id='+(result.data.id||'')
+    showNotice('Employee saved. Returning to employee list...');
+    localStorage.setItem('tt_recent_employee',JSON.stringify(Object.assign({},payload,{id:result.data.id})));
+    window.location.href='employee-list.html?created='+(result.data.id||'')
   }catch(error){
     console.error(error);
     showNotice(error?.message||'Could not save employee. Check Supabase connection and SQL setup.','error')
@@ -570,11 +571,15 @@ document.getElementById('employee-form').addEventListener('submit',submitEmploye
 window.addEventListener('load',init);
 </script>
 <script>
-(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);const hrPages=['hr-payroll.html','employee-profile.html','add-employee.html'];function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current||(current==='add-employee.html'&&href==='hr-payroll.html'))});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);const isHr=hrPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);setDropdown('hrm',isHr);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction);const hrToggle=document.querySelector('[data-sidebar-toggle="hrm"]');if(hrToggle)hrToggle.classList.toggle('active',isHr)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
+(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);const hrPages=['employee-list.html','add-employee.html'];function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current||(current==='add-employee.html'&&href==='employee-list.html'))});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);const isHr=hrPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);setDropdown('hrm',isHr);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction);const hrToggle=document.querySelector('[data-sidebar-toggle="hrm"]');if(hrToggle)hrToggle.classList.toggle('active',isHr)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
 async function handleLogout(){try{const client=window.supabase&&window.supabase.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;if(client&&client.auth)await client.auth.signOut()}catch(e){}localStorage.removeItem('tt_company_id');window.location.href='login.html'}
 </script>
 </body>
 </html>
+
+
+
+
 
 
 
