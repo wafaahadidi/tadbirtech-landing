@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TadbirTech - Chart of Accounts</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C}
@@ -340,6 +340,117 @@ tr:hover td,.drill-row:hover td{background:#FAFCFE!important}
 /* Restored TadbirTech sidebar logo */
 .sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}
 .sb-logo img,.tt-brand-logo-img{display:block!important;width:215px!important;max-width:100%!important;height:auto!important;max-height:none!important;object-fit:contain!important;visibility:visible!important;opacity:1!important}
+/* TadbirTech invoice/settings visual consistency */
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;
+  background:#F3F6FB!important;
+  color:#0D1F3C!important;
+  font-feature-settings:normal!important;
+}
+.main{background:#F3F6FB!important}
+.topbar{
+  height:60px!important;
+  background:#fff!important;
+  border-bottom:.5px solid #DDE6EF!important;
+  padding:0 28px!important;
+  z-index:50!important;
+}
+.topbar-title,.tb-left h2,.page-title{
+  font-size:16px!important;
+  font-weight:600!important;
+  color:#0D1F3C!important;
+  letter-spacing:0!important;
+}
+.topbar-sub,.tb-left p,.page-subtitle{
+  font-size:11px!important;
+  color:#5B7594!important;
+  font-weight:400!important;
+}
+.content{padding:22px 28px 32px!important}
+.surface,.section,.panel,.card,.settings-nav,.org-col{
+  background:#fff!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:12px!important;
+  box-shadow:0 1px 6px rgba(13,31,60,.04)!important;
+}
+.surface-head,.section-head,.panel-head,.card-head{
+  border-bottom:.5px solid #EDF2F7!important;
+}
+.surface-title,.section-title,.panel-title,.card-title{
+  font-size:14px!important;
+  font-weight:600!important;
+  color:#0D1F3C!important;
+}
+.surface-sub,.section-sub,.panel-sub,.card-sub{
+  font-size:11px!important;
+  color:#5B7594!important;
+}
+.btn,.btn-primary,.btn-add,.tb-btn.primary{
+  background:#1a8fd1!important;
+  color:#fff!important;
+  border:none!important;
+  border-radius:9px!important;
+  font-size:12px!important;
+  font-weight:500!important;
+  font-family:inherit!important;
+  box-shadow:none!important;
+}
+.btn:hover,.btn-primary:hover,.btn-add:hover,.tb-btn.primary:hover{
+  background:#1476b0!important;
+}
+.btn-ghost,.btn-outline,.tb-btn.secondary,.btn:not(.primary):not(.btn-primary):not(.btn-add){
+  background:#fff!important;
+  color:#0D1F3C!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:9px!important;
+  font-size:12px!important;
+  font-weight:600!important;
+  box-shadow:none!important;
+}
+.btn-ghost:hover,.btn-outline:hover,.tb-btn.secondary:hover{
+  border-color:#1a8fd1!important;
+  color:#1a8fd1!important;
+  background:#fff!important;
+}
+.kpi,.stat,.metric-card,.summary-card{
+  background:#fff!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:12px!important;
+  box-shadow:0 1px 6px rgba(13,31,60,.05)!important;
+}
+th{
+  background:#FAFBFC!important;
+  color:#6C7E95!important;
+  font-size:10px!important;
+  font-weight:500!important;
+  border-bottom:.5px solid #DDE6EF!important;
+}
+td{
+  font-size:12px!important;
+  color:#0D1F3C!important;
+  border-bottom:.5px solid #F4F7FB!important;
+}
+.field label,label{
+  font-weight:500!important;
+  color:#0D1F3C!important;
+}
+input,select,textarea,.input,.select,.textarea,.search-input,.filter-select{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:8px!important;
+}
+input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:focus,.search-input:focus{
+  border-color:#1a8fd1!important;
+  box-shadow:0 0 0 3px rgba(26,143,209,.09)!important;
+}
+.badge,.pill,.status-pill,.count-pill{
+  font-weight:600!important;
+}
+@media(max-width:900px){
+  .content{padding:16px!important}
+  .topbar{padding:0 16px!important}
+}
+/* End TadbirTech invoice/settings visual consistency */
 </style>
 </head>
 <body>
@@ -348,7 +459,7 @@ tr:hover td,.drill-row:hover td{background:#FAFCFE!important}
 <!-- SIDEBAR -->
 <aside class="sidebar">
       <div class="sb-logo">
-      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-sidebar.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
+      <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-light.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;height:auto;display:block;">
     </div>
   <div class="sb-user">
     <div class="sb-avatar" id="sb-av">T</div>
@@ -387,7 +498,7 @@ tr:hover td,.drill-row:hover td{background:#FAFCFE!important}
       </div>
 
       <a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
-      <a class="sb-item" href="hr-payroll.html" data-sidebar-link="hr-payroll.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
+      <a class="sb-item" href="employee-list.html" data-sidebar-link="employee-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="sb-item-text">HR &amp; Payroll</span></a>
 
       <div class="sb-sec">Account</div>
       <a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
@@ -1050,8 +1161,17 @@ window.addEventListener('load',initCurrency);
   window.initSidebarDropdowns = initSidebarDropdowns;
 })();
 </script>
+<script>
+/* Clean browser title guard */
+document.title = 'TadbirTech - Chart of Accounts';
+</script>
 </body>
 </html>
+
+
+
+
+
 
 
 

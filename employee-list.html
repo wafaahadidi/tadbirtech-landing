@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TadbirTech - Employee List</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -287,6 +287,117 @@ body{font-family:'Inter',system-ui,sans-serif!important;background:#F4F7FB!impor
 .employee-name-main{font-size:13px;font-weight:900;color:#0D1F3C;line-height:1.2}
 .employee-name-sub{font-size:11px;font-weight:700;color:#7a93ae;margin-top:2px}
 .employee-id-cell{font-size:12px;font-weight:900;color:#38536F}
+/* TadbirTech invoice/settings visual consistency */
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;
+  background:#F3F6FB!important;
+  color:#0D1F3C!important;
+  font-feature-settings:normal!important;
+}
+.main{background:#F3F6FB!important}
+.topbar{
+  height:60px!important;
+  background:#fff!important;
+  border-bottom:.5px solid #DDE6EF!important;
+  padding:0 28px!important;
+  z-index:50!important;
+}
+.topbar-title,.tb-left h2,.page-title{
+  font-size:16px!important;
+  font-weight:600!important;
+  color:#0D1F3C!important;
+  letter-spacing:0!important;
+}
+.topbar-sub,.tb-left p,.page-subtitle{
+  font-size:11px!important;
+  color:#5B7594!important;
+  font-weight:400!important;
+}
+.content{padding:22px 28px 32px!important}
+.surface,.section,.panel,.card,.settings-nav,.org-col{
+  background:#fff!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:12px!important;
+  box-shadow:0 1px 6px rgba(13,31,60,.04)!important;
+}
+.surface-head,.section-head,.panel-head,.card-head{
+  border-bottom:.5px solid #EDF2F7!important;
+}
+.surface-title,.section-title,.panel-title,.card-title{
+  font-size:14px!important;
+  font-weight:600!important;
+  color:#0D1F3C!important;
+}
+.surface-sub,.section-sub,.panel-sub,.card-sub{
+  font-size:11px!important;
+  color:#5B7594!important;
+}
+.btn,.btn-primary,.btn-add,.tb-btn.primary{
+  background:#1a8fd1!important;
+  color:#fff!important;
+  border:none!important;
+  border-radius:9px!important;
+  font-size:12px!important;
+  font-weight:500!important;
+  font-family:inherit!important;
+  box-shadow:none!important;
+}
+.btn:hover,.btn-primary:hover,.btn-add:hover,.tb-btn.primary:hover{
+  background:#1476b0!important;
+}
+.btn-ghost,.btn-outline,.tb-btn.secondary,.btn:not(.primary):not(.btn-primary):not(.btn-add){
+  background:#fff!important;
+  color:#0D1F3C!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:9px!important;
+  font-size:12px!important;
+  font-weight:600!important;
+  box-shadow:none!important;
+}
+.btn-ghost:hover,.btn-outline:hover,.tb-btn.secondary:hover{
+  border-color:#1a8fd1!important;
+  color:#1a8fd1!important;
+  background:#fff!important;
+}
+.kpi,.stat,.metric-card,.summary-card{
+  background:#fff!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:12px!important;
+  box-shadow:0 1px 6px rgba(13,31,60,.05)!important;
+}
+th{
+  background:#FAFBFC!important;
+  color:#6C7E95!important;
+  font-size:10px!important;
+  font-weight:500!important;
+  border-bottom:.5px solid #DDE6EF!important;
+}
+td{
+  font-size:12px!important;
+  color:#0D1F3C!important;
+  border-bottom:.5px solid #F4F7FB!important;
+}
+.field label,label{
+  font-weight:500!important;
+  color:#0D1F3C!important;
+}
+input,select,textarea,.input,.select,.textarea,.search-input,.filter-select{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif!important;
+  border:.5px solid #DDE6EF!important;
+  border-radius:8px!important;
+}
+input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:focus,.search-input:focus{
+  border-color:#1a8fd1!important;
+  box-shadow:0 0 0 3px rgba(26,143,209,.09)!important;
+}
+.badge,.pill,.status-pill,.count-pill{
+  font-weight:600!important;
+}
+@media(max-width:900px){
+  .content{padding:16px!important}
+  .topbar{padding:0 16px!important}
+}
+/* End TadbirTech invoice/settings visual consistency */
 </style>
 </head>
 <body>
@@ -809,6 +920,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
