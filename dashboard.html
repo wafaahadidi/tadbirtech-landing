@@ -680,8 +680,49 @@ try{ const year = new Date().getFullYear(); const rb = await sb.from('budgets').
 } function setFilter(btn, filterKey){ dashboardState.filter = filterKey; document.querySelectorAll('[onclick^="setFilter"]').forEach(item => { item.style.background = '#fff'; item.style.color = '#5B7594'; item.style.borderColor = '#DDE6EF'; }); if(btn){ btn.style.background = '#1a8fd1'; btn.style.color = '#fff'; btn.style.borderColor = '#1a8fd1'; } renderChart();
 } function toggleDropdown(el) { const submenu = el.nextElementSibling; const chevron = el.querySelector('.sb-chevron'); const isOpen = submenu.style.display !== 'none'; submenu.style.display = isOpen ? 'none' : 'block'; if(chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)'; el.style.background = isOpen ? '' : 'rgba(26,143,209,.15)';
 } function handleLogout(){ sb.auth.signOut().then(() => { window.location.href = 'login.html'; });
-} async function initDashboard(){ const { data: { session } } = await sb.auth.getSession(); dashboardState.session = session || null; if(session){ const meta = session.user.user_metadata || {}; const firstName = meta.first_name || session.user.email.split('@')[0]; const lastName = meta.last_name || ''; const fullName = lastName ? firstName + ' ' + lastName : firstName; const initials = (firstName.charAt(0) + (lastName.charAt(0) || '')).toUpperCase(); setText('.sb-user-name', fullName); setText('.sb-avatar', initials); setText('.topbar-title', 'Good morning, ' + firstName); } setText('.topbar-sub', formatTopbarDate()); await resolveCompany(); await loadDashboardData(); renderDashboard(); const loader = document.getElementById('tt-loader'); if(loader){ setTimeout(() => { loader.classList.add('hidden'); setTimeout(() => { loader.style.display = 'none'; }, 500); }, 450); }
-} window.addEventListener('load', initDashboard); /* - Patch: update topbar sub with date - */
+} function hideDashboardLoader(){
+  const loader = document.getElementById('tt-loader');
+  if(!loader) return;
+  loader.classList.add('hidden');
+  setTimeout(() => { loader.style.display = 'none'; }, 500);
+}
+function ttWithTimeout(promise, ms, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error((label || 'Operation') + ' timed out')), ms))
+  ]);
+}
+async function initDashboard(){
+  try{
+    const sessionResult = await ttWithTimeout(sb.auth.getSession(), 8000, 'Supabase session');
+    const session = sessionResult && sessionResult.data && sessionResult.data.session;
+    dashboardState.session = session || null;
+    if(session){
+      const meta = session.user.user_metadata || {};
+      const firstName = meta.first_name || session.user.email.split('@')[0];
+      const lastName = meta.last_name || '';
+      const fullName = lastName ? firstName + ' ' + lastName : firstName;
+      const initials = (firstName.charAt(0) + (lastName.charAt(0) || '')).toUpperCase();
+      setText('.sb-user-name', fullName);
+      setText('.sb-avatar', initials);
+      setText('.topbar-title', 'Good morning, ' + firstName);
+    }
+    setText('.topbar-sub', formatTopbarDate());
+    await ttWithTimeout(resolveCompany(), 10000, 'Company loading');
+    await ttWithTimeout(loadDashboardData(), 16000, 'Dashboard data loading');
+    renderDashboard();
+  }catch(error){
+    console.error('Dashboard failed to finish loading:', error);
+    try{
+      renderDashboard();
+    }catch(renderError){
+      console.error('Dashboard fallback render failed:', renderError);
+    }
+  }finally{
+    setTimeout(hideDashboardLoader, 450);
+  }
+}
+window.addEventListener('load', initDashboard); /* - Patch: update topbar sub with date - */
 const _orig_initDashboard = initDashboard;
 initDashboard = async function() { await _orig_initDashboard(); document.getElementById('topbar-sub').textContent = formatTopbarDate();
 }; /* - Patch: modern activity render - */
@@ -723,8 +764,31 @@ renderDashboard = function() { _orig_renderDashboard(); // Override kpi-sales to
 /* Clean browser title guard */
 document.title = 'TadbirTech - Accounting Dashboard';
 </script>
+<script>
+/* Safety net: never leave users stuck behind the loading screen. */
+(function(){
+  function hideLoader(){
+    var loader = document.getElementById('tt-loader');
+    if(!loader) return;
+    loader.classList.add('hidden');
+    setTimeout(function(){ loader.style.display = 'none'; }, 500);
+  }
+  window.addEventListener('error', function(event){
+    console.error('Dashboard runtime error:', event.error || event.message);
+    hideLoader();
+  });
+  window.addEventListener('unhandledrejection', function(event){
+    console.error('Dashboard promise error:', event.reason);
+    hideLoader();
+  });
+  window.addEventListener('load', function(){
+    setTimeout(hideLoader, 7000);
+  });
+})();
+</script>
 </body>
 </html> 
+
 
 
 
