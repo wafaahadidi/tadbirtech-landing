@@ -809,7 +809,14 @@ function cachedEmployees(){
   try{return JSON.parse(localStorage.getItem('tt_employee_cache')||'[]').filter(Boolean)}catch(e){return[]}
 }
 function mergeRecentEmployee(employees){
-  const cached=cachedEmployees().filter(e=>!state.companyId||!e.company_id||e.company_id===state.companyId||e.company_id==='local-preview');
+  const created = new URLSearchParams(location.search).get('created');
+  const cached = cachedEmployees().filter(e => {
+    if(!e) return false;
+    if(created && String(e.id) === String(created)) return true;
+    if(e.company_id === 'local-preview') return true;
+    if(!state.companyId || !e.company_id) return true;
+    return String(e.company_id) === String(state.companyId);
+  });
   const merged=employees.slice();
   cached.forEach(local=>{
     const idx=merged.findIndex(e=>e.id===local.id||String(e.employee_number||'')===String(local.employee_number||''));
@@ -818,10 +825,25 @@ function mergeRecentEmployee(employees){
   });
   return merged
 }
+function showCreatedEmployeeNotice(message){
+  const notice=document.getElementById('schema-notice');
+  if(!notice) return;
+  notice.textContent=message || 'Employee saved and added to the list.';
+  notice.classList.add('show');
+}
 async function loadAll(){
   state.schemaReady=true;state.loadErrors=[];state.demoMode=false;
   await resolveCompany();
-  if(!state.companyId){applyDemoData();renderAll();return}
+  if(!state.companyId){
+    const localEmployees = mergeRecentEmployee([]);
+    if(localEmployees.length){
+      Object.assign(state,{employees:localEmployees,departments:[],positions:[],documents:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],statusEvents:[],promotions:[]});
+      renderAll();
+      showCreatedEmployeeNotice('Employee is shown locally. Login/select a company to sync it permanently.');
+      return;
+    }
+    applyDemoData();renderAll();return
+  }
   let employees=await safeLoad('employees','*','full_name');
   let departments=await safeLoad('departments','*','name');
   let positions=await safeLoad('positions','*','title');
@@ -832,12 +854,12 @@ async function loadAll(){
   let payrollRuns=await safeLoad('payroll_runs','*','period_month');
   let statusEvents=await safeLoad('employee_status_events','*','start_date');
   let promotions=await safeLoad('employee_promotions','*','effective_date');
-  if(!state.schemaReady){applyDemoData();renderAll();return}
   employees=mergeRecentEmployee(employees);
+  if(!state.schemaReady && !employees.length){applyDemoData();renderAll();return}
   Object.assign(state,{employees,departments,positions,documents,attendance,leaveRequests,leaveBalances,payrollRuns,statusEvents,promotions});
   renderAll();
   const created=new URLSearchParams(location.search).get('created');
-  if(created){const notice=document.getElementById('schema-notice');if(notice){notice.textContent='Employee saved and added to the list.';notice.classList.add('show')}}
+  if(created)showCreatedEmployeeNotice('Employee saved and added to the list.');
 }
 function depName(id){return state.departments.find(d=>d.id===id)?.name||'Unassigned'}
 function empName(id){return state.employees.find(e=>e.id===id)?.full_name||'Employee'}
@@ -853,7 +875,7 @@ function renderEmployees(){
   let employees=state.employees.slice();
   if(employeeFilter==='active')employees=employees.filter(e=>!['terminated','resigned','dismissed','archived'].includes(String(e.status||'').toLowerCase()));
   if(employeeFilter==='archived')employees=employees.filter(e=>['terminated','resigned','dismissed','archived'].includes(String(e.status||'').toLowerCase()));
-  if(search)employees=employees.filter(e=>[e.full_name,e.email,e.phone,posName(e.position_id),e.status].some(v=>String(v||'').toLowerCase().includes(search)));
+  if(search)employees=employees.filter(e=>[e.full_name,e.employee_number,e.email,e.phone,employeePosition(e),posName(e.position_id),e.status].some(v=>String(v||'').toLowerCase().includes(search)));
   employees.sort((a,b)=>String(a.full_name||'').localeCompare(String(b.full_name||'')));
   if(!employees.length){rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">No employees match this view.</div></td></tr>';return}
   rows.innerHTML=employees.map(e=>{const n=nameParts(e.full_name);return '<tr ondblclick="openEmployeeModal(\''+e.id+'\')"><td class="select-col"><span class="row-check"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn" type="button" onclick="event.stopPropagation();openEmployeeModal(\''+e.id+'\')">'+text(n.last||e.full_name)+'</button><div class="employee-name-sub">'+text(e.employee_number||e.id||'-')+'</div></div></div></td><td><span class="employee-name-main">'+text(n.first)+'</span></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeModal(\''+e.id+'\')">Edit</button></td></tr>'}).join('')
@@ -903,6 +925,12 @@ document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>
 ['calc-base','calc-allowances','calc-overtime','calc-bonuses','calc-absence','calc-advance'].forEach(id=>document.addEventListener('input',e=>{if(e.target&&e.target.id===id)renderCalculator()}));
 document.getElementById('new-employee-btn').addEventListener('click',()=>location.href='add-employee.html');
 document.getElementById('refresh-btn').addEventListener('click',loadAll);
+document.getElementById('employee-search')?.addEventListener('input',renderEmployees);
+document.querySelectorAll('[data-employee-filter]').forEach(btn=>btn.addEventListener('click',()=>{
+  employeeFilter=btn.dataset.employeeFilter || 'active';
+  document.querySelectorAll('[data-employee-filter]').forEach(item=>item.classList.toggle('active',item===btn));
+  renderEmployees();
+}));
 window.addEventListener('load',loadAll);
 </script>
 <script>
@@ -920,6 +948,8 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
+
 
 
 
