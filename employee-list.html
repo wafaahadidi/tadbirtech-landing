@@ -805,14 +805,36 @@ async function safeLoad(table,select='*',order){
     return[];
   }
 }
+function readStoredEmployee(key, storage){
+  try{
+    const raw = storage && storage.getItem ? storage.getItem(key) : null;
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){return null}
+}
 function cachedEmployees(){
-  try{return JSON.parse(localStorage.getItem('tt_employee_cache')||'[]').filter(Boolean)}catch(e){return[]}
+  const items = [];
+  try{
+    const cached = JSON.parse(localStorage.getItem('tt_employee_cache')||'[]');
+    if(Array.isArray(cached)) items.push(...cached.filter(Boolean));
+  }catch(e){}
+  const recentLocal = readStoredEmployee('tt_recent_employee', localStorage);
+  const recentSession = readStoredEmployee('tt_recent_employee', sessionStorage);
+  if(recentLocal) items.unshift(recentLocal);
+  if(recentSession) items.unshift(recentSession);
+  const seen = new Set();
+  return items.filter(employee => {
+    if(!employee) return false;
+    const key = String(employee.id || employee.employee_number || employee.full_name || Math.random());
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 function mergeRecentEmployee(employees){
   const created = new URLSearchParams(location.search).get('created');
   const cached = cachedEmployees().filter(e => {
     if(!e) return false;
-    if(created && String(e.id) === String(created)) return true;
+    if(created) return true;
     if(e.company_id === 'local-preview') return true;
     if(!state.companyId || !e.company_id) return true;
     return String(e.company_id) === String(state.companyId);
@@ -948,6 +970,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 

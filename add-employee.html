@@ -637,14 +637,44 @@ function fileValues(id){return Array.from(document.getElementById(id)?.files||[]
 function cleanFileName(name){return String(name||'file').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/-+/g,'-')}
 function selectedText(id){const el=document.getElementById(id);return el&&el.selectedIndex>=0?el.options[el.selectedIndex].textContent:''}
 function readPhotoDataUrl(file){return new Promise(resolve=>{if(!file){resolve(null);return}const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>resolve(null);reader.readAsDataURL(file)})}
+function compactEmployeeForStorage(employee){
+  const copy = Object.assign({}, employee);
+  if(copy.profile_photo_url && String(copy.profile_photo_url).length > 180000){
+    copy.profile_photo_url = null;
+    copy.photo_pending = true;
+  }
+  return copy;
+}
 function cacheEmployeeForList(employee){
+  const key='tt_employee_cache';
+  const safeEmployee = compactEmployeeForStorage(employee);
   try{
-    const key='tt_employee_cache';
-    const list=JSON.parse(localStorage.getItem(key)||'[]').filter(x=>x&&x.id!==employee.id);
-    list.unshift(employee);
+    const list=JSON.parse(localStorage.getItem(key)||'[]').filter(x=>x&&x.id!==safeEmployee.id&&String(x.employee_number||'')!==String(safeEmployee.employee_number||''));
+    list.unshift(safeEmployee);
     localStorage.setItem(key,JSON.stringify(list.slice(0,100)));
-    localStorage.setItem('tt_recent_employee',JSON.stringify(employee));
-  }catch(e){console.warn('Could not cache employee for list',e)}
+    localStorage.setItem('tt_recent_employee',JSON.stringify(safeEmployee));
+    sessionStorage.setItem('tt_recent_employee',JSON.stringify(safeEmployee));
+  }catch(e){
+    console.warn('Could not cache full employee for list',e);
+    const tiny = {
+      id:safeEmployee.id,
+      company_id:safeEmployee.company_id || 'local-preview',
+      employee_number:safeEmployee.employee_number,
+      full_name:safeEmployee.full_name,
+      email:safeEmployee.email || null,
+      phone:safeEmployee.phone || null,
+      status:safeEmployee.status || 'active',
+      position_id:safeEmployee.position_id || null,
+      job_position_label:safeEmployee.job_position_label || null
+    };
+    try{
+      localStorage.setItem('tt_recent_employee',JSON.stringify(tiny));
+      sessionStorage.setItem('tt_recent_employee',JSON.stringify(tiny));
+      localStorage.setItem(key,JSON.stringify([tiny]));
+    }catch(finalError){
+      console.warn('Could not cache tiny employee handoff',finalError);
+    }
+  }
 }
 function documentCategoryForType(type){return {cv:'experience',contract:'employment',work_certificate:'employment',diploma:'education',certificate:'personal',other:'personal'}[type]||'personal'}
 async function uploadEmployeeFile(client,employeeId,type,file){if(!file)return null;const key=[companyId,employeeId,type,Date.now()+'-'+cleanFileName(file.name)].join('/');const upload=await client.storage.from('employee-files').upload(key,file,{cacheControl:'3600',upsert:false});if(upload.error)throw upload.error;const publicUrl=client.storage.from('employee-files').getPublicUrl(key)?.data?.publicUrl;return {url:publicUrl,path:key,name:file.name,size:file.size}}
@@ -765,6 +795,9 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
+
 
 
 
