@@ -658,46 +658,98 @@ async function insertOptionalRecords(client,employeeId){
   if(value('academic-background')||value('diplomas')){try{const result=await client.from('employee_education').insert({company_id:companyId,employee_id:employeeId,degree:value('diplomas')||null,notes:value('academic-background')||null});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
   if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){try{const r=payrollCalc();const result=await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:r.gross,employee_cnas:r.employeeCnas,income_tax:r.incomeTax,total_deductions:r.totalDeductions,employer_contributions:r.employerCnas,net_salary:r.net,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form with Algerian CNAS/IRG preview'});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
 }
+let isSubmittingEmployee = false;
+function withTimeout(promise, ms, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error((label || 'Operation') + ' timed out')), ms))
+  ]);
+}
+function redirectToEmployeeList(id){
+  window.location.href = 'employee-list.html?created=' + encodeURIComponent(id || '');
+}
 async function submitEmployee(event){
   if(event&&event.preventDefault)event.preventDefault();
+  if(isSubmittingEmployee) return;
   const submitBtn=document.getElementById('submit-btn');
   const originalText=submitBtn?submitBtn.textContent:'Submit and finish';
   if(!validateStep('personal')){setStep('personal');return}
-  document.getElementById('currency').value='DZD';
-  updatePayrollPreview();
-  const client=getSupabase();
-  if(!client||!companyId){
-    const payload=corePayload();
-    const localId='local-'+Date.now();
-    const photoUrl=await readPhotoDataUrl(fileValue('profile-photo-file'));
-    cacheEmployeeForList(Object.assign({},payload,{id:localId,company_id:companyId||'local-preview',profile_photo_url:photoUrl,job_position_label:selectedText('position-id'),department_label:selectedText('department-id'),manager_label:selectedText('manager-id')}));
-    showNotice('Employee saved locally for preview. Login and run the HR SQL to save it permanently.');
-    window.location.href='employee-list.html?created='+localId;
-    return
-  }
+  isSubmittingEmployee = true;
+  if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Saving...'}
   try{
-    if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Saving...'}
+    document.getElementById('currency').value='DZD';
+    updatePayrollPreview();
     showNotice('Saving employee profile...');
     const payload=corePayload();
+    const localId='local-'+Date.now();
     const localPhotoUrl=await readPhotoDataUrl(fileValue('profile-photo-file'));
-    const result=await tryInsertEmployee(client,payload);
-    if(result.error){
-      const localId='local-'+Date.now();
-      cacheEmployeeForList(Object.assign({},payload,{id:localId,company_id:companyId||'local-preview',profile_photo_url:localPhotoUrl,job_position_label:selectedText('position-id'),department_label:selectedText('department-id'),manager_label:selectedText('manager-id'),sync_error:result.error.message}));
-      showNotice('Supabase did not save permanently: '+result.error.message+'. The employee is shown locally in the list.','error');
-      window.location.href='employee-list.html?created='+localId;
-      return
+    const localEmployee=Object.assign({},payload,{
+      id:localId,
+      company_id:companyId||payload.company_id||'local-preview',
+      profile_photo_url:localPhotoUrl,
+      job_position_label:selectedText('position-id'),
+      department_label:selectedText('department-id'),
+      manager_label:selectedText('manager-id')
+    });
+    cacheEmployeeForList(localEmployee);
+
+    const client=getSupabase();
+    if(!client||!companyId){
+      showNotice('Employee saved locally. Returning to employee list...');
+      setTimeout(()=>redirectToEmployeeList(localId),250);
+      return;
     }
-    if(!result.data?.id){showNotice('Employee was not saved because Supabase did not return an employee id.','error');return}
-    await insertOptionalRecords(client,result.data.id);
+
+    let result;
+    try{
+      result=await withTimeout(tryInsertEmployee(client,payload),9000,'Saving employee to Supabase');
+    }catch(timeoutError){
+      console.warn(timeoutError);
+      cacheEmployeeForList(Object.assign({},localEmployee,{sync_error:timeoutError.message}));
+      showNotice('Supabase is taking too long. The employee is saved locally and will appear in the list.','error');
+      setTimeout(()=>redirectToEmployeeList(localId),650);
+      return;
+    }
+
+    if(result&&result.error){
+      cacheEmployeeForList(Object.assign({},localEmployee,{sync_error:result.error.message}));
+      showNotice('Supabase did not save permanently: '+result.error.message+'. The employee is shown locally in the list.','error');
+      setTimeout(()=>redirectToEmployeeList(localId),650);
+      return;
+    }
+
+    const savedId=result&&result.data&&result.data.id ? result.data.id : localId;
+    cacheEmployeeForList(Object.assign({},localEmployee,{id:savedId,company_id:companyId}));
+
+    if(result&&result.data&&result.data.id){
+      insertOptionalRecords(client,result.data.id).catch(error=>console.warn('Optional employee records skipped:',error.message||error));
+    }
+
     showNotice('Employee saved. Returning to employee list...');
-    cacheEmployeeForList(Object.assign({},payload,{id:result.data.id,profile_photo_url:localPhotoUrl,job_position_label:selectedText('position-id'),department_label:selectedText('department-id'),manager_label:selectedText('manager-id')}));
-    window.location.href='employee-list.html?created='+(result.data.id||'')
+    setTimeout(()=>redirectToEmployeeList(savedId),350);
   }catch(error){
     console.error(error);
-    showNotice(error?.message||'Could not save employee. Check Supabase connection and SQL setup.','error')
-  }finally{
-    if(submitBtn){submitBtn.textContent=originalText;submitBtn.disabled=currentStep!==steps[steps.length-1]}
+    const fallbackId='local-'+Date.now();
+    try{
+      const payload=corePayload();
+      const localPhotoUrl=await readPhotoDataUrl(fileValue('profile-photo-file'));
+      cacheEmployeeForList(Object.assign({},payload,{
+        id:fallbackId,
+        company_id:companyId||'local-preview',
+        profile_photo_url:localPhotoUrl,
+        job_position_label:selectedText('position-id'),
+        department_label:selectedText('department-id'),
+        manager_label:selectedText('manager-id'),
+        sync_error:error?.message||'Save failed'
+      }));
+      showNotice('Save was interrupted, but the employee is saved locally and will appear in the list.','error');
+      setTimeout(()=>redirectToEmployeeList(fallbackId),700);
+    }catch(cacheError){
+      console.error(cacheError);
+      showNotice(error?.message||'Could not save employee. Check Supabase connection and SQL setup.','error');
+      isSubmittingEmployee=false;
+      if(submitBtn){submitBtn.textContent=originalText;submitBtn.disabled=currentStep!==steps[steps.length-1]}
+    }
   }
 }
 document.querySelectorAll('[data-step-tab]').forEach(tab=>tab.addEventListener('click',()=>setStep(tab.dataset.stepTab)));
@@ -713,6 +765,7 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
 
 
 
