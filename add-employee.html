@@ -752,7 +752,7 @@ async function submitEmployee(event){
     const client=getSupabase();
     if(!client||!companyId){
       showNotice('Employee saved locally. Returning to employee list...');
-      setTimeout(()=>redirectToEmployeeList(localId),250);
+      setTimeout(()=>redirectToEmployeeList(localEmployee),250);
       return;
     }
 
@@ -763,33 +763,34 @@ async function submitEmployee(event){
       console.warn(timeoutError);
       cacheEmployeeForList(Object.assign({},localEmployee,{sync_error:timeoutError.message}));
       showNotice('Supabase is taking too long. The employee is saved locally and will appear in the list.','error');
-      setTimeout(()=>redirectToEmployeeList(localId),650);
+      setTimeout(()=>redirectToEmployeeList(localEmployee),650);
       return;
     }
 
     if(result&&result.error){
       cacheEmployeeForList(Object.assign({},localEmployee,{sync_error:result.error.message}));
       showNotice('Supabase did not save permanently: '+result.error.message+'. The employee is shown locally in the list.','error');
-      setTimeout(()=>redirectToEmployeeList(localId),650);
+      setTimeout(()=>redirectToEmployeeList(localEmployee),650);
       return;
     }
 
     const savedId=result&&result.data&&result.data.id ? result.data.id : localId;
-    cacheEmployeeForList(Object.assign({},localEmployee,{id:savedId,company_id:companyId}));
+    const savedEmployee=Object.assign({},localEmployee,{id:savedId,company_id:companyId});
+    cacheEmployeeForList(savedEmployee);
 
     if(result&&result.data&&result.data.id){
       insertOptionalRecords(client,result.data.id).catch(error=>console.warn('Optional employee records skipped:',error.message||error));
     }
 
     showNotice('Employee saved. Returning to employee list...');
-    setTimeout(()=>redirectToEmployeeList(savedId),350);
+    setTimeout(()=>redirectToEmployeeList(savedEmployee),350);
   }catch(error){
     console.error(error);
     const fallbackId='local-'+Date.now();
     try{
       const payload=corePayload();
       const localPhotoUrl=await readPhotoDataUrl(fileValue('profile-photo-file'));
-      cacheEmployeeForList(Object.assign({},payload,{
+      const fallbackEmployee=Object.assign({},payload,{
         id:fallbackId,
         company_id:companyId||'local-preview',
         profile_photo_url:localPhotoUrl,
@@ -797,9 +798,10 @@ async function submitEmployee(event){
         department_label:selectedText('department-id'),
         manager_label:selectedText('manager-id'),
         sync_error:error?.message||'Save failed'
-      }));
+      });
+      cacheEmployeeForList(fallbackEmployee);
       showNotice('Save was interrupted, but the employee is saved locally and will appear in the list.','error');
-      setTimeout(()=>redirectToEmployeeList(fallbackId),700);
+      setTimeout(()=>redirectToEmployeeList(fallbackEmployee),700);
     }catch(cacheError){
       console.error(cacheError);
       showNotice(error?.message||'Could not save employee. Check Supabase connection and SQL setup.','error');
@@ -821,6 +823,8 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
 
 
 

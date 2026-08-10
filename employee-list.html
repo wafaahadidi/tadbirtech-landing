@@ -986,7 +986,20 @@ document.querySelectorAll('[data-employee-filter]').forEach(btn=>btn.addEventLis
   document.querySelectorAll('[data-employee-filter]').forEach(item=>item.classList.toggle('active',item===btn));
   renderEmployees();
 }));
-window.addEventListener('load',loadAll);
+function emergencyEmployeeSeed(){
+  const employee=employeeFromUrlParams()||readStoredEmployee('tt_recent_employee',sessionStorage)||readStoredEmployee('tt_recent_employee',localStorage);
+  if(!employee)return;
+  if(!state.employees.some(e=>e.id===employee.id||String(e.employee_number||'')===String(employee.employee_number||''))){
+    state.employees.unshift(employee);
+  }
+  try{renderEmployees();showCreatedEmployeeNotice('Employee saved and added to the list.')}catch(e){console.warn(e)}
+}
+window.addEventListener('DOMContentLoaded',()=>setTimeout(emergencyEmployeeSeed,0));
+window.addEventListener('load',async()=>{
+  try{await loadAll()}catch(error){console.error(error);emergencyEmployeeSeed()}
+  setTimeout(emergencyEmployeeSeed,100);
+  setTimeout(emergencyEmployeeSeed,1000);
+});
 </script>
 <script>
 (function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);const hrPages=['employee-list.html','add-employee.html'];function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);const isHr=hrPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);setDropdown('hrm',isHr);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction);const hrToggle=document.querySelector('[data-sidebar-toggle="hrm"]');if(hrToggle)hrToggle.classList.toggle('active',isHr)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
@@ -1003,6 +1016,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
