@@ -695,8 +695,34 @@ function withTimeout(promise, ms, label){
     new Promise((_, reject) => setTimeout(() => reject(new Error((label || 'Operation') + ' timed out')), ms))
   ]);
 }
-function redirectToEmployeeList(id){
-  window.location.href = 'employee-list.html?created=' + encodeURIComponent(id || '');
+function redirectEmployeeFromStorage(id){
+  const stores=[sessionStorage,localStorage];
+  let latest=null;
+  for(const store of stores){
+    try{
+      const employee=JSON.parse(store.getItem('tt_recent_employee')||'null');
+      if(employee&&!latest)latest=employee;
+      if(employee&&(!id||String(employee.id)===String(id)||String(employee.employee_number)===String(id)))return employee;
+    }catch(e){}
+  }
+  return latest||{id:id||'',employee_number:id||'',full_name:'New employee'};
+}
+function employeeListParams(employee){
+  const e=employee&&typeof employee==='object'?employee:redirectEmployeeFromStorage(employee);
+  const params=new URLSearchParams();
+  params.set('created',e.id||e.employee_number||'');
+  params.set('emp_id',e.id||'');
+  params.set('emp_no',e.employee_number||'');
+  params.set('emp_name',e.full_name||'New employee');
+  params.set('emp_email',e.email||'');
+  params.set('emp_phone',e.phone||'');
+  params.set('emp_job',e.job_position_label||selectedText('position-id')||'Unassigned');
+  params.set('emp_status',e.status||'active');
+  params.set('company_id',e.company_id||companyId||'local-preview');
+  return params.toString();
+}
+function redirectToEmployeeList(employeeOrId){
+  window.location.href='employee-list.html?'+employeeListParams(employeeOrId);
 }
 async function submitEmployee(event){
   if(event&&event.preventDefault)event.preventDefault();
@@ -795,6 +821,8 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
 
 
 

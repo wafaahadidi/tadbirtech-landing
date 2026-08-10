@@ -811,8 +811,41 @@ function readStoredEmployee(key, storage){
     return raw ? JSON.parse(raw) : null;
   }catch(e){return null}
 }
+function employeeFromUrlParams(){
+  const params=new URLSearchParams(location.search);
+  const id=params.get('emp_id')||params.get('created')||'';
+  const name=params.get('emp_name')||'';
+  const number=params.get('emp_no')||'';
+  if(!id&&!name&&!number)return null;
+  return {
+    id:id||('local-url-'+Date.now()),
+    company_id:params.get('company_id')||'local-preview',
+    employee_number:number||id||'EMP-LOCAL',
+    full_name:name||'New employee',
+    email:params.get('emp_email')||null,
+    phone:params.get('emp_phone')||null,
+    status:params.get('emp_status')||'active',
+    position_id:null,
+    job_position_label:params.get('emp_job')||'Unassigned'
+  };
+}
+function rememberUrlEmployee(employee){
+  if(!employee)return;
+  try{
+    const list=JSON.parse(localStorage.getItem('tt_employee_cache')||'[]').filter(x=>x&&x.id!==employee.id&&String(x.employee_number||'')!==String(employee.employee_number||''));
+    list.unshift(employee);
+    localStorage.setItem('tt_employee_cache',JSON.stringify(list.slice(0,100)));
+    localStorage.setItem('tt_recent_employee',JSON.stringify(employee));
+    sessionStorage.setItem('tt_recent_employee',JSON.stringify(employee));
+  }catch(e){}
+}
 function cachedEmployees(){
   const items = [];
+  const fromUrl=employeeFromUrlParams();
+  if(fromUrl){
+    items.unshift(fromUrl);
+    rememberUrlEmployee(fromUrl);
+  }
   try{
     const cached = JSON.parse(localStorage.getItem('tt_employee_cache')||'[]');
     if(Array.isArray(cached)) items.push(...cached.filter(Boolean));
@@ -970,6 +1003,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
