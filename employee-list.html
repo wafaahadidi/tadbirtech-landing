@@ -790,7 +790,15 @@ async function safeLoad(table,select='*',order){
   const client=getSupabase();
   if(!client)return[];
   try{
-    let q=client.from(table).select(select).eq('company_id',state.companyId);
+    if(state.companyId){
+      let scoped=client.from(table).select(select).eq('company_id',state.companyId);
+      if(order)scoped=scoped.order(order,{ascending:true});
+      const scopedResult=await scoped;
+      if(scopedResult.error)throw scopedResult.error;
+      if(scopedResult.data&&scopedResult.data.length)return scopedResult.data;
+    }
+
+    let q=client.from(table).select(select);
     if(order)q=q.order(order,{ascending:true});
     const {data,error}=await q;
     if(error)throw error;
@@ -842,6 +850,7 @@ function rememberUrlEmployee(employee){
 function cachedEmployees(){
   const items = [];
   const fromUrl=employeeFromUrlParams();
+  try{const rows=JSON.parse(localStorage.getItem('tt_employee_rows')||'[]');if(Array.isArray(rows))items.push(...rows.filter(Boolean));}catch(e){}
   if(fromUrl){
     items.unshift(fromUrl);
     rememberUrlEmployee(fromUrl);
@@ -889,16 +898,19 @@ function showCreatedEmployeeNotice(message){
 async function loadAll(){
   state.schemaReady=true;state.loadErrors=[];state.demoMode=false;
   await resolveCompany();
-  if(!state.companyId){
+
+  const client=getSupabase();
+  if(!client){
     const localEmployees = mergeRecentEmployee([]);
     if(localEmployees.length){
       Object.assign(state,{employees:localEmployees,departments:[],positions:[],documents:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],statusEvents:[],promotions:[]});
       renderAll();
-      showCreatedEmployeeNotice('Employee is shown locally. Login/select a company to sync it permanently.');
+      showCreatedEmployeeNotice('Employee is shown locally because Supabase did not load.');
       return;
     }
-    applyDemoData();renderAll();return
+    applyDemoData();renderAll();return;
   }
+
   let employees=await safeLoad('employees','*','full_name');
   let departments=await safeLoad('departments','*','name');
   let positions=await safeLoad('positions','*','title');
@@ -909,8 +921,19 @@ async function loadAll(){
   let payrollRuns=await safeLoad('payroll_runs','*','period_month');
   let statusEvents=await safeLoad('employee_status_events','*','start_date');
   let promotions=await safeLoad('employee_promotions','*','effective_date');
+
   employees=mergeRecentEmployee(employees);
+
+  if(!employees.length){
+    const localEmployees = mergeRecentEmployee([]);
+    if(localEmployees.length){
+      employees=localEmployees;
+    }
+  }
+
   if(!state.schemaReady && !employees.length){applyDemoData();renderAll();return}
+  if(!employees.length){applyDemoData();renderAll();return}
+
   Object.assign(state,{employees,departments,positions,documents,attendance,leaveRequests,leaveBalances,payrollRuns,statusEvents,promotions});
   renderAll();
   const created=new URLSearchParams(location.search).get('created');
@@ -1016,6 +1039,8 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
+
 
 
 
