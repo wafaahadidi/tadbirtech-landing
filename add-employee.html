@@ -605,7 +605,7 @@ async function init(){
   let positions=await safeLoad('positions','title');
   let employees=await safeLoad('employees','full_name');
   const demo=demoHrDropdownData();
-  if(!departments.length){departments=demo.departments;showNotice('Demo dropdowns loaded. Run the updated HR SQL in Supabase to save real department, position, and manager links.');}
+  if(!departments.length){departments=demo.departments;}
   if(!positions.length)positions=demo.positions;
   if(!employees.length)employees=demo.employees;
   employeeCount=employees.length;
@@ -654,6 +654,9 @@ function cacheEmployeeForList(employee){
     localStorage.setItem(key,JSON.stringify(list.slice(0,100)));
     localStorage.setItem('tt_recent_employee',JSON.stringify(safeEmployee));
     sessionStorage.setItem('tt_recent_employee',JSON.stringify(safeEmployee));
+    const rows=JSON.parse(localStorage.getItem('tt_employee_rows')||'[]').filter(x=>x&&x.id!==safeEmployee.id&&String(x.employee_number||'')!==String(safeEmployee.employee_number||''));
+    rows.unshift({id:safeEmployee.id,company_id:safeEmployee.company_id||'local-preview',employee_number:safeEmployee.employee_number,full_name:safeEmployee.full_name,email:safeEmployee.email||null,phone:safeEmployee.phone||null,status:safeEmployee.status||'active',job_position_label:safeEmployee.job_position_label||selectedText('position-id')||'Unassigned'});
+    localStorage.setItem('tt_employee_rows',JSON.stringify(rows.slice(0,100)));
   }catch(e){
     console.warn('Could not cache full employee for list',e);
     const tiny = {
@@ -823,6 +826,7 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
 
 
 
