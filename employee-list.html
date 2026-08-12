@@ -1009,6 +1009,70 @@ document.querySelectorAll('[data-employee-filter]').forEach(btn=>btn.addEventLis
   document.querySelectorAll('[data-employee-filter]').forEach(item=>item.classList.toggle('active',item===btn));
   renderEmployees();
 }));
+function directEmployeeInitials(employee){
+  return String(employee.full_name||'--').split(/\s+/).filter(Boolean).map(part=>part[0]).join('').slice(0,2).toUpperCase()||'--';
+}
+function directEmployeeNameParts(fullName){
+  const parts=String(fullName||'').trim().split(/\s+/).filter(Boolean);
+  if(!parts.length)return{first:'',last:''};
+  return{first:parts[0],last:parts.slice(1).join(' ')||parts[0]};
+}
+function renderEmployeeRowsDirect(employees){
+  const rows=document.getElementById('employee-rows');
+  if(!rows)return false;
+  if(!employees||!employees.length){
+    rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">No employees found in Supabase yet.</div></td></tr>';
+    return false;
+  }
+  state.employees=employees.slice();
+  rows.innerHTML=employees.map(employee=>{
+    const parts=directEmployeeNameParts(employee.full_name);
+    const avatar=employee.profile_photo_url?'<img src="'+text(employee.profile_photo_url)+'" alt="">':text(directEmployeeInitials(employee));
+    const job=employee.job_position_label||employee.position_title||employee.position||employee.job_position||'Unassigned';
+    return '<tr><td class="select-col"><span class="row-check"></span></td><td><div class="employee-identity"><span class="employee-avatar">'+avatar+'</span><div><button class="link-btn" type="button">'+text(parts.last||employee.full_name||'Employee')+'</button><div class="employee-name-sub">'+text(employee.employee_number||employee.id||'-')+'</div></div></div></td><td><span class="employee-name-main">'+text(parts.first)+'</span></td><td class="employee-id-cell">'+text(employee.employee_number||employee.id||'-')+'</td><td class="job-cell">'+text(job)+'</td><td>'+text(employee.phone||'-')+'</td><td class="email-cell">'+text(employee.email||'-')+'</td><td class="status-active">'+text(employee.status||'active')+'</td><td class="right"><button class="employee-menu" type="button">View</button></td></tr>';
+  }).join('');
+  return true;
+}
+async function loadEmployeeRowsDirect(){
+  const rows=document.getElementById('employee-rows');
+  if(!rows)return;
+  const client=getSupabase();
+  if(!client){
+    setTimeout(loadEmployeeRowsDirect,700);
+    return;
+  }
+  const storedCompany=localStorage.getItem('tt_company_id');
+  let employees=[];
+  let lastError=null;
+  try{
+    if(storedCompany&&storedCompany!=='null'&&storedCompany!=='undefined'){
+      const scoped=await client.from('employees').select('*').eq('company_id',storedCompany).order('full_name',{ascending:true});
+      if(scoped.error)lastError=scoped.error;
+      else employees=scoped.data||[];
+    }
+    if(!employees.length){
+      const unscoped=await client.from('employees').select('*').order('full_name',{ascending:true});
+      if(unscoped.error)lastError=unscoped.error;
+      else employees=unscoped.data||[];
+    }
+  }catch(error){
+    lastError=error;
+  }
+  if(employees.length){
+    renderEmployeeRowsDirect(employees);
+    showSchemaNotice('Loaded '+employees.length+' employee(s) from Supabase.');
+    return;
+  }
+  const localEmployees=mergeRecentEmployee([]);
+  if(localEmployees.length){
+    renderEmployeeRowsDirect(localEmployees);
+    showSchemaNotice('Showing locally saved employee rows.');
+    return;
+  }
+  if(lastError){
+    showSchemaNotice('Could not load employees from Supabase: '+(lastError.message||lastError));
+  }
+}
 function emergencyEmployeeSeed(){
   const employee=employeeFromUrlParams()||readStoredEmployee('tt_recent_employee',sessionStorage)||readStoredEmployee('tt_recent_employee',localStorage);
   if(!employee)return;
@@ -1017,11 +1081,16 @@ function emergencyEmployeeSeed(){
   }
   try{renderEmployees();showCreatedEmployeeNotice('Employee saved and added to the list.')}catch(e){console.warn(e)}
 }
-window.addEventListener('DOMContentLoaded',()=>setTimeout(emergencyEmployeeSeed,0));
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(loadEmployeeRowsDirect,50);
+  setTimeout(emergencyEmployeeSeed,150);
+});
 window.addEventListener('load',async()=>{
+  await loadEmployeeRowsDirect();
   try{await loadAll()}catch(error){console.error(error);emergencyEmployeeSeed()}
-  setTimeout(emergencyEmployeeSeed,100);
-  setTimeout(emergencyEmployeeSeed,1000);
+  setTimeout(loadEmployeeRowsDirect,500);
+  setTimeout(emergencyEmployeeSeed,700);
+  setTimeout(loadEmployeeRowsDirect,1500);
 });
 </script>
 <script>
@@ -1039,6 +1108,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
