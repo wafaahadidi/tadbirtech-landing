@@ -154,6 +154,9 @@ body{font-family:'Inter',system-ui,sans-serif!important;background:#F4F7FB!impor
 .employee-table td{font-size:13px;color:#0D1F3C;padding:13px 14px;border-bottom:.5px solid #F4F7FB;vertical-align:middle}
 .employee-table tr:last-child td{border-bottom:none}
 .employee-table tr:hover td{background:#FAFCFE}
+.employee-table tr.selected td{background:#EAF6FE!important}
+.row-check.checked{background:#1a8fd1;border-color:#1a8fd1;box-shadow:inset 0 0 0 3px #fff}
+.employee-table tr{cursor:pointer}
 .employee-table .select-col{width:34px;text-align:center}
 .row-check{width:15px;height:15px;border:.5px solid #B7C3D0;border-radius:4px;background:#fff;display:inline-block}
 .job-cell{max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -542,7 +545,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             <table class="employee-table">
               <thead>
                 <tr>
-                  <th class="select-col"><span class="row-check"></span></th>
+                  <th class="select-col"><span class="row-check" id="select-all-employees" title="Select all visible employees"></span></th>
                   <th>Employee</th>
                   <th>First name</th><th>Employee ID</th>
                   <th>Job position</th>
@@ -717,7 +720,7 @@ function getSupabase(){
   return sb;
 }
 const fmt = new Intl.NumberFormat('en-DZ',{maximumFractionDigits:0});
-const state={companyId:null,employees:[],departments:[],positions:[],documents:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],statusEvents:[],promotions:[],schemaReady:true,loadErrors:[],editingEmployeeId:null,historyEmployeeId:null,demoMode:false};
+const state={companyId:null,employees:[],departments:[],positions:[],documents:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],statusEvents:[],promotions:[],schemaReady:true,loadErrors:[],editingEmployeeId:null,historyEmployeeId:null,demoMode:false,selectedEmployees:new Set()};
 function money(v,c='DZD'){return fmt.format(Number(v||0))+' '+c}
 function text(v){return String(v ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function today(){return new Date().toISOString().slice(0,10)}
@@ -947,16 +950,44 @@ function employeeAvatar(e){return '<span class="employee-avatar">'+(e.profile_ph
 function employeePosition(e){return posName(e.position_id)==='Unassigned'?(e.job_position_label||'Unassigned'):posName(e.position_id)}
 function nameParts(fullName){const parts=String(fullName||'').trim().split(/\s+/).filter(Boolean);if(!parts.length)return{first:'',last:''};return{first:parts[0],last:parts.slice(1).join(' ')||parts[0]}}
 let employeeFilter='active';
-function renderEmployees(){
-  const rows=document.getElementById('employee-rows');
+function visibleEmployees(){
   const search=(document.getElementById('employee-search')?.value||'').toLowerCase().trim();
   let employees=state.employees.slice();
-  if(employeeFilter==='active')employees=employees.filter(e=>!['terminated','resigned','dismissed','archived'].includes(String(e.status||'').toLowerCase()));
+  if(employeeFilter==='active')employees=employees.filter(e=>!['terminated','resigned','dismissed','archived'].includes(String(e.status||'active').toLowerCase()));
   if(employeeFilter==='archived')employees=employees.filter(e=>['terminated','resigned','dismissed','archived'].includes(String(e.status||'').toLowerCase()));
   if(search)employees=employees.filter(e=>[e.full_name,e.employee_number,e.email,e.phone,employeePosition(e),posName(e.position_id),e.status].some(v=>String(v||'').toLowerCase().includes(search)));
   employees.sort((a,b)=>String(a.full_name||'').localeCompare(String(b.full_name||'')));
+  return employees;
+}
+function toggleEmployeeSelection(id,event){
+  if(event)event.stopPropagation();
+  if(!id)return;
+  if(state.selectedEmployees.has(id))state.selectedEmployees.delete(id);
+  else state.selectedEmployees.add(id);
+  renderEmployees();
+}
+function toggleAllVisibleEmployees(){
+  const employees=visibleEmployees();
+  const allSelected=employees.length&&employees.every(e=>state.selectedEmployees.has(e.id));
+  employees.forEach(e=>allSelected?state.selectedEmployees.delete(e.id):state.selectedEmployees.add(e.id));
+  renderEmployees();
+}
+function openEmployeeRecord(id,event){
+  if(event)event.stopPropagation();
+  openEmployeeModal(id);
+}
+function renderEmployees(){
+  const rows=document.getElementById('employee-rows');
+  if(!rows)return;
+  const employees=visibleEmployees();
+  const selectAll=document.getElementById('select-all-employees');
+  if(selectAll)selectAll.classList.toggle('checked',employees.length&&employees.every(e=>state.selectedEmployees.has(e.id)));
   if(!employees.length){rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">No employees match this view.</div></td></tr>';return}
-  rows.innerHTML=employees.map(e=>{const n=nameParts(e.full_name);return '<tr ondblclick="openEmployeeModal(\''+e.id+'\')"><td class="select-col"><span class="row-check"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn" type="button" onclick="event.stopPropagation();openEmployeeModal(\''+e.id+'\')">'+text(n.last||e.full_name)+'</button><div class="employee-name-sub">'+text(e.employee_number||e.id||'-')+'</div></div></div></td><td><span class="employee-name-main">'+text(n.first)+'</span></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeModal(\''+e.id+'\')">Edit</button></td></tr>'}).join('')
+  rows.innerHTML=employees.map(e=>{
+    const n=nameParts(e.full_name);
+    const selected=state.selectedEmployees.has(e.id);
+    return '<tr class="'+(selected?'selected':'')+'" onclick="openEmployeeRecord(\''+e.id+'\',event)" ondblclick="openEmployeeRecord(\''+e.id+'\',event)"><td class="select-col"><span class="row-check '+(selected?'checked':'')+'" onclick="toggleEmployeeSelection(\''+e.id+'\',event)"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">'+text(n.last||e.full_name)+'</button><div class="employee-name-sub">'+text(e.employee_number||e.id||'-')+'</div></div></div></td><td><span class="employee-name-main">'+text(n.first)+'</span></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">View</button></td></tr>'
+  }).join('');
 }
 function renderDepartments(){const host=document.getElementById('department-list');if(!state.departments.length){host.innerHTML='<div class="empty">Departments will appear here.</div>';return}host.innerHTML=state.departments.map(d=>{const team=state.employees.filter(e=>e.department_id===d.id);const manager=state.employees.find(e=>e.id===d.manager_id);return '<div class="calc-row"><span><strong>'+text(d.name)+'</strong><br><small style="color:#7a93ae">'+text(manager?manager.full_name:'No manager')+'</small></span><strong>'+team.length+' employee(s)</strong></div>'}).join('')}
 function renderAttendance(){const rows=document.getElementById('attendance-rows');if(!state.attendance.length){rows.innerHTML='<tr><td colspan="6"><div class="empty">No attendance records yet.</div></td></tr>';return}rows.innerHTML=state.attendance.slice(-20).reverse().map(a=>'<tr><td>'+text(a.date)+'</td><td>'+text(empName(a.employee_id))+'</td><td>'+statusPill(a.status)+'</td><td>'+text(a.check_in||'-')+'</td><td>'+text(a.check_out||'-')+'</td><td class="right">'+Number(a.hours_worked||0).toFixed(1)+'</td></tr>').join('')}
@@ -1002,7 +1033,8 @@ document.querySelectorAll('.module-tab').forEach(btn=>btn.addEventListener('clic
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>openHrView(btn.dataset.tab)));
 ['calc-base','calc-allowances','calc-overtime','calc-bonuses','calc-absence','calc-advance'].forEach(id=>document.addEventListener('input',e=>{if(e.target&&e.target.id===id)renderCalculator()}));
 document.getElementById('new-employee-btn').addEventListener('click',()=>location.href='add-employee.html');
-document.getElementById('refresh-btn').addEventListener('click',loadAll);
+document.getElementById('refresh-btn').addEventListener('click',async()=>{await loadEmployeeRowsDirect();await loadAll();});
+const selectAllEmployees=document.getElementById('select-all-employees');if(selectAllEmployees)selectAllEmployees.addEventListener('click',toggleAllVisibleEmployees);
 document.getElementById('employee-search')?.addEventListener('input',renderEmployees);
 document.querySelectorAll('[data-employee-filter]').forEach(btn=>btn.addEventListener('click',()=>{
   employeeFilter=btn.dataset.employeeFilter || 'active';
@@ -1060,7 +1092,7 @@ async function loadEmployeeRowsDirect(){
   }
   if(employees.length){
     renderEmployeeRowsDirect(employees);
-    showSchemaNotice('Loaded '+employees.length+' employee(s) from Supabase.');
+    
     return;
   }
   const localEmployees=mergeRecentEmployee([]);
@@ -1108,6 +1140,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
