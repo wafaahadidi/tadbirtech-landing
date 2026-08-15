@@ -1,15 +1,227 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=employee-list.html">
-  <title>TadbirTech - Employee List</title>
-  <script>
-    window.location.replace('employee-list.html' + (window.location.search || ''));
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TadbirTech - Employee Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4F7FB;color:#0D1F3C;-webkit-font-smoothing:antialiased}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.main{min-height:100vh;background:#F4F7FB}
+.sidebar{width:220px;background:#0D1F3C;color:#fff;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:hidden}
+.sb-logo{padding:12px 8px;border-bottom:.5px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;min-height:76px;background:#0D1F3C}
+.sb-logo img{width:215px;max-width:100%;height:auto;display:block;object-fit:contain}
+.sb-nav{padding:10px 40px 10px 10px;flex:1;overflow-y:auto;overflow-x:hidden;margin-right:-32px;scrollbar-width:none}
+.sb-sec{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin:10px 0 4px}
+.sb-item{display:flex;align-items:center;gap:10px;width:100%;min-height:34px;padding:9px 10px;border-radius:8px;margin-bottom:2px;text-decoration:none;color:rgba(255,255,255,.65);font-size:13px;font-weight:500;background:transparent;border:.5px solid transparent;font-family:inherit;text-align:left}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.active{background:rgba(26,143,209,.2);border-color:rgba(26,143,209,.3);color:#fff}
+.sb-item svg{width:15px;height:15px;opacity:.72;flex-shrink:0}
+.sb-chevron{margin-left:auto;width:7px;height:7px;border-right:1.5px solid rgba(255,255,255,.55);border-bottom:1.5px solid rgba(255,255,255,.55);transform:rotate(45deg)}
+.sb-submenu{display:grid;gap:2px;margin:2px 0 6px 16px}
+.sb-submenu .sb-item{padding:7px 10px;font-size:12px}
+.sb-foot{padding:10px;border-top:.5px solid rgba(255,255,255,.08)}
+.sb-logout{width:100%;border:0;background:transparent;color:rgba(255,255,255,.45);display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer}
+.topbar{height:62px;background:#fff;border-bottom:.5px solid #DDE6EF;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.topbar-title{font-size:15px;font-weight:800;color:#0D1F3C}.topbar-sub{font-size:11px;color:#7a93ae;margin-top:2px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.content{padding:22px 28px 36px}
+.btn{height:38px;border-radius:8px;border:.5px solid #DDE6EF;background:#fff;color:#0D1F3C;padding:0 14px;font:800 12px inherit;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+.btn.primary{background:#1a8fd1;color:#fff;border-color:#1a8fd1}.btn.danger{background:#FEF2F2;color:#B42318;border-color:#FECACA}.btn:hover{border-color:#1a8fd1;color:#1a8fd1}.btn.primary:hover{background:#1476b0;color:#fff}
+.notice{display:none;margin-bottom:14px;padding:12px 14px;border-radius:11px;border:.5px solid #BFDBFE;background:#EFF6FF;color:#1E3A8A;font-size:12px;font-weight:800}.notice.show{display:block}.notice.error{border-color:#FECACA;background:#FEF2F2;color:#991B1B}
+.profile-hero{display:flex;align-items:center;gap:16px;background:#fff;border:.5px solid #E2EAF2;border-radius:10px;padding:18px 20px;box-shadow:0 1px 8px rgba(13,31,60,.04);margin-bottom:14px;flex-wrap:wrap}
+.avatar{width:68px;height:68px;border-radius:50%;background:#E8F5FD;color:#176FA8;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;border:.5px solid #CFE8F8;overflow:hidden;flex:0 0 68px}
+.avatar img{width:100%;height:100%;object-fit:cover}.identity{flex:1;min-width:220px}.name{font-size:22px;font-weight:900;letter-spacing:-.25px;color:#0D1F3C}.meta{font-size:12px;color:#5B7594;margin-top:5px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.pill{display:inline-flex;align-items:center;border-radius:999px;background:#EEF3F8;color:#38536F;font-size:10px;font-weight:900;padding:5px 9px;text-transform:capitalize}.pill.good{background:#DCFCE7;color:#166534}.pill.warn{background:#FEF3C7;color:#92400E}.pill.bad{background:#FEE2E2;color:#991B1B}
+.tabs{display:flex;gap:4px;width:max-content;max-width:100%;overflow:auto;background:#E8EEF6;border:.5px solid #D4DCE8;border-radius:12px;padding:4px;margin-bottom:14px}
+.tab{border:0;background:transparent;color:#607896;border-radius:9px;height:36px;padding:0 14px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}.tab.active{background:#fff;color:#0D1F3C;box-shadow:0 2px 10px rgba(13,31,60,.1)}
+.view[hidden]{display:none!important}.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.75fr);gap:14px}.two-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.surface{background:#fff;border:.5px solid #E2EAF2;border-radius:10px;box-shadow:0 1px 8px rgba(13,31,60,.04);overflow:hidden;margin-bottom:14px}
+.surface-head{padding:15px 18px;border-bottom:.5px solid #EEF3F8;background:#FAFBFD;display:flex;justify-content:space-between;gap:12px}.surface-title{font-size:14px;font-weight:900}.surface-sub{font-size:11px;color:#7a93ae;margin-top:3px}.surface-body{padding:16px 18px}
+.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}.info{padding:10px 0;border-bottom:.5px solid #F0F4F8}.label{font-size:10px;color:#7a93ae;text-transform:uppercase;letter-spacing:.08em;font-weight:900}.value{font-size:13px;font-weight:800;margin-top:4px;color:#0D1F3C;word-break:break-word}
+.metric{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:.5px solid #F0F4F8}.metric:last-child,.info:last-child{border-bottom:0}.metric span{font-size:12px;color:#5B7594}.metric strong{font-size:13px;text-align:right}
+.empty{padding:20px;text-align:center;color:#7a93ae;font-size:12px;background:#FAFBFD;border:.5px dashed #DDE6EF;border-radius:10px}
+table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;color:#7a93ae;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:0 0 10px;border-bottom:.5px solid #EEF3F8}td{font-size:12px;padding:11px 0;border-bottom:.5px solid #F4F7FB;vertical-align:middle}
+.doc-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:.5px solid #F0F4F8}.doc-card:last-child{border-bottom:0}.doc-title{font-size:13px;font-weight:900}.doc-meta{font-size:11px;color:#7a93ae;margin-top:3px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.grid,.two-grid,.info-grid{grid-template-columns:1fr}.content{padding:16px}.topbar{padding:0 16px}.name{font-size:20px}}
+</style>
 </head>
 <body>
-  <p>Redirecting to <a href="employee-list.html">Employee List</a>...</p>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-logo"><img src="tadbirtech-logo-sidebar.png" alt="TadbirTech"></div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Main</div>
+      <a class="sb-item" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <div class="sb-sec">Modules</div>
+      <a class="sb-item" href="invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>Accounting<span class="sb-chevron"></span></a>
+      <a class="sb-item" href="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory</a>
+      <a class="sb-item active" href="employee-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Human Resources Management<span class="sb-chevron"></span></a>
+      <div class="sb-submenu">
+        <a class="sb-item active" href="employee-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>Employees</a>
+      </div>
+      <div class="sb-sec">Account</div>
+      <a class="sb-item" href="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>Company Profile</a>
+      <a class="sb-item" href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>Settings</a>
+      <a class="sb-item" href="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg>Demo Dataset</a>
+    </nav>
+    <div class="sb-foot"><button class="sb-logout" onclick="handleLogout()">Log out</button></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div><div class="topbar-title">Employee Profile</div><div class="topbar-sub">Complete employee record, documents, payroll, and history.</div></div>
+      <div class="topbar-actions"><a class="btn" href="employee-list.html">Back to employees</a><button class="btn danger" onclick="deleteEmployee()">Delete</button></div>
+    </header>
+    <div class="content">
+      <div class="notice show" id="notice">Loading employee profile...</div>
+      <section class="profile-hero">
+        <div class="avatar" id="avatar">--</div>
+        <div class="identity">
+          <div class="name" id="profile-name">Loading employee...</div>
+          <div class="meta" id="profile-meta">Employee record</div>
+          <div class="pill-row">
+            <span class="pill good" id="profile-status">status</span>
+            <span class="pill" id="profile-number">EMP-000</span>
+            <span class="pill" id="profile-salary">0 DZD</span>
+            <span class="pill" id="profile-joined">Joined -</span>
+          </div>
+        </div>
+      </section>
+      <nav class="tabs">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="employment">Employment</button>
+        <button class="tab" data-tab="payroll">Payroll</button>
+        <button class="tab" data-tab="documents">Documents</button>
+        <button class="tab" data-tab="history">History</button>
+      </nav>
+      <section class="view" id="view-overview">
+        <div class="grid">
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Personal & contact</div><div class="surface-sub">Identity, contact, and emergency information.</div></div></div><div class="surface-body"><div class="info-grid" id="overview-info"></div></div></div>
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Quick summary</div><div class="surface-sub">Current HR status.</div></div></div><div class="surface-body" id="quick-summary"></div></div>
+        </div>
+      </section>
+      <section class="view" id="view-employment" hidden>
+        <div class="two-grid">
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Employment details</div><div class="surface-sub">Department, position, manager, and contract.</div></div></div><div class="surface-body"><div class="info-grid" id="employment-info"></div></div></div>
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Schedule</div><div class="surface-sub">Work system and weekly rhythm.</div></div></div><div class="surface-body"><div class="info-grid" id="schedule-info"></div></div></div>
+        </div>
+      </section>
+      <section class="view" id="view-payroll" hidden>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Payroll details</div><div class="surface-sub">Salary, allowances, deductions, and bank information.</div></div></div><div class="surface-body"><div class="info-grid" id="payroll-info"></div></div></div>
+      </section>
+      <section class="view" id="view-documents" hidden>
+        <div class="two-grid">
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Document vault</div><div class="surface-sub">Personal, education, contracts, and other documents.</div></div></div><div class="surface-body" id="documents-list"></div></div>
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Qualifications</div><div class="surface-sub">Academic background, diplomas, certificates, languages, and skills.</div></div></div><div class="surface-body"><div class="info-grid" id="qualification-info"></div></div></div>
+        </div>
+      </section>
+      <section class="view" id="view-history" hidden>
+        <div class="two-grid">
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Status history</div><div class="surface-sub">Leaves, sick leave, resignation, dismissal, and returns.</div></div></div><div class="surface-body" id="status-history"></div></div>
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Promotion history</div><div class="surface-sub">Role and salary progression.</div></div></div><div class="surface-body" id="promotion-history"></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script>
+const SUPABASE_URL='https://gqmpqpnboenmshuuopnp.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
+let sb=null;
+const state={employee:null,departments:[],positions:[],employees:[],documents:[],statusEvents:[],promotions:[]};
+function client(){if(sb)return sb;if(!window.supabase||!window.supabase.createClient)return null;sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);return sb}
+function text(v){return String(v ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function money(v,c='DZD'){return new Intl.NumberFormat('en-DZ',{maximumFractionDigits:0}).format(Number(v||0))+' '+(c||'DZD')}
+function showNotice(msg,type='info'){const el=document.getElementById('notice');el.textContent=msg;el.classList.add('show');el.classList.toggle('error',type==='error')}
+function hideNotice(){document.getElementById('notice').classList.remove('show','error')}
+function getId(){return new URLSearchParams(location.search).get('id')}
+function initials(name){return String(name||'--').split(/\s+/).filter(Boolean).map(x=>x[0]).join('').slice(0,2).toUpperCase()||'--'}
+function depName(id){return state.departments.find(d=>d.id===id)?.name||'Unassigned'}
+function posName(id){return state.positions.find(p=>p.id===id)?.title||state.employee?.job_position_label||'Unassigned'}
+function empName(id){return state.employees.find(e=>e.id===id)?.full_name||'No manager'}
+function field(label,value){return '<div class="info"><div class="label">'+text(label)+'</div><div class="value">'+text(value||'-')+'</div></div>'}
+function metric(label,value){return '<div class="metric"><span>'+text(label)+'</span><strong>'+text(value||'-')+'</strong></div>'}
+async function safeQuery(builder){try{const r=await builder;return r.error?[]:(r.data||[])}catch(error){console.warn(error);return[]}}
+function render(){
+  const e=state.employee;if(!e)return;
+  const status=String(e.status||'active');
+  document.getElementById('profile-name').textContent=e.full_name||'Employee';
+  document.getElementById('profile-meta').textContent=[posName(e.position_id),depName(e.department_id),e.email,e.phone].filter(Boolean).join(' | ')||'Employee record';
+  document.getElementById('profile-status').textContent=status.replaceAll('_',' ');
+  document.getElementById('profile-status').className='pill '+(status==='active'?'good':status.includes('leave')?'warn':'bad');
+  document.getElementById('profile-number').textContent=e.employee_number||e.id||'-';
+  document.getElementById('profile-salary').textContent=money(e.base_salary,e.currency||'DZD');
+  document.getElementById('profile-joined').textContent='Joined '+(e.hire_date||'-');
+  document.getElementById('avatar').innerHTML=e.profile_photo_url?'<img src="'+text(e.profile_photo_url)+'" alt="">':text(initials(e.full_name));
+  document.getElementById('overview-info').innerHTML=[
+    field('Employee number',e.employee_number),field('Full name',e.full_name),field('Email',e.email),field('Phone',e.phone),
+    field('Secondary phone',e.secondary_phone),field('National ID / Passport',e.national_id),field('Social security number',e.social_security_number),field('Birth date',e.birth_date),
+    field('Gender',e.gender),field('Marital status',e.marital_status),field('Address',[e.address,e.city,e.state_region,e.postal_code,e.country].filter(Boolean).join(', ')),
+    field('Emergency contact',[e.emergency_contact_name,e.emergency_contact_relationship,e.emergency_contact_phone].filter(Boolean).join(' | '))
+  ].join('');
+  document.getElementById('quick-summary').innerHTML=[
+    metric('Status',status.replaceAll('_',' ')),metric('Department',depName(e.department_id)),metric('Position',posName(e.position_id)),metric('Manager',empName(e.manager_id)),metric('Contract',e.contract_type),metric('Workplace',e.workplace)
+  ].join('');
+  document.getElementById('employment-info').innerHTML=[
+    field('Department',depName(e.department_id)),field('Position',posName(e.position_id)),field('Manager',empName(e.manager_id)),field('Contract type',e.contract_type),field('Hire date',e.hire_date),field('Contract end date',e.contract_end_date),field('Status',status.replaceAll('_',' ')),field('Workplace',e.workplace)
+  ].join('');
+  document.getElementById('schedule-info').innerHTML=[field('Work system',e.work_system),field('Hours / week',e.work_hours_per_week),field('Work days',Array.isArray(e.work_days)?e.work_days.join(', '):e.work_days),field('Shift notes',e.shift_schedule)].join('');
+  document.getElementById('payroll-info').innerHTML=[
+    field('Base salary',money(e.base_salary,e.currency||'DZD')),field('Currency',e.currency||'DZD'),field('Allowances',money(e.allowances,e.currency||'DZD')),field('Bonuses',money(e.bonuses,e.currency||'DZD')),field('Deductions',money(e.deductions,e.currency||'DZD')),field('Payment method',e.payment_method),field('Bank',e.bank_name),field('Bank account',e.bank_account)
+  ].join('');
+  document.getElementById('qualification-info').innerHTML=[
+    field('Diplomas',e.diplomas),field('Languages',e.languages),field('Skills',e.skills),field('Academic background',e.academic_background),field('Professional certificates',e.professional_certifications),field('HR notes',e.hr_notes)
+  ].join('');
+  renderDocuments();
+  renderHistory();
+}
+function renderDocuments(){
+  const el=document.getElementById('documents-list');
+  if(!state.documents.length){el.innerHTML='<div class="empty">No documents uploaded yet.</div>';return}
+  el.innerHTML=state.documents.map(d=>{
+    const type=d.document_type||d.document_category||d.category||'document';
+    const title=d.title||d.file_name||d.name||'Untitled document';
+    const file=d.file_url||d.url||d.public_url||'';
+    return '<div class="doc-card"><div><div class="doc-title">'+text(title)+'</div><div class="doc-meta">'+text(type)+' '+text(d.expiration_date?(' | expires '+d.expiration_date):'')+'</div></div>'+(file?'<a class="btn" href="'+text(file)+'" target="_blank">Open</a>':'<span class="pill">No file</span>')+'</div>';
+  }).join('');
+}
+function renderHistory(){
+  const statusEl=document.getElementById('status-history');
+  const promoEl=document.getElementById('promotion-history');
+  statusEl.innerHTML=state.statusEvents.length?'<table><thead><tr><th>Date</th><th>Event</th><th>Notes</th></tr></thead><tbody>'+state.statusEvents.map(h=>'<tr><td>'+text(h.start_date||'-')+'</td><td>'+text(h.event_type||'-')+'</td><td>'+text(h.notes||'-')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No status history yet.</div>';
+  promoEl.innerHTML=state.promotions.length?'<table><thead><tr><th>Date</th><th>Change</th><th>Salary</th></tr></thead><tbody>'+state.promotions.map(h=>'<tr><td>'+text(h.effective_date||'-')+'</td><td>'+text((h.previous_title||'')+' -> '+(h.new_title||''))+'</td><td>'+text(h.new_salary?money(h.new_salary,state.employee?.currency||'DZD'):'-')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No promotion history yet.</div>';
+}
+async function load(){
+  const employeeId=getId();if(!employeeId){showNotice('Missing employee id. Open this page from Employee List.','error');return}
+  const c=client();if(!c){showNotice('Supabase library did not load. Refresh the page.','error');return}
+  const employee=await c.from('employees').select('*').eq('id',employeeId).maybeSingle();
+  if(employee.error){showNotice(employee.error.message,'error');return}
+  if(!employee.data){showNotice('Employee not found.','error');return}
+  state.employee=employee.data;
+  const companyId=employee.data.company_id;
+  state.departments=await safeQuery(c.from('departments').select('*').eq('company_id',companyId).order('name',{ascending:true}));
+  state.positions=await safeQuery(c.from('positions').select('*').eq('company_id',companyId).order('title',{ascending:true}));
+  state.employees=await safeQuery(c.from('employees').select('id,full_name').eq('company_id',companyId).order('full_name',{ascending:true}));
+  state.documents=await safeQuery(c.from('employee_documents').select('*').eq('employee_id',employeeId));
+  state.statusEvents=await safeQuery(c.from('employee_status_events').select('*').eq('employee_id',employeeId).order('start_date',{ascending:false}));
+  state.promotions=await safeQuery(c.from('employee_promotions').select('*').eq('employee_id',employeeId).order('effective_date',{ascending:false}));
+  render();
+  hideNotice();
+}
+async function deleteEmployee(){
+  const e=state.employee;if(!e)return;
+  if(!confirm('Delete '+(e.full_name||'this employee')+'?'))return;
+  const c=client();if(!c)return;
+  const r=await c.from('employees').delete().eq('id',e.id);
+  if(r.error){showNotice(r.error.message,'error');return}
+  location.href='employee-list.html?deleted=1';
+}
+function handleLogout(){localStorage.removeItem('tt_company_id');location.href='login.html'}
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));document.querySelectorAll('.view').forEach(v=>v.hidden=true);document.getElementById('view-'+btn.dataset.tab).hidden=false}));
+window.addEventListener('load',load);
+</script>
 </body>
 </html>
