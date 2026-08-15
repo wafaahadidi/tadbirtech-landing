@@ -1101,6 +1101,114 @@ async function loadEmployeeRowsDirect(){
     showSchemaNotice('Could not load employees from Supabase: '+(lastError.message||lastError));
   }
 }
+function managerName(id){return empName(id)}
+async function loadEmployeesReliable(){
+  const client=getSupabase();
+  const localEmployees=mergeRecentEmployee([]);
+  if(!client)return localEmployees;
+  const companyIds=[];
+  const addCompanyId=id=>{
+    const value=String(id||'').trim();
+    if(value&&value!=='null'&&value!=='undefined'&&!companyIds.includes(value))companyIds.push(value);
+  };
+  addCompanyId(state.companyId);
+  addCompanyId(localStorage.getItem('tt_company_id'));
+  try{
+    const sessionResult=await client.auth.getSession();
+    const userId=sessionResult?.data?.session?.user?.id;
+    if(userId){
+      const memberships=await client.from('company_members').select('company_id').eq('user_id',userId);
+      if(!memberships.error)(memberships.data||[]).forEach(row=>addCompanyId(row.company_id));
+    }
+  }catch(error){console.warn('Company membership lookup skipped',error)}
+  const loaded=[];
+  let lastError=null;
+  for(const companyId of companyIds){
+    try{
+      const result=await client.from('employees').select('*').eq('company_id',companyId).order('full_name',{ascending:true});
+      if(result.error){lastError=result.error;continue}
+      (result.data||[]).forEach(employee=>loaded.push(employee));
+    }catch(error){lastError=error}
+  }
+  if(!loaded.length){
+    try{
+      const result=await client.from('employees').select('*').order('full_name',{ascending:true});
+      if(result.error)lastError=result.error;
+      else (result.data||[]).forEach(employee=>loaded.push(employee));
+    }catch(error){lastError=error}
+  }
+  const seen=new Set();
+  const merged=mergeRecentEmployee(loaded).filter(employee=>{
+    const key=String(employee.id||employee.employee_number||employee.full_name||'');
+    if(!key||seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
+  if(merged[0]?.company_id){
+    state.companyId=merged[0].company_id;
+    localStorage.setItem('tt_company_id',state.companyId);
+  }
+  if(!merged.length&&lastError)showSchemaNotice('Could not load employees from Supabase: '+(lastError.message||lastError));
+  return merged;
+}
+function safeRenderStep(name,fn){
+  try{fn()}catch(error){console.warn('HR render skipped: '+name,error)}
+}
+function renderAll(){
+  const schemaNotice=document.getElementById('schema-notice');
+  if(schemaNotice)schemaNotice.classList.toggle('show',!state.schemaReady&&!state.demoMode);
+  safeRenderStep('employees',renderEmployees);
+  safeRenderStep('kpis',renderKpis);
+  safeRenderStep('mini-stats',renderMiniStats);
+  safeRenderStep('departments',renderDepartments);
+  safeRenderStep('org-chart',renderOrgChart);
+  safeRenderStep('documents',renderDocumentVault);
+  safeRenderStep('positions',renderPositionsGrades);
+  safeRenderStep('attendance',renderAttendance);
+  safeRenderStep('leave',renderLeave);
+  safeRenderStep('payroll',renderPayroll);
+  safeRenderStep('payslips',renderPayslips);
+  safeRenderStep('cnas',renderCnasSummary);
+  safeRenderStep('livre-paie',renderLivrePaie);
+  safeRenderStep('reports',renderReports);
+  safeRenderStep('selects',populateEmployeeSelects);
+}
+async function loadEmployeeRowsDirect(){
+  const rows=document.getElementById('employee-rows');
+  if(!rows)return;
+  const employees=await loadEmployeesReliable();
+  if(employees.length){
+    state.demoMode=false;
+    state.employees=employees;
+    renderEmployees();
+    return;
+  }
+  rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">No employees found yet. Create an employee, then refresh this page.</div></td></tr>';
+}
+async function loadAll(){
+  state.schemaReady=true;state.loadErrors=[];state.demoMode=false;
+  await resolveCompany();
+  const employees=await loadEmployeesReliable();
+  const client=getSupabase();
+  if(!client){
+    Object.assign(state,{employees,departments:[],positions:[],documents:[],attendance:[],leaveRequests:[],leaveBalances:[],payrollRuns:[],statusEvents:[],promotions:[]});
+    renderAll();
+    return;
+  }
+  let departments=await safeLoad('departments','*','name');
+  let positions=await safeLoad('positions','*','title');
+  let documents=await safeLoad('employee_documents','*','created_at');
+  let attendance=await safeLoad('attendance','*','date');
+  let leaveRequests=await safeLoad('leave_requests','*','start_date');
+  let leaveBalances=await safeLoad('leave_balances','*','year');
+  let payrollRuns=await safeLoad('payroll_runs','*','period_month');
+  let statusEvents=await safeLoad('employee_status_events','*','start_date');
+  let promotions=await safeLoad('employee_promotions','*','effective_date');
+  Object.assign(state,{employees,departments,positions,documents,attendance,leaveRequests,leaveBalances,payrollRuns,statusEvents,promotions});
+  renderAll();
+  const created=new URLSearchParams(location.search).get('created');
+  if(created)showCreatedEmployeeNotice('Employee saved and added to the list.');
+}
 function emergencyEmployeeSeed(){
   const employee=employeeFromUrlParams()||readStoredEmployee('tt_recent_employee',sessionStorage)||readStoredEmployee('tt_recent_employee',localStorage);
   if(!employee)return;
@@ -1136,6 +1244,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
