@@ -1242,8 +1242,123 @@ async function handleLogout(){
   window.location.href='login.html';
 }
 </script>
+<script>
+(function(){
+  function esc(value){
+    return String(value ?? '').replace(/[&<>"']/g,function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function initials(name){
+    return String(name||'--').split(/\s+/).filter(Boolean).map(function(part){return part[0]}).join('').slice(0,2).toUpperCase() || '--';
+  }
+  function nameParts(name){
+    var parts=String(name||'').trim().split(/\s+/).filter(Boolean);
+    if(!parts.length)return {first:'',last:''};
+    return {first:parts[0],last:parts.slice(1).join(' ') || parts[0]};
+  }
+  function openProfile(id){
+    if(!id)return;
+    window.location.href='employee-profile.html?id='+encodeURIComponent(id);
+  }
+  window.ttOpenEmployeeProfile=openProfile;
+  function rowHtml(employee){
+    var parts=nameParts(employee.full_name);
+    var id=String(employee.id || '');
+    var photo=employee.profile_photo_url ? '<img src="'+esc(employee.profile_photo_url)+'" alt="">' : esc(initials(employee.full_name));
+    var job=employee.job_position_label || employee.position_title || employee.position || employee.title || 'Unassigned';
+    return '<tr onclick="window.ttOpenEmployeeProfile(\''+esc(id)+'\')" style="cursor:pointer">'+
+      '<td class="select-col"><span class="row-check"></span></td>'+
+      '<td><div class="employee-identity"><span class="employee-avatar">'+photo+'</span><div><button class="link-btn" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+esc(id)+'\')">'+esc(parts.last || employee.full_name || 'Employee')+'</button><div class="employee-name-sub">'+esc(employee.employee_number || id || '-')+'</div></div></div></td>'+
+      '<td><span class="employee-name-main">'+esc(parts.first)+'</span></td>'+
+      '<td class="employee-id-cell">'+esc(employee.employee_number || id || '-')+'</td>'+
+      '<td class="job-cell">'+esc(job)+'</td>'+
+      '<td>'+esc(employee.phone || '-')+'</td>'+
+      '<td class="email-cell">'+esc(employee.email || '-')+'</td>'+
+      '<td class="status-active">'+esc(employee.status || 'active')+'</td>'+
+      '<td class="right"><button class="employee-menu" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+esc(id)+'\')">View</button></td>'+
+    '</tr>';
+  }
+  function showRows(employees,message){
+    var rows=document.getElementById('employee-rows');
+    if(!rows)return;
+    if(!employees.length){
+      rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">'+esc(message || 'No employees found yet.')+'</div></td></tr>';
+      return;
+    }
+    rows.innerHTML=employees.map(rowHtml).join('');
+    try{
+      if(window.state){
+        window.state.employees=employees.slice();
+        window.state.demoMode=false;
+      }
+    }catch(error){}
+  }
+  function readCache(){
+    var items=[];
+    ['tt_employee_rows','tt_employee_cache'].forEach(function(key){
+      try{
+        var parsed=JSON.parse(localStorage.getItem(key)||'[]');
+        if(Array.isArray(parsed))items=items.concat(parsed.filter(Boolean));
+      }catch(error){}
+    });
+    try{
+      var recent=JSON.parse(localStorage.getItem('tt_recent_employee')||'null');
+      if(recent)items.unshift(recent);
+    }catch(error){}
+    var seen={};
+    return items.filter(function(employee){
+      var key=String(employee.id||employee.employee_number||employee.full_name||'');
+      if(!key || seen[key])return false;
+      seen[key]=true;
+      return true;
+    });
+  }
+  async function loadRows(){
+    var rows=document.getElementById('employee-rows');
+    if(!rows)return;
+    rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">Loading employees from Supabase...</div></td></tr>';
+    var cached=readCache();
+    var client=null;
+    try{
+      client=window.supabase && window.supabase.createClient ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
+    }catch(error){}
+    if(!client){
+      showRows(cached,cached.length?'':'Supabase did not load. Refresh the page.');
+      return;
+    }
+    var all=[];
+    var lastError=null;
+    try{
+      var unscoped=await client.from('employees').select('*').order('created_at',{ascending:false});
+      if(unscoped.error)lastError=unscoped.error;
+      else all=unscoped.data || [];
+    }catch(error){lastError=error}
+    if(!all.length){
+      try{
+        var byName=await client.from('employees').select('*').order('full_name',{ascending:true});
+        if(byName.error)lastError=byName.error;
+        else all=byName.data || [];
+      }catch(error){lastError=error}
+    }
+    if(cached.length){
+      var keys={};
+      all.forEach(function(employee){keys[String(employee.id||employee.employee_number||employee.full_name)] = true});
+      cached.forEach(function(employee){
+        var key=String(employee.id||employee.employee_number||employee.full_name);
+        if(!keys[key])all.unshift(employee);
+      });
+    }
+    showRows(all,lastError ? ('Could not load employees: '+(lastError.message||lastError)) : 'No employees found yet.');
+  }
+  window.ttHardLoadEmployees=loadRows;
+  window.addEventListener('DOMContentLoaded',function(){setTimeout(loadRows,250)});
+  window.addEventListener('load',function(){setTimeout(loadRows,1000);setTimeout(loadRows,2500)});
+})();
+</script>
 </body>
 </html>
+
 
 
 
