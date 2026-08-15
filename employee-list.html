@@ -974,7 +974,8 @@ function toggleAllVisibleEmployees(){
 }
 function openEmployeeRecord(id,event){
   if(event)event.stopPropagation();
-  openEmployeeModal(id);
+  if(!id)return;
+  window.location.href='employee-profile.html?id='+encodeURIComponent(id);
 }
 function renderEmployees(){
   const rows=document.getElementById('employee-rows');
@@ -1057,12 +1058,7 @@ function renderEmployeeRowsDirect(employees){
     return false;
   }
   state.employees=employees.slice();
-  rows.innerHTML=employees.map(employee=>{
-    const parts=directEmployeeNameParts(employee.full_name);
-    const avatar=employee.profile_photo_url?'<img src="'+text(employee.profile_photo_url)+'" alt="">':text(directEmployeeInitials(employee));
-    const job=employee.job_position_label||employee.position_title||employee.position||employee.job_position||'Unassigned';
-    return '<tr><td class="select-col"><span class="row-check"></span></td><td><div class="employee-identity"><span class="employee-avatar">'+avatar+'</span><div><button class="link-btn" type="button">'+text(parts.last||employee.full_name||'Employee')+'</button><div class="employee-name-sub">'+text(employee.employee_number||employee.id||'-')+'</div></div></div></td><td><span class="employee-name-main">'+text(parts.first)+'</span></td><td class="employee-id-cell">'+text(employee.employee_number||employee.id||'-')+'</td><td class="job-cell">'+text(job)+'</td><td>'+text(employee.phone||'-')+'</td><td class="email-cell">'+text(employee.email||'-')+'</td><td class="status-active">'+text(employee.status||'active')+'</td><td class="right"><button class="employee-menu" type="button">View</button></td></tr>';
-  }).join('');
+  renderEmployees();
   return true;
 }
 async function loadEmployeeRowsDirect(){
@@ -1140,6 +1136,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
