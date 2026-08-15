@@ -194,20 +194,56 @@ function renderHistory(){
   statusEl.innerHTML=state.statusEvents.length?'<table><thead><tr><th>Date</th><th>Event</th><th>Notes</th></tr></thead><tbody>'+state.statusEvents.map(h=>'<tr><td>'+text(h.start_date||'-')+'</td><td>'+text(h.event_type||'-')+'</td><td>'+text(h.notes||'-')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No status history yet.</div>';
   promoEl.innerHTML=state.promotions.length?'<table><thead><tr><th>Date</th><th>Change</th><th>Salary</th></tr></thead><tbody>'+state.promotions.map(h=>'<tr><td>'+text(h.effective_date||'-')+'</td><td>'+text((h.previous_title||'')+' -> '+(h.new_title||''))+'</td><td>'+text(h.new_salary?money(h.new_salary,state.employee?.currency||'DZD'):'-')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No promotion history yet.</div>';
 }
+function isUuid(value){return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value||''))}
+function cachedProfileEmployees(){
+  const items=[];
+  ['tt_recent_employee','tt_employee_rows','tt_employee_cache'].forEach(key=>{
+    try{
+      const raw=localStorage.getItem(key)||sessionStorage.getItem(key);
+      if(!raw)return;
+      const parsed=JSON.parse(raw);
+      if(Array.isArray(parsed))items.push(...parsed.filter(Boolean));
+      else if(parsed)items.push(parsed);
+    }catch(error){}
+  });
+  const seen=new Set();
+  return items.filter(employee=>{
+    const key=String(employee.id||employee.employee_number||employee.full_name||'');
+    if(!key||seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
+}
+function findCachedEmployee(employeeId){
+  const items=cachedProfileEmployees();
+  return items.find(employee=>String(employee.id||'')===String(employeeId))
+    || items.find(employee=>String(employee.employee_number||'')===String(employeeId))
+    || items[0] || null;
+}
 async function load(){
   const employeeId=getId();if(!employeeId){showNotice('Missing employee id. Open this page from Employee List.','error');return}
-  const c=client();if(!c){showNotice('Supabase library did not load. Refresh the page.','error');return}
-  const employee=await c.from('employees').select('*').eq('id',employeeId).maybeSingle();
-  if(employee.error){showNotice(employee.error.message,'error');return}
-  if(!employee.data){showNotice('Employee not found.','error');return}
-  state.employee=employee.data;
-  const companyId=employee.data.company_id;
-  state.departments=await safeQuery(c.from('departments').select('*').eq('company_id',companyId).order('name',{ascending:true}));
-  state.positions=await safeQuery(c.from('positions').select('*').eq('company_id',companyId).order('title',{ascending:true}));
-  state.employees=await safeQuery(c.from('employees').select('id,full_name').eq('company_id',companyId).order('full_name',{ascending:true}));
-  state.documents=await safeQuery(c.from('employee_documents').select('*').eq('employee_id',employeeId));
-  state.statusEvents=await safeQuery(c.from('employee_status_events').select('*').eq('employee_id',employeeId).order('start_date',{ascending:false}));
-  state.promotions=await safeQuery(c.from('employee_promotions').select('*').eq('employee_id',employeeId).order('effective_date',{ascending:false}));
+  const c=client();if(!c){const cached=findCachedEmployee(employeeId);if(cached){state.employee=cached;render();hideNotice();return}showNotice('Supabase library did not load. Refresh the page.','error');return}
+  let employeeData=null;
+  if(isUuid(employeeId)){
+    const employee=await c.from('employees').select('*').eq('id',employeeId).maybeSingle();
+    if(employee.error){showNotice(employee.error.message,'error');return}
+    employeeData=employee.data;
+  }else{
+    employeeData=findCachedEmployee(employeeId);
+  }
+  if(!employeeData){showNotice('Employee not found. Go back to employees and refresh the list.','error');return}
+  state.employee=employeeData;
+  const companyId=employeeData.company_id;
+  if(companyId){
+    state.departments=await safeQuery(c.from('departments').select('*').eq('company_id',companyId).order('name',{ascending:true}));
+    state.positions=await safeQuery(c.from('positions').select('*').eq('company_id',companyId).order('title',{ascending:true}));
+    state.employees=await safeQuery(c.from('employees').select('id,full_name').eq('company_id',companyId).order('full_name',{ascending:true}));
+  }
+  if(isUuid(employeeId)){
+    state.documents=await safeQuery(c.from('employee_documents').select('*').eq('employee_id',employeeId));
+    state.statusEvents=await safeQuery(c.from('employee_status_events').select('*').eq('employee_id',employeeId).order('start_date',{ascending:false}));
+    state.promotions=await safeQuery(c.from('employee_promotions').select('*').eq('employee_id',employeeId).order('effective_date',{ascending:false}));
+  }
   render();
   hideNotice();
 }
@@ -225,3 +261,4 @@ window.addEventListener('load',load);
 </script>
 </body>
 </html>
+

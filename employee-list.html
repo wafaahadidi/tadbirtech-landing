@@ -1343,10 +1343,21 @@ async function handleLogout(){
     }
     if(cached.length){
       var keys={};
-      all.forEach(function(employee){keys[String(employee.id||employee.employee_number||employee.full_name)] = true});
+      function employeeKeys(employee){
+        return [
+          employee.id,
+          employee.employee_number ? 'no:'+employee.employee_number : '',
+          employee.email ? 'email:'+String(employee.email).toLowerCase() : '',
+          employee.full_name ? 'name:'+String(employee.full_name).toLowerCase() : ''
+        ].filter(Boolean).map(String);
+      }
+      all.forEach(function(employee){employeeKeys(employee).forEach(function(key){keys[key]=true})});
       cached.forEach(function(employee){
-        var key=String(employee.id||employee.employee_number||employee.full_name);
-        if(!keys[key])all.unshift(employee);
+        var duplicate=employeeKeys(employee).some(function(key){return keys[key]});
+        if(!duplicate){
+          all.unshift(employee);
+          employeeKeys(employee).forEach(function(key){keys[key]=true});
+        }
       });
     }
     showRows(all,lastError ? ('Could not load employees: '+(lastError.message||lastError)) : 'No employees found yet.');
@@ -1358,6 +1369,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
