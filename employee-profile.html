@@ -47,6 +47,32 @@ body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F4
 table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;color:#7a93ae;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:0 0 10px;border-bottom:.5px solid #EEF3F8}td{font-size:12px;padding:11px 0;border-bottom:.5px solid #F4F7FB;vertical-align:middle}
 .doc-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:.5px solid #F0F4F8}.doc-card:last-child{border-bottom:0}.doc-title{font-size:13px;font-weight:900}.doc-meta{font-size:11px;color:#7a93ae;margin-top:3px}
 @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.grid,.two-grid,.info-grid{grid-template-columns:1fr}.content{padding:16px}.topbar{padding:0 16px}.name{font-size:20px}}
+.doc-folder-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.doc-folder{border:1px solid #DDE8F3;border-radius:8px;background:#fff;overflow:hidden}
+.doc-folder-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #EAF0F6;background:#F8FBFF}
+.doc-folder-title{font-weight:800;color:#001B3D}
+.doc-count{font-size:12px;font-weight:800;color:#4F6C8F;background:#EAF6FE;border-radius:999px;padding:4px 8px}
+.doc-folder-body{display:grid;gap:8px;padding:12px}
+.doc-card{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #E4ECF5;border-radius:8px;padding:10px 12px;background:#fff}
+.doc-title{font-weight:800;color:#001B3D}
+.doc-meta{font-size:12px;color:#6E83A3;margin-top:3px}
+.doc-empty{color:#7A8FAA;font-weight:700;padding:10px;border:1px dashed #D8E4F0;border-radius:8px;background:#FBFDFF}
+@media(max-width:900px){.doc-folder-grid{grid-template-columns:1fr}}
+.edit-modal{position:fixed;inset:0;background:rgba(9,24,44,.45);display:none;align-items:center;justify-content:center;padding:24px;z-index:999}
+.edit-modal.show{display:flex}
+.edit-dialog{width:min(760px,96vw);max-height:90vh;overflow:auto;background:#fff;border:1px solid #DDE8F3;border-radius:10px;box-shadow:0 24px 70px rgba(11,34,66,.25)}
+.edit-dialog-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #E6EEF7}
+.edit-dialog-title{font-weight:900;font-size:20px;color:#001B3D}
+.edit-dialog-body{padding:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.edit-field{display:grid;gap:7px}
+.edit-field.full{grid-column:1/-1}
+.edit-field label{font-size:12px;font-weight:900;color:#577194;text-transform:uppercase;letter-spacing:.04em}
+.edit-field input,.edit-field select,.edit-field textarea{width:100%;border:1px solid #D8E4F0;border-radius:8px;padding:11px 12px;font:inherit;color:#0D1F3C;background:#fff}
+.edit-field textarea{min-height:90px;resize:vertical}
+.edit-dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid #E6EEF7}
+.doc-actions{display:flex;gap:8px;align-items:center}
+.btn.danger{color:#B42318;border-color:#F5C2C7;background:#FFF7F7}
+@media(max-width:760px){.edit-dialog-body{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -73,7 +99,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
   <main class="main">
     <header class="topbar">
       <div><div class="topbar-title">Employee Profile</div><div class="topbar-sub">Complete employee record, documents, payroll, and history.</div></div>
-      <div class="topbar-actions"><a class="btn" href="employee-list.html">Back to employees</a><button class="btn danger" onclick="deleteEmployee()">Delete</button></div>
+      <div class="topbar-actions"><a class="btn" href="employee-list.html">Back to employees</a><button class="btn" onclick="openEditProfile()">Edit profile</button><button class="btn danger" onclick="deleteEmployee()">Delete</button></div>
     </header>
     <div class="content">
       <div class="notice show" id="notice">Loading employee profile...</div>
@@ -114,7 +140,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
       </section>
       <section class="view" id="view-documents" hidden>
         <div class="two-grid">
-          <div class="surface"><div class="surface-head"><div><div class="surface-title">Document vault</div><div class="surface-sub">Personal, education, contracts, and other documents.</div></div></div><div class="surface-body" id="documents-list"></div></div>
+          <div class="surface"><div class="surface-head"><div><div class="surface-title">Document vault</div><div class="surface-sub">Personal, education, contracts, and other documents.</div></div><button class="btn" onclick="openDocumentUpload()">Upload document</button></div><div class="surface-body" id="documents-list"></div></div>
           <div class="surface"><div class="surface-head"><div><div class="surface-title">Qualifications</div><div class="surface-sub">Academic background, diplomas, certificates, languages, and skills.</div></div></div><div class="surface-body"><div class="info-grid" id="qualification-info"></div></div></div>
         </div>
       </section>
@@ -126,6 +152,47 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
       </section>
     </div>
   </main>
+</div>
+<div class="edit-modal" id="edit-profile-modal">
+  <div class="edit-dialog">
+    <div class="edit-dialog-head"><div class="edit-dialog-title">Edit employee profile</div><button class="btn" onclick="closeEditProfile()">Close</button></div>
+    <div class="edit-dialog-body">
+      <div class="edit-field"><label>Full name</label><input id="edit-full-name"></div>
+      <div class="edit-field"><label>Email</label><input id="edit-email" type="email"></div>
+      <div class="edit-field"><label>Phone</label><input id="edit-phone"></div>
+      <div class="edit-field"><label>Status</label><select id="edit-status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="archived">Archived</option><option value="terminated">Terminated</option><option value="resigned">Resigned</option></select></div>
+      <div class="edit-field"><label>Base salary</label><input id="edit-base-salary" type="number" min="0" step="1"></div>
+      <div class="edit-field"><label>Bank</label><input id="edit-bank-name"></div>
+      <div class="edit-field full"><label>Address</label><input id="edit-address"></div>
+      <div class="edit-field full"><label>HR notes</label><textarea id="edit-hr-notes"></textarea></div>
+    </div>
+    <div class="edit-dialog-actions"><button class="btn" onclick="closeEditProfile()">Cancel</button><button class="btn primary" onclick="saveEditProfile()">Save changes</button></div>
+  </div>
+</div>
+<div class="edit-modal" id="upload-document-modal">
+  <div class="edit-dialog">
+    <div class="edit-dialog-head"><div class="edit-dialog-title">Upload employee document</div><button class="btn" onclick="closeDocumentUpload()">Close</button></div>
+    <div class="edit-dialog-body">
+      <div class="edit-field"><label>Folder</label><select id="upload-doc-category"><option value="personal">Personal documents</option><option value="education">Education and diplomas</option><option value="experience">Professional certificates</option><option value="employment">Contracts and HR decisions</option><option value="other">Other documents</option></select></div>
+      <div class="edit-field"><label>Type</label><input id="upload-doc-type" placeholder="Diploma, ID card, contract..."></div>
+      <div class="edit-field full"><label>Title</label><input id="upload-doc-title" placeholder="Document title"></div>
+      <div class="edit-field full"><label>File</label><input id="upload-doc-file" type="file"></div>
+    </div>
+    <div class="edit-dialog-actions"><button class="btn" onclick="closeDocumentUpload()">Cancel</button><button class="btn primary" onclick="saveUploadedDocument()">Upload</button></div>
+  </div>
+</div>
+<div class="edit-modal" id="edit-document-modal">
+  <div class="edit-dialog">
+    <div class="edit-dialog-head"><div class="edit-dialog-title">Edit document</div><button class="btn" onclick="closeEditDocument()">Close</button></div>
+    <div class="edit-dialog-body">
+      <input id="edit-doc-id" type="hidden">
+      <div class="edit-field"><label>Folder</label><select id="edit-doc-category"><option value="personal">Personal documents</option><option value="education">Education and diplomas</option><option value="experience">Professional certificates</option><option value="employment">Contracts and HR decisions</option><option value="other">Other documents</option></select></div>
+      <div class="edit-field"><label>Type</label><input id="edit-doc-type" placeholder="Diploma, ID card, contract..."></div>
+      <div class="edit-field full"><label>Title</label><input id="edit-doc-title" placeholder="Document title"></div>
+      <div class="edit-field full"><label>Replace file</label><input id="edit-doc-file" type="file"></div>
+    </div>
+    <div class="edit-dialog-actions"><button class="btn" onclick="closeEditDocument()">Cancel</button><button class="btn primary" onclick="saveEditedDocument()">Save document</button></div>
+  </div>
 </div>
 <script>
 const SUPABASE_URL='https://gqmpqpnboenmshuuopnp.supabase.co';
@@ -178,15 +245,57 @@ function render(){
   renderDocuments();
   renderHistory();
 }
+function documentCategoryLabel(key){
+  return {
+    personal:'Personal documents',
+    education:'Education and diplomas',
+    experience:'Professional certificates',
+    employment:'Contracts and HR decisions',
+    other:'Other documents'
+  }[key] || 'Other documents';
+}
+function normalizeDocumentCategory(doc){
+  const raw=String(doc.document_category||doc.category||doc.document_type||'other').toLowerCase();
+  if(/diploma|education|academic/.test(raw))return 'education';
+  if(/experience|professional/.test(raw))return 'experience';
+  if(/contract|promotion|decision|work_certificate|employment/.test(raw))return 'employment';
+  if(/id|medical|birth|family|personal|certificate|cv/.test(raw))return 'personal';
+  return 'other';
+}
+function localDocumentFallback(){
+  const e=state.employee||{};
+  const docs=[];
+  [
+    ['profile_photo_url','Profile photo','personal'],
+    ['cv_url','CV','personal'],
+    ['contract_url','Employment contract','employment'],
+    ['id_card_url','ID card','personal'],
+    ['medical_certificate_url','Medical certificate','personal'],
+    ['diploma_url','Scanned diploma paper','education']
+  ].forEach(([field,title,category])=>{
+    if(e[field])docs.push({title,document_category:category,file_url:e[field],file_name:title});
+  });
+  if(Array.isArray(e.documents))docs.push(...e.documents);
+  return docs;
+}
 function renderDocuments(){
   const el=document.getElementById('documents-list');
-  if(!state.documents.length){el.innerHTML='<div class="empty">No documents uploaded yet.</div>';return}
-  el.innerHTML=state.documents.map(d=>{
-    const type=d.document_type||d.document_category||d.category||'document';
-    const title=d.title||d.file_name||d.name||'Untitled document';
-    const file=d.file_url||d.url||d.public_url||'';
-    return '<div class="doc-card"><div><div class="doc-title">'+text(title)+'</div><div class="doc-meta">'+text(type)+' '+text(d.expiration_date?(' | expires '+d.expiration_date):'')+'</div></div>'+(file?'<a class="btn" href="'+text(file)+'" target="_blank">Open</a>':'<span class="pill">No file</span>')+'</div>';
-  }).join('');
+  const docs=[...(state.documents||[]),...localDocumentFallback()];
+  const groups={personal:[],education:[],experience:[],employment:[],other:[]};
+  docs.forEach(doc=>{groups[normalizeDocumentCategory(doc)].push(doc)});
+  const order=['personal','education','experience','employment','other'];
+  el.innerHTML='<div class="doc-folder-grid">'+order.map(key=>{
+    const items=groups[key]||[];
+    const body=items.length?items.map(d=>{
+      const title=d.title||d.file_name||d.name||'Untitled document';
+      const type=d.document_type||d.document_category||d.category||'document';
+      const file=d.file_url||d.url||d.public_url||'';
+      const editButton=d.id?'<button class="btn" data-doc-id="'+text(d.id)+'" onclick="openEditDocument(this.dataset.docId)">Edit</button>':'';
+      const deleteButton=d.id?'<button class="btn danger" data-doc-id="'+text(d.id)+'" onclick="deleteDocument(this.dataset.docId)">Delete</button>':'';
+      return '<div class="doc-card"><div><div class="doc-title">'+text(title)+'</div><div class="doc-meta">'+text(documentCategoryLabel(normalizeDocumentCategory(d)))+' | '+text(type)+text(d.file_name?(' | '+d.file_name):'')+text(d.expiration_date?(' | expires '+d.expiration_date):'')+'</div></div><div class="doc-actions">'+(file?'<a class="btn" href="'+text(file)+'" target="_blank">Open</a>':'<span class="pill">No file</span>')+editButton+deleteButton+'</div></div>';
+    }).join(''):'<div class="doc-empty">No uploaded files in this folder yet.</div>';
+    return '<div class="doc-folder"><div class="doc-folder-head"><div class="doc-folder-title">'+text(documentCategoryLabel(key))+'</div><span class="doc-count">'+items.length+'</span></div><div class="doc-folder-body">'+body+'</div></div>';
+  }).join('')+'</div>';
 }
 function renderHistory(){
   const statusEl=document.getElementById('status-history');
@@ -247,12 +356,168 @@ async function load(){
   render();
   hideNotice();
 }
+function removeEmployeeFromCaches(employee){
+  const matchers=[
+    String(employee.id||''),
+    String(employee.employee_number||''),
+    String(employee.email||'').toLowerCase(),
+    String(employee.full_name||'').toLowerCase()
+  ].filter(Boolean);
+  function same(item){
+    if(!item)return false;
+    return matchers.includes(String(item.id||'')) ||
+      matchers.includes(String(item.employee_number||'')) ||
+      matchers.includes(String(item.email||'').toLowerCase()) ||
+      matchers.includes(String(item.full_name||'').toLowerCase());
+  }
+  ['tt_employee_rows','tt_employee_cache'].forEach(key=>{
+    try{
+      const next=JSON.parse(localStorage.getItem(key)||'[]').filter(item=>!same(item));
+      localStorage.setItem(key,JSON.stringify(next));
+    }catch(error){}
+  });
+  ['tt_recent_employee'].forEach(key=>{
+    [localStorage,sessionStorage].forEach(store=>{
+      try{const item=JSON.parse(store.getItem(key)||'null');if(same(item))store.removeItem(key)}catch(error){}
+    });
+  });
+}
+function setEditValue(id,value){const el=document.getElementById(id);if(el)el.value=value??''}
+function getEditValue(id){return document.getElementById(id)?.value?.trim()||''}
+function openEditProfile(){
+  const e=state.employee||{};
+  setEditValue('edit-full-name',e.full_name);
+  setEditValue('edit-email',e.email);
+  setEditValue('edit-phone',e.phone);
+  setEditValue('edit-status',e.status||'active');
+  setEditValue('edit-base-salary',e.base_salary||0);
+  setEditValue('edit-bank-name',e.bank_name);
+  setEditValue('edit-address',e.address);
+  setEditValue('edit-hr-notes',e.hr_notes);
+  document.getElementById('edit-profile-modal')?.classList.add('show');
+}
+function closeEditProfile(){document.getElementById('edit-profile-modal')?.classList.remove('show')}
+function updateEmployeeCaches(employee){
+  ['tt_employee_cache','tt_employee_rows'].forEach(key=>{
+    try{
+      const list=JSON.parse(localStorage.getItem(key)||'[]');
+      const next=list.map(item=>String(item.id||item.employee_number)===String(employee.id||employee.employee_number)?Object.assign({},item,employee):item);
+      localStorage.setItem(key,JSON.stringify(next));
+    }catch(error){}
+  });
+  try{localStorage.setItem('tt_recent_employee',JSON.stringify(employee));sessionStorage.setItem('tt_recent_employee',JSON.stringify(employee))}catch(error){}
+}
+async function saveEditProfile(){
+  const e=state.employee;if(!e)return;
+  const patch={full_name:getEditValue('edit-full-name'),email:getEditValue('edit-email')||null,phone:getEditValue('edit-phone')||null,status:getEditValue('edit-status')||'active',base_salary:Number(getEditValue('edit-base-salary')||0),bank_name:getEditValue('edit-bank-name')||null,address:getEditValue('edit-address')||null,hr_notes:getEditValue('edit-hr-notes')||null};
+  if(isUuid(e.id)){
+    const c=client();if(c){const r=await c.from('employees').update(patch).eq('id',e.id).select('*').single();if(r.error){showNotice(r.error.message,'error');return}state.employee=r.data}
+  }else{
+    state.employee=Object.assign({},e,patch);
+  }
+  updateEmployeeCaches(state.employee);
+  closeEditProfile();
+  render();
+}
+function openDocumentUpload(){document.getElementById('upload-document-modal')?.classList.add('show')}
+function closeDocumentUpload(){document.getElementById('upload-document-modal')?.classList.remove('show')}
+function cleanUploadName(name){return String(name||'file').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/-+/g,'-')}
+function findDocumentById(id){return (state.documents||[]).find(doc=>String(doc.id)===String(id))}
+function openEditDocument(id){
+  const doc=findDocumentById(id);
+  if(!doc){showNotice('Document not found. Refresh the profile and try again.','error');return}
+  setEditValue('edit-doc-id',doc.id);
+  setEditValue('edit-doc-category',normalizeDocumentCategory(doc));
+  setEditValue('edit-doc-type',doc.document_type||'document');
+  setEditValue('edit-doc-title',doc.title||doc.file_name||'Untitled document');
+  const fileInput=document.getElementById('edit-doc-file');
+  if(fileInput)fileInput.value='';
+  document.getElementById('edit-document-modal')?.classList.add('show');
+}
+function closeEditDocument(){document.getElementById('edit-document-modal')?.classList.remove('show')}
+async function uploadProfileDocumentFile(file,category){
+  const e=state.employee;if(!e||!isUuid(e.id))throw new Error('This employee must be saved in Supabase before uploading files.');
+  const c=client();if(!c)throw new Error('Supabase did not load.');
+  const key=[e.company_id||'company',e.id,category||'other',Date.now()+'-'+cleanUploadName(file.name)].join('/');
+  const up=await c.storage.from('employee-files').upload(key,file,{cacheControl:'3600',upsert:false});
+  if(up.error)throw up.error;
+  const publicUrl=c.storage.from('employee-files').getPublicUrl(key)?.data?.publicUrl;
+  return {publicUrl,key};
+}
+async function saveEditedDocument(){
+  const id=getEditValue('edit-doc-id');
+  const doc=findDocumentById(id);
+  if(!doc){showNotice('Document not found. Refresh the profile and try again.','error');return}
+  const category=getEditValue('edit-doc-category')||'other';
+  const file=document.getElementById('edit-doc-file')?.files?.[0]||null;
+  const patch={document_category:category,document_type:getEditValue('edit-doc-type')||category,title:getEditValue('edit-doc-title')||doc.file_name||'Untitled document'};
+  const c=client();if(!c)return;
+  if(file){
+    try{
+      const uploaded=await uploadProfileDocumentFile(file,category);
+      patch.file_url=uploaded.publicUrl;
+      patch.file_name=file.name;
+      patch.file_size=file.size;
+      patch.storage_path=uploaded.key;
+      if(doc.storage_path){try{await c.storage.from('employee-files').remove([doc.storage_path])}catch(error){}}
+    }catch(error){
+      showNotice(error.message||String(error),'error');
+      return;
+    }
+  }
+  const r=await c.from('employee_documents').update(patch).eq('id',id).select('*').single();
+  if(r.error){showNotice(r.error.message,'error');return}
+  state.documents=state.documents.map(item=>String(item.id)===String(id)?r.data:item);
+  closeEditDocument();
+  renderDocuments();
+}
+async function saveUploadedDocument(){
+  const e=state.employee;if(!e)return;
+  const file=document.getElementById('upload-doc-file')?.files?.[0];
+  if(!file){showNotice('Choose a file first.','error');return}
+  const category=getEditValue('upload-doc-category')||'other';
+  const type=getEditValue('upload-doc-type')||category;
+  const title=getEditValue('upload-doc-title')||file.name;
+  if(!isUuid(e.id)){showNotice('This employee must be saved in Supabase before uploading files.','error');return}
+  const c=client();if(!c)return;
+  let uploaded;
+  try{uploaded=await uploadProfileDocumentFile(file,category)}catch(error){showNotice(error.message||String(error),'error');return}
+  const key=uploaded.key;
+  const publicUrl=uploaded.publicUrl;
+  const row={company_id:e.company_id,employee_id:e.id,document_category:category,document_type:type,title,file_url:publicUrl,file_name:file.name,file_size:file.size,storage_path:key};
+  const ins=await c.from('employee_documents').insert(row).select('*').single();
+  if(ins.error){showNotice(ins.error.message,'error');return}
+  state.documents.unshift(ins.data);
+  closeDocumentUpload();
+  renderDocuments();
+}
+async function deleteDocument(id){
+  const doc=findDocumentById(id);
+  if(!doc){showNotice('Document not found. Refresh the profile and try again.','error');return}
+  if(!confirm('Delete "'+(doc.title||doc.file_name||'this document')+'" from the employee file?'))return;
+  const c=client();if(!c)return;
+  const r=await c.from('employee_documents').delete().eq('id',id);
+  if(r.error){showNotice(r.error.message,'error');return}
+  if(doc.storage_path){try{await c.storage.from('employee-files').remove([doc.storage_path])}catch(error){}}
+  state.documents=state.documents.filter(doc=>String(doc.id)!==String(id));
+  renderDocuments();
+}
 async function deleteEmployee(){
   const e=state.employee;if(!e)return;
   if(!confirm('Delete '+(e.full_name||'this employee')+'?'))return;
+  if(!isUuid(e.id)){
+    removeEmployeeFromCaches(e);
+    location.href='employee-list.html?deleted=1';
+    return;
+  }
   const c=client();if(!c)return;
+  try{await c.from('employee_documents').delete().eq('employee_id',e.id)}catch(error){}
+  try{await c.from('employee_status_events').delete().eq('employee_id',e.id)}catch(error){}
+  try{await c.from('employee_promotions').delete().eq('employee_id',e.id)}catch(error){}
+  try{await c.from('employee_salary_history').delete().eq('employee_id',e.id)}catch(error){}
   const r=await c.from('employees').delete().eq('id',e.id);
   if(r.error){showNotice(r.error.message,'error');return}
+  removeEmployeeFromCaches(e);
   location.href='employee-list.html?deleted=1';
 }
 function handleLogout(){localStorage.removeItem('tt_company_id');location.href='login.html'}

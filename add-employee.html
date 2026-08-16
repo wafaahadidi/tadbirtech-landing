@@ -782,10 +782,17 @@ async function submitEmployee(event){
     cacheEmployeeForList(savedEmployee);
 
     if(result&&result.data&&result.data.id){
-      insertOptionalRecords(client,result.data.id).catch(error=>console.warn('Optional employee records skipped:',error.message||error));
+      showNotice('Employee saved. Uploading documents...');
+      try{
+        await withTimeout(insertOptionalRecords(client,result.data.id),30000,'Saving employee documents');
+      }catch(error){
+        console.warn('Optional employee records skipped:',error.message||error);
+        showNotice('Employee saved, but some documents were not uploaded: '+(error.message||error),'error');
+        await new Promise(resolve=>setTimeout(resolve,900));
+      }
     }
 
-    showNotice('Employee saved. Returning to employee list...');
+    showNotice('Employee and documents saved. Returning to employee list...');
     setTimeout(()=>redirectToEmployeeList(savedEmployee),350);
   }catch(error){
     console.error(error);
