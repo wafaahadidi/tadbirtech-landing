@@ -425,23 +425,57 @@ function cachedProfileEmployees(){
   });
 }
 function findCachedEmployee(employeeId){
+  const params=new URLSearchParams(location.search);
+  const wanted=[
+    employeeId,
+    params.get('employee_number'),
+    params.get('emp_number'),
+    params.get('email'),
+    params.get('emp_email'),
+    params.get('name'),
+    params.get('emp_name')
+  ].filter(Boolean).map(value=>String(value).toLowerCase());
   const items=cachedProfileEmployees();
-  return items.find(employee=>String(employee.id||'')===String(employeeId))
-    || items.find(employee=>String(employee.employee_number||'')===String(employeeId))
-    || items[0] || null;
+  return items.find(employee=>{
+    const keys=[
+      employee.id,
+      employee.employee_number,
+      employee.email,
+      employee.full_name
+    ].filter(Boolean).map(value=>String(value).toLowerCase());
+    return keys.some(key=>wanted.includes(key));
+  }) || null;
+}
+async function findEmployeeInSupabase(c,employeeId){
+  const params=new URLSearchParams(location.search);
+  const lookups=[];
+  if(isUuid(employeeId))lookups.push({column:'id',value:employeeId});
+  if(employeeId)lookups.push({column:'employee_number',value:employeeId});
+  if(params.get('employee_number'))lookups.push({column:'employee_number',value:params.get('employee_number')});
+  if(params.get('emp_number'))lookups.push({column:'employee_number',value:params.get('emp_number')});
+  if(params.get('email'))lookups.push({column:'email',value:params.get('email')});
+  if(params.get('emp_email'))lookups.push({column:'email',value:params.get('emp_email')});
+  const seen=new Set();
+  for(const lookup of lookups){
+    const key=lookup.column+':'+lookup.value;
+    if(!lookup.value||seen.has(key))continue;
+    seen.add(key);
+    try{
+      const result=await c.from('employees').select('*').eq(lookup.column,lookup.value).maybeSingle();
+      if(!result.error&&result.data)return result.data;
+    }catch(error){console.warn(error)}
+  }
+  return null;
 }
 async function load(){
   const employeeId=getId();if(!employeeId){showNotice('Missing employee id. Open this page from Employee List.','error');return}
   const c=client();if(!c){const cached=findCachedEmployee(employeeId);if(cached){state.employee=cached;render();hideNotice();return}showNotice('Supabase library did not load. Refresh the page.','error');return}
-  let employeeData=null;
-  if(isUuid(employeeId)){
-    const employee=await c.from('employees').select('*').eq('id',employeeId).maybeSingle();
-    if(employee.error){showNotice(employee.error.message,'error');return}
-    employeeData=employee.data;
-  }else{
-    employeeData=findCachedEmployee(employeeId);
+  let employeeData=await findEmployeeInSupabase(c,employeeId);
+  if(!employeeData)employeeData=findCachedEmployee(employeeId);
+  if(!employeeData){
+    showNotice('Employee not found. Go back to employees, press Refresh, then open the employee again.','error');
+    return;
   }
-  if(!employeeData){showNotice('Employee not found. Go back to employees and refresh the list.','error');return}
   state.employee=employeeData;
   const companyId=employeeData.company_id;
   if(companyId){

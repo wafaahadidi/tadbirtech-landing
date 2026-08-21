@@ -401,6 +401,21 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
   .topbar{padding:0 16px!important}
 }
 /* End TadbirTech invoice/settings visual consistency */
+.danger-action{color:#B42318;border-color:#F5C2C7;background:#FFF7F7}.danger-action:hover{background:#FFECEC}
+.employee-select-box{width:18px;height:18px;border:1px solid #B9C8D8;border-radius:5px;background:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s ease}
+.employee-select-box:hover{border-color:#1a8fd1;background:#F0F9FF}
+.employee-select-box.checked{background:#1a8fd1;border-color:#1a8fd1}
+.employee-select-box.checked:after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin-top:-2px}
+.employee-identity{min-width:300px!important}
+.employee-full-name{font-size:14px;font-weight:900;color:#0D1F3C;line-height:1.25;white-space:normal;word-break:normal}
+.employee-number-sub{font-size:12px;font-weight:800;color:#6E83A3;margin-top:3px}
+.employee-table th:nth-child(3),.employee-table td:nth-child(3){display:none}
+.link-btn.employee-full-name{border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;text-align:left}
+.sb-item.sidebar-pressed{background:rgba(26,143,209,.2)!important;border:.5px solid rgba(26,143,209,.3)!important;color:#fff!important}
+.sb-item.sidebar-pressed .sb-item-text,.sb-item.sidebar-pressed span{color:#fff!important}
+.employee-name-main.force-hidden{display:none!important}
+.employee-table th:nth-child(3),.employee-table td:nth-child(3){display:none!important}
+.employee-full-name,.link-btn.employee-full-name{max-width:100%;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.25!important}
 </style>
 </head>
 <body>
@@ -525,7 +540,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             <div class="surface-sub">Search, filter, create, and open complete employee records.</div>
           </div>
           <div class="employee-actions">
-            <button class="employee-options" type="button">Options</button>
+            <button class="employee-options danger-action" type="button" onclick="window.ttDeleteSelectedEmployees&&window.ttDeleteSelectedEmployees()">Delete selected</button><button class="employee-options" type="button">Options</button>
             <button class="employee-create" type="button" onclick="location.href='add-employee.html'">Create employee +</button>
           </div>
         </div>
@@ -545,9 +560,9 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             <table class="employee-table">
               <thead>
                 <tr>
-                  <th class="select-col"><span class="row-check" id="select-all-employees" title="Select all visible employees"></span></th>
+                  <th class="select-col"><span class="employee-select-box" id="select-all-employees" title="Select all visible employees"></span></th>
                   <th>Employee</th>
-                  <th>First name</th><th>Employee ID</th>
+                  <th hidden></th><th>Employee ID</th>
                   <th>Job position</th>
                   <th>Phone number</th>
                   <th>Email</th>
@@ -984,10 +999,10 @@ function renderEmployees(){
   const selectAll=document.getElementById('select-all-employees');
   if(selectAll)selectAll.classList.toggle('checked',employees.length&&employees.every(e=>state.selectedEmployees.has(e.id)));
   if(!employees.length){rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">No employees match this view.</div></td></tr>';return}
-  rows.innerHTML=employees.map(e=>{
-    const n=nameParts(e.full_name);
+    rows.innerHTML=employees.map(e=>{
     const selected=state.selectedEmployees.has(e.id);
-    return '<tr class="'+(selected?'selected':'')+'" onclick="openEmployeeRecord(\''+e.id+'\',event)" ondblclick="openEmployeeRecord(\''+e.id+'\',event)"><td class="select-col"><span class="row-check '+(selected?'checked':'')+'" onclick="toggleEmployeeSelection(\''+e.id+'\',event)"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">'+text(n.last||e.full_name)+'</button><div class="employee-name-sub">'+text(e.employee_number||e.id||'-')+'</div></div></div></td><td><span class="employee-name-main">'+text(n.first)+'</span></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">View</button></td></tr>'
+    const fullName=e.full_name||'Employee';
+    return '<tr class="'+(selected?'selected':'')+'" onclick="openEmployeeRecord(\''+e.id+'\',event)" ondblclick="openEmployeeRecord(\''+e.id+'\',event)"><td class="select-col"><span class="employee-select-box '+(selected?'checked':'')+'" onclick="toggleEmployeeSelection(\''+e.id+'\',event)"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn employee-full-name" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">'+text(fullName)+'</button><div class="employee-number-sub">'+text(e.employee_number||e.id||'-')+'</div></div></div></td><td hidden></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">View</button></td></tr>'
   }).join('');
 }
 function renderDepartments(){const host=document.getElementById('department-list');if(!state.departments.length){host.innerHTML='<div class="empty">Departments will appear here.</div>';return}host.innerHTML=state.departments.map(d=>{const team=state.employees.filter(e=>e.department_id===d.id);const manager=state.employees.find(e=>e.id===d.manager_id);return '<div class="calc-row"><span><strong>'+text(d.name)+'</strong><br><small style="color:#7a93ae">'+text(manager?manager.full_name:'No manager')+'</small></span><strong>'+team.length+' employee(s)</strong></div>'}).join('')}
@@ -1230,7 +1245,7 @@ window.addEventListener('load',async()=>{
 });
 </script>
 <script>
-(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);const hrPages=['employee-list.html','add-employee.html'];function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);const isHr=hrPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);setDropdown('hrm',isHr);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction);const hrToggle=document.querySelector('[data-sidebar-toggle="hrm"]');if(hrToggle)hrToggle.classList.toggle('active',isHr)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
+(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);const hrPages=['employee-list.html','add-employee.html','employee-profile.html'];function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);const isHr=hrPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);setDropdown('hrm',isHr);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction);const hrToggle=document.querySelector('[data-sidebar-toggle="hrm"]');if(hrToggle)hrToggle.classList.toggle('active',isHr)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});document.addEventListener('mousedown',event=>{const item=event.target.closest('.sb-item');if(!item)return;document.querySelectorAll('.sb-item.sidebar-pressed').forEach(x=>x.classList.remove('sidebar-pressed'));item.classList.add('sidebar-pressed')});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
 </script>
 <script>
 async function handleLogout(){
@@ -1244,11 +1259,17 @@ async function handleLogout(){
 </script>
 <script>
 (function(){
+  window.ttHardSelectedEmployees = window.ttHardSelectedEmployees || new Set();
+  window.ttHardEmployees = window.ttHardEmployees || [];
+  var activeFilter='active';
+  var searchTerm='';
   function esc(value){
     return String(value ?? '').replace(/[&<>"']/g,function(ch){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
     });
   }
+  function js(value){return String(value ?? '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r?\n/g,' ')}
+  function isUuid(value){return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value||''))}
   function initials(name){
     return String(name||'--').split(/\s+/).filter(Boolean).map(function(part){return part[0]}).join('').slice(0,2).toUpperCase() || '--';
   }
@@ -1257,36 +1278,60 @@ async function handleLogout(){
     if(!parts.length)return {first:'',last:''};
     return {first:parts[0],last:parts.slice(1).join(' ') || parts[0]};
   }
+  function employeeKey(employee){return String(employee.id || employee.employee_number || employee.email || employee.full_name || '')}
   function openProfile(id){
     if(!id)return;
     window.location.href='employee-profile.html?id='+encodeURIComponent(id);
   }
   window.ttOpenEmployeeProfile=openProfile;
+  function toggleSelected(key,event){
+    if(event)event.stopPropagation();
+    if(window.ttHardSelectedEmployees.has(key))window.ttHardSelectedEmployees.delete(key);
+    else window.ttHardSelectedEmployees.add(key);
+    showRows(window.ttHardEmployees);
+  }
+  window.ttToggleHardEmployeeSelection=toggleSelected;
+  function statusIsArchived(employee){
+    return /archived|terminated|resigned|dismissed|inactive/i.test(String(employee.status||''));
+  }
+  function filterRows(employees){
+    return employees.filter(function(employee){
+      if(activeFilter==='active' && statusIsArchived(employee))return false;
+      if(activeFilter==='archived' && !statusIsArchived(employee))return false;
+      if(!searchTerm)return true;
+      var hay=[employee.full_name,employee.employee_number,employee.email,employee.phone,employee.job_position_label,employee.position_title,employee.status].join(' ').toLowerCase();
+      return hay.indexOf(searchTerm)>=0;
+    });
+  }
   function rowHtml(employee){
     var parts=nameParts(employee.full_name);
-    var id=String(employee.id || '');
+    var id=String(employee.id || employee.employee_number || '');
+    var key=employeeKey(employee);
+    var selected=window.ttHardSelectedEmployees.has(key);
     var photo=employee.profile_photo_url ? '<img src="'+esc(employee.profile_photo_url)+'" alt="">' : esc(initials(employee.full_name));
     var job=employee.job_position_label || employee.position_title || employee.position || employee.title || 'Unassigned';
-    return '<tr onclick="window.ttOpenEmployeeProfile(\''+esc(id)+'\')" style="cursor:pointer">'+
-      '<td class="select-col"><span class="row-check"></span></td>'+
-      '<td><div class="employee-identity"><span class="employee-avatar">'+photo+'</span><div><button class="link-btn" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+esc(id)+'\')">'+esc(parts.last || employee.full_name || 'Employee')+'</button><div class="employee-name-sub">'+esc(employee.employee_number || id || '-')+'</div></div></div></td>'+
-      '<td><span class="employee-name-main">'+esc(parts.first)+'</span></td>'+
+    return '<tr class="'+(selected?'selected':'')+'" onclick="window.ttOpenEmployeeProfile(\''+js(id)+'\')" style="cursor:pointer">'+
+      '<td class="select-col"><span class="employee-select-box '+(selected?'checked':'')+'" onclick="window.ttToggleHardEmployeeSelection(\''+js(key)+'\',event)"></span></td>'+
+      '<td><div class="employee-identity"><span class="employee-avatar">'+photo+'</span><div><button class="link-btn employee-full-name" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+js(id)+'\')">'+esc(employee.full_name || 'Employee')+'</button><div class="employee-number-sub">'+esc(employee.employee_number || id || '-')+'</div></div></div></td>'+
+      '<td hidden></td>'+
       '<td class="employee-id-cell">'+esc(employee.employee_number || id || '-')+'</td>'+
       '<td class="job-cell">'+esc(job)+'</td>'+
       '<td>'+esc(employee.phone || '-')+'</td>'+
       '<td class="email-cell">'+esc(employee.email || '-')+'</td>'+
       '<td class="status-active">'+esc(employee.status || 'active')+'</td>'+
-      '<td class="right"><button class="employee-menu" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+esc(id)+'\')">View</button></td>'+
+      '<td class="right"><button class="employee-menu" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+js(id)+'\')">View</button></td>'+
     '</tr>';
   }
   function showRows(employees,message){
     var rows=document.getElementById('employee-rows');
     if(!rows)return;
-    if(!employees.length){
-      rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">'+esc(message || 'No employees found yet.')+'</div></td></tr>';
+    window.ttHardEmployees=employees.slice();
+    var visible=filterRows(employees);
+    if(!visible.length){
+      rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">'+esc(message || 'No employees match this view.')+'</div></td></tr>';
       return;
     }
-    rows.innerHTML=employees.map(rowHtml).join('');
+    rows.innerHTML=visible.map(rowHtml).join('');
     try{
       if(window.state){
         window.state.employees=employees.slice();
@@ -1308,12 +1353,54 @@ async function handleLogout(){
     }catch(error){}
     var seen={};
     return items.filter(function(employee){
-      var key=String(employee.id||employee.employee_number||employee.full_name||'');
+      var key=String(employee.id||employee.employee_number||employee.email||employee.full_name||'');
       if(!key || seen[key])return false;
       seen[key]=true;
       return true;
     });
   }
+  function removeFromCaches(employees){
+    function keys(employee){
+      return [employee.id,employee.employee_number,employee.email && String(employee.email).toLowerCase(),employee.full_name && String(employee.full_name).toLowerCase()].filter(Boolean).map(String);
+    }
+    var deleteKeys={};
+    employees.forEach(function(employee){keys(employee).forEach(function(key){deleteKeys[key]=true})});
+    function same(item){return item && keys(item).some(function(key){return deleteKeys[key]})}
+    ['tt_employee_rows','tt_employee_cache'].forEach(function(key){
+      try{
+        var next=JSON.parse(localStorage.getItem(key)||'[]').filter(function(item){return !same(item)});
+        localStorage.setItem(key,JSON.stringify(next));
+      }catch(error){}
+    });
+    [localStorage,sessionStorage].forEach(function(store){
+      try{var recent=JSON.parse(store.getItem('tt_recent_employee')||'null');if(same(recent))store.removeItem('tt_recent_employee')}catch(error){}
+    });
+  }
+  async function deleteSelected(){
+    var selectedKeys=Array.from(window.ttHardSelectedEmployees);
+    if(!selectedKeys.length){alert('Select at least one employee first.');return}
+    var selected=window.ttHardEmployees.filter(function(employee){return selectedKeys.indexOf(employeeKey(employee))>=0});
+    if(!selected.length){alert('Select at least one employee first.');return}
+    if(!confirm('Delete '+selected.length+' selected employee(s)?'))return;
+    var client=null;
+    try{client=window.supabase && window.supabase.createClient ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null}catch(error){}
+    if(client){
+      for(var i=0;i<selected.length;i++){
+        var employee=selected[i];
+        if(!isUuid(employee.id))continue;
+        try{await client.from('employee_documents').delete().eq('employee_id',employee.id)}catch(error){}
+        try{await client.from('employee_status_events').delete().eq('employee_id',employee.id)}catch(error){}
+        try{await client.from('employee_promotions').delete().eq('employee_id',employee.id)}catch(error){}
+        try{await client.from('employee_salary_history').delete().eq('employee_id',employee.id)}catch(error){}
+        var result=await client.from('employees').delete().eq('id',employee.id);
+        if(result.error){alert(result.error.message);return}
+      }
+    }
+    removeFromCaches(selected);
+    window.ttHardSelectedEmployees.clear();
+    await loadRows();
+  }
+  window.ttDeleteSelectedEmployees=deleteSelected;
   async function loadRows(){
     var rows=document.getElementById('employee-rows');
     if(!rows)return;
@@ -1363,7 +1450,39 @@ async function handleLogout(){
     showRows(all,lastError ? ('Could not load employees: '+(lastError.message||lastError)) : 'No employees found yet.');
   }
   window.ttHardLoadEmployees=loadRows;
-  window.addEventListener('DOMContentLoaded',function(){setTimeout(loadRows,250)});
+  window.addEventListener('DOMContentLoaded',function(){
+    var search=document.getElementById('employee-search');
+    if(search)search.addEventListener('input',function(){searchTerm=String(search.value||'').toLowerCase();showRows(window.ttHardEmployees)});
+
+    var filterButtons=[];
+    document.querySelectorAll('[data-employee-filter]').forEach(function(btn){
+      var clean=btn.cloneNode(true);
+      btn.parentNode.replaceChild(clean,btn);
+      filterButtons.push(clean);
+    });
+    filterButtons.forEach(function(btn){
+      btn.addEventListener('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        activeFilter=btn.getAttribute('data-employee-filter')||'active';
+        filterButtons.forEach(function(x){x.classList.toggle('active',x===btn)});
+        showRows(window.ttHardEmployees);
+      });
+    });
+    var selectAll=document.getElementById('select-all-employees');
+    if(selectAll)selectAll.addEventListener('click',function(event){
+      event.stopPropagation();
+      var visible=filterRows(window.ttHardEmployees);
+      var allSelected=visible.length&&visible.every(function(employee){return window.ttHardSelectedEmployees.has(employeeKey(employee))});
+      visible.forEach(function(employee){
+        var key=employeeKey(employee);
+        if(allSelected)window.ttHardSelectedEmployees.delete(key);
+        else window.ttHardSelectedEmployees.add(key);
+      });
+      showRows(window.ttHardEmployees);
+    });
+    setTimeout(loadRows,250);
+  });
   window.addEventListener('load',function(){setTimeout(loadRows,1000);setTimeout(loadRows,2500)});
 })();
 </script>
