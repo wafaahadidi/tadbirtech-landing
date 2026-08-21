@@ -679,15 +679,56 @@ function cacheEmployeeForList(employee){
     }
   }
 }
-function documentCategoryForType(type){return {cv:'experience',contract:'employment',work_certificate:'employment',diploma:'education',certificate:'personal',other:'personal'}[type]||'personal'}
+function documentCategoryForType(type){return {cv:'personal',contract:'employment',work_certificate:'employment',diploma:'education',certificate:'personal',other:'personal'}[type]||'personal'}
+function dbDocumentCategoryForSave(category){
+  category=String(category||'personal').toLowerCase();
+  return ['personal','education','employment'].includes(category) ? category : 'personal';
+}
+async function insertEmployeeDocumentRecord(client,row){
+  const safeRow=Object.assign({},row,{document_category:dbDocumentCategoryForSave(row.document_category)});
+  const attempts=[
+    safeRow,
+    {company_id:safeRow.company_id,employee_id:safeRow.employee_id,document_category:safeRow.document_category,document_type:safeRow.document_type,title:safeRow.title,file_url:safeRow.file_url,file_name:safeRow.file_name,file_size:safeRow.file_size},
+    {company_id:safeRow.company_id,employee_id:safeRow.employee_id,document_type:safeRow.document_type,title:safeRow.title,file_url:safeRow.file_url},
+    {company_id:safeRow.company_id,employee_id:safeRow.employee_id,document_type:'other',title:safeRow.title,file_url:safeRow.file_url}
+  ];
+  let lastError=null;
+  for(const attempt of attempts){
+    const result=await client.from('employee_documents').insert(attempt).select('*').single();
+    if(!result.error)return result.data;
+    lastError=result.error;
+  }
+  throw lastError || new Error('Document could not be saved.');
+}
 async function uploadEmployeeFile(client,employeeId,type,file){if(!file)return null;const key=[companyId,employeeId,type,Date.now()+'-'+cleanFileName(file.name)].join('/');const upload=await client.storage.from('employee-files').upload(key,file,{cacheControl:'3600',upsert:false});if(upload.error)throw upload.error;const publicUrl=client.storage.from('employee-files').getPublicUrl(key)?.data?.publicUrl;return {url:publicUrl,path:key,name:file.name,size:file.size}}
 async function tryInsertEmployee(client,payload){const attempts=[payload,{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,national_id:payload.national_id,hire_date:payload.hire_date,contract_type:payload.contract_type,department_id:payload.department_id,position_id:payload.position_id,manager_id:payload.manager_id,status:payload.status,base_salary:payload.base_salary,currency:payload.currency,bank_name:payload.bank_name,bank_account:payload.bank_account},{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,hire_date:payload.hire_date,status:payload.status,base_salary:payload.base_salary,currency:payload.currency}];let last=null;for(let i=0;i<attempts.length;i++){const result=await client.from('employees').insert(attempts[i]).select('id').single();if(!result.error){if(i>0)showNotice('Employee saved with core fields. Run the updated HR SQL to enable every new tab field.');return result}last=result;if(!isMissingColumnError(result.error))return result}return last}
 async function insertOptionalRecords(client,employeeId){
   const photo=fileValue('profile-photo-file');
   if(photo){try{const uploaded=await uploadEmployeeFile(client,employeeId,'profile-photo',photo);if(uploaded?.url){const update=await client.from('employees').update({profile_photo_url:uploaded.url}).eq('id',employeeId);if(update.error&&!isMissingColumnError(update.error))console.warn(update.error)}}catch(error){console.warn('Profile photo upload skipped:',error.message||error)}}
   const docInputs=[['cv','CV','cv-file'],['contract','Employment contract','contract-file'],['other','ID card','id-card-file'],['certificate','Medical certificate','medical-certificate-file'],['diploma','Scanned diploma paper','diploma-scan-file']];
-  for(const [document_type,title,inputId] of docInputs){const file=fileValue(inputId);if(!file)continue;try{const uploaded=await uploadEmployeeFile(client,employeeId,document_type,file);const insert=await client.from('employee_documents').insert({company_id:companyId,employee_id:employeeId,document_category:documentCategoryForType(document_type),document_type,title,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});if(insert.error&&!isMissingColumnError(insert.error))console.warn(insert.error)}catch(error){console.warn(title+' upload skipped:',error.message||error)}}
-  for(const file of fileValues('other-certificate-files')){try{const category=value('other-doc-category')||'personal';const uploaded=await uploadEmployeeFile(client,employeeId,category,file);const insert=await client.from('employee_documents').insert({company_id:companyId,employee_id:employeeId,document_category:category,document_type:'other',title:'Other document - '+uploaded.name,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});if(insert.error&&!isMissingColumnError(insert.error))console.warn(insert.error)}catch(error){console.warn('Document upload skipped:',error.message||error)}}
+  const documentErrors=[];
+  for(const [document_type,title,inputId] of docInputs){
+    const file=fileValue(inputId);
+    if(!file)continue;
+    try{
+      const uploaded=await uploadEmployeeFile(client,employeeId,document_type,file);
+      await insertEmployeeDocumentRecord(client,{company_id:companyId,employee_id:employeeId,document_category:documentCategoryForType(document_type),document_type,title,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});
+    }catch(error){
+      console.warn(title+' upload skipped:',error.message||error);
+      documentErrors.push(title+': '+(error.message||error));
+    }
+  }
+  for(const file of fileValues('other-certificate-files')){
+    try{
+      const category=dbDocumentCategoryForSave(value('other-doc-category')||'personal');
+      const uploaded=await uploadEmployeeFile(client,employeeId,category,file);
+      await insertEmployeeDocumentRecord(client,{company_id:companyId,employee_id:employeeId,document_category:category,document_type:'other',title:'Other document - '+uploaded.name,file_url:uploaded.url,file_name:uploaded.name,file_size:uploaded.size,storage_path:uploaded.path});
+    }catch(error){
+      console.warn('Document upload skipped:',error.message||error);
+      documentErrors.push('Other document: '+(error.message||error));
+    }
+  }
+  if(documentErrors.length)throw new Error(documentErrors.join(' | '));
   if(value('academic-background')||value('diplomas')){try{const result=await client.from('employee_education').insert({company_id:companyId,employee_id:employeeId,degree:value('diplomas')||null,notes:value('academic-background')||null});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
   if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){try{const r=payrollCalc();const result=await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:r.gross,employee_cnas:r.employeeCnas,income_tax:r.incomeTax,total_deductions:r.totalDeductions,employer_contributions:r.employerCnas,net_salary:r.net,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form with Algerian CNAS/IRG preview'});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
 }

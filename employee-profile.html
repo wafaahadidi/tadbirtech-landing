@@ -103,6 +103,24 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
 .sb-logout{display:flex!important;gap:9px!important;align-items:center!important;background:transparent!important;border:0!important;color:rgba(255,255,255,.5)!important;font:inherit!important;cursor:pointer!important}
 .sb-logout svg{width:15px!important;height:15px!important}
 @media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
+
+/* Profile document vault consistency */
+#view-documents .two-grid{grid-template-columns:1fr!important;gap:14px!important}
+#view-documents .surface{margin-bottom:14px!important}
+#view-documents .surface-head{min-height:58px!important;align-items:center!important}
+#view-documents .surface-body{padding:18px 20px!important}
+#view-documents .info-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.doc-folder-grid{grid-template-columns:repeat(2,minmax(320px,1fr))!important;gap:14px!important}
+.doc-folder{min-width:0!important}
+.doc-folder-body{gap:10px!important}
+.doc-card{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:14px!important;min-height:66px!important;overflow:hidden!important}
+.doc-card>div:first-child{min-width:0!important}
+.doc-title{font-size:13px!important;line-height:1.25!important;white-space:normal!important;overflow:visible!important}
+.doc-meta{font-size:11px!important;line-height:1.35!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.doc-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:nowrap!important}
+.doc-actions .btn{height:34px!important;min-width:64px!important;padding:0 12px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important}
+@media(max-width:1100px){.doc-folder-grid{grid-template-columns:1fr!important}#view-documents .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:700px){#view-documents .info-grid{grid-template-columns:1fr!important}.doc-card{grid-template-columns:1fr!important}.doc-actions{justify-content:flex-start!important;flex-wrap:wrap!important}}
 </style>
 </head>
 <body>
@@ -336,18 +354,20 @@ function documentCategoryLabel(key){
   }[key] || 'Other documents';
 }
 function normalizeDocumentCategory(doc){
-  const raw=String(doc.document_category||doc.category||doc.document_type||'other').toLowerCase();
+  const type=String(doc.document_type||doc.type||'').toLowerCase();
+  const category=String(doc.document_category||doc.category||'').toLowerCase();
+  const title=String(doc.title||doc.file_name||'').toLowerCase();
+  const raw=[type,category,title].join(' ');
   if(/diploma|education|academic/.test(raw))return 'education';
-  if(/experience|professional/.test(raw))return 'experience';
+  if(/cv|experience|professional/.test(raw))return 'experience';
   if(/contract|promotion|decision|work_certificate|employment/.test(raw))return 'employment';
-  if(/id|medical|birth|family|personal|certificate|cv/.test(raw))return 'personal';
+  if(/id|identity|medical|birth|family|personal|certificate/.test(raw))return 'personal';
   return 'other';
 }
 function localDocumentFallback(){
   const e=state.employee||{};
   const docs=[];
   [
-    ['profile_photo_url','Profile photo','personal'],
     ['cv_url','CV','personal'],
     ['contract_url','Employment contract','employment'],
     ['id_card_url','ID card','personal'],
