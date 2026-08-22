@@ -402,7 +402,6 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             <button class="wizard-tab active" type="button" data-step-tab="personal"><span class="tab-icon"><i data-lucide="user-round"></i></span><span>Personal</span></button>
             <button class="wizard-tab" type="button" data-step-tab="contact"><span class="tab-icon"><i data-lucide="mail"></i></span><span>Contact</span></button>
             <button class="wizard-tab" type="button" data-step-tab="employment"><span class="tab-icon"><i data-lucide="briefcase-business"></i></span><span>Employment</span></button>
-            <button class="wizard-tab" type="button" data-step-tab="payroll"><span class="tab-icon"><i data-lucide="wallet-cards"></i></span><span>Payroll</span></button>
             <button class="wizard-tab" type="button" data-step-tab="schedule"><span class="tab-icon"><i data-lucide="clock-3"></i></span><span>Schedule</span></button>
             <button class="wizard-tab" type="button" data-step-tab="documents"><span class="tab-icon"><i data-lucide="files"></i></span><span>Documents</span></button>
             <button class="wizard-tab" type="button" data-step-tab="access"><span class="tab-icon"><i data-lucide="shield-check"></i></span><span>System Access</span></button>
@@ -425,7 +424,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             </section>
 
             <section class="wizard-step" data-step="contact" hidden>
-              <div class="step-head"><div><div class="step-kicker">Reachability</div><div class="step-title">Contact information</div><p class="step-copy">Email, phones, address, and emergency contact.</p></div><span class="step-count">2 / 8</span></div>
+              <div class="step-head"><div><div class="step-kicker">Reachability</div><div class="step-title">Contact information</div><p class="step-copy">Email, phones, address, and emergency contact.</p></div><span class="step-count">2 / 7</span></div>
               <div class="form-grid">
                 <div class="field"><label>Email</label><input id="email" type="email" autocomplete="email" placeholder="employee@company.com"></div>
                 <div class="field"><label>Phone number</label><input id="phone" autocomplete="tel"></div>
@@ -447,7 +446,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             </section>
 
             <section class="wizard-step" data-step="employment" hidden>
-              <div class="step-head"><div><div class="step-kicker">Role and contract</div><div class="step-title">Employment information</div><p class="step-copy">Department, manager, contract type, status, and workplace.</p></div><span class="step-count">3 / 8</span></div>
+              <div class="step-head"><div><div class="step-kicker">Role and contract</div><div class="step-title">Employment information</div><p class="step-copy">Department, manager, contract type, status, and workplace.</p></div><span class="step-count">3 / 7</span></div>
               <div class="form-grid">
                 <div class="field"><label>Job position</label><select id="position-id"></select></div>
                 <div class="field"><label>Department</label><select id="department-id"></select></div>
@@ -460,22 +459,8 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
               </div>
             </section>
 
-            <section class="wizard-step" data-step="payroll" hidden>
-              <div class="step-head"><div><div class="step-kicker">Compensation</div><div class="step-title">Payroll information</div><p class="step-copy">Salary basis, payment method, bank, bonuses, allowances, and deductions.</p></div><span class="step-count">4 / 8</span></div>
-              <div class="form-grid">
-                <div class="field"><label>Base salary</label><input id="base-salary" type="number" min="0" step="1000"></div>
-                <div class="field"><label>Currency</label><input id="currency" value="DZD" readonly><small class="field-hint strong">Locked for Algerian payroll.</small></div>
-                <div class="field"><label>Payment method</label><select id="payment-method"><option value="bank_transfer">Bank transfer</option><option value="cash">Cash</option><option value="cheque">Cheque</option></select></div>
-                <div class="field"><label>Bank</label><input id="bank-name"></div>
-                <div class="field"><label>Bank account / IBAN</label><input id="bank-account"></div>
-                <div class="field"><label>Bonuses</label><input id="bonuses" type="number" min="0" step="1000"></div>
-                <div class="field"><label>Allowances</label><input id="allowances" type="number" min="0" step="1000"></div>
-                <div class="field"><label>Deductions</label><input id="deductions" type="number" min="0" step="1000"></div><div class="payroll-preview" aria-label="Algerian payroll preview"><div class="payroll-chip"><span>Gross salary</span><strong id="payroll-gross">0 DZD</strong></div><div class="payroll-chip"><span>CNAS employee 9%</span><strong id="payroll-cnas">0 DZD</strong></div><div class="payroll-chip"><span>IRG estimate</span><strong id="payroll-irg">0 DZD</strong></div><div class="payroll-chip"><span>Employer CNAS 26%</span><strong id="payroll-employer-cnas">0 DZD</strong></div><div class="payroll-chip"><span>Net salary</span><strong id="payroll-net">0 DZD</strong></div></div>
-              </div>
-            </section>
-
             <section class="wizard-step" data-step="schedule" hidden>
-              <div class="step-head"><div><div class="step-kicker">Work pattern</div><div class="step-title">Schedule</div><p class="step-copy">Working model, hours, days, and optional shift notes.</p></div><span class="step-count">5 / 8</span></div>
+              <div class="step-head"><div><div class="step-kicker">Work pattern</div><div class="step-title">Schedule</div><p class="step-copy">Working model, hours, days, and optional shift notes.</p></div><span class="step-count">4 / 7</span></div>
               <div class="form-grid">
                 <div class="field"><label>Work system</label><select id="work-system"><option value="full_time">Full-Time</option><option value="part_time">Part-Time</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option></select></div>
                 <div class="field"><label>Weekly hours</label><input id="work-hours-per-week" type="number" min="0" step="0.5" value="40"></div>
@@ -498,7 +483,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             </section>
 
             <section class="wizard-step" data-step="documents" hidden>
-              <div class="step-head"><div><div class="step-kicker">Document vault</div><div class="step-title">Documents, diplomas, and skills</div><p class="step-copy">Upload employee files directly, then complete diplomas, education, languages, and skills.</p></div><span class="step-count">6 / 8</span></div>
+              <div class="step-head"><div><div class="step-kicker">Document vault</div><div class="step-title">Documents, diplomas, and skills</div><p class="step-copy">Upload employee files directly, then complete diplomas, education, languages, and skills.</p></div><span class="step-count">5 / 7</span></div>
               <div class="form-grid">
                 <div class="field"><label>CV</label><input id="cv-file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></div>
                 <div class="field"><label>Employment contract</label><input id="contract-file" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></div>
@@ -515,7 +500,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             </section>
 
             <section class="wizard-step" data-step="access" hidden>
-              <div class="step-head"><div><div class="step-kicker">Application access</div><div class="step-title">System Access</div><p class="step-copy">Prepare the user account role without sending credentials yet.</p></div><span class="step-count">7 / 8</span></div>
+              <div class="step-head"><div><div class="step-kicker">Application access</div><div class="step-title">System Access</div><p class="step-copy">Prepare the user account role without sending credentials yet.</p></div><span class="step-count">6 / 7</span></div>
               <div class="form-grid">
                 <div class="field"><label>Username</label><input id="system-username"></div>
                 <div class="field"><label>Login email</label><input id="login-email" type="email"></div>
@@ -524,7 +509,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
             </section>
 
             <section class="wizard-step" data-step="notes" hidden>
-              <div class="step-head"><div><div class="step-kicker">Internal context</div><div class="step-title">Notes</div><p class="step-copy">Add private HR notes before creating the employee profile.</p></div><span class="step-count">8 / 8</span></div>
+              <div class="step-head"><div><div class="step-kicker">Internal context</div><div class="step-title">Notes</div><p class="step-copy">Add private HR notes before creating the employee profile.</p></div><span class="step-count">7 / 7</span></div>
               <div class="form-grid">
                 <div class="field span-2"><label>HR notes</label><textarea id="hr-notes" placeholder="Anything HR should know about this employee record"></textarea></div>
               </div>
@@ -548,7 +533,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
 <script>
 const SUPABASE_URL='https://gqmpqpnboenmshuuopnp.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
-const steps=['personal','contact','employment','payroll','schedule','documents','access','notes'];
+const steps=['personal','contact','employment','schedule','documents','access','notes'];
 let sb=null;
 let companyId=null;
 let currentStep='personal';
@@ -598,7 +583,6 @@ async function init(){
   if(window.lucide)window.lucide.createIcons();
   initCompletionChart();
   document.getElementById('hire-date').value=today();
-  document.getElementById('currency').value='DZD';
   await resolveCompany();
   if(!companyId)showNotice('Preview mode: login and select a company before saving real employee records.');
   let departments=await safeLoad('departments','name');
@@ -613,15 +597,10 @@ async function init(){
   fillSelect('department-id',departments,d=>d.name||'Department','Select department');
   fillSelect('position-id',positions,p=>p.title||'Position','Select job position');
   fillSelect('manager-id',employees,e=>e.full_name||'Employee','No direct manager');
-  ['base-salary','allowances','bonuses','deductions'].forEach(id=>document.getElementById(id)?.addEventListener('input',updatePayrollPreview));
   ['national-id','social-security-number'].forEach(id=>document.getElementById(id)?.addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'')}));
-  updatePayrollPreview();
 }
 function isValidNin(v){return !v||/^\d{18}$/.test(v)}
 function isValidCnas(v){return !v||/^\d{12}$/.test(v)}
-function irgMonthly(taxable){taxable=Math.max(0,Number(taxable||0));let tax=0;if(taxable>80000)tax+=(taxable-80000)*.35;if(taxable>40000)tax+=(Math.min(taxable,80000)-40000)*.27;if(taxable>20000)tax+=(Math.min(taxable,40000)-20000)*.23;return Math.round(tax)}
-function payrollCalc(){const gross=Math.max(0,numberValue('base-salary')+numberValue('allowances')+numberValue('bonuses')-numberValue('deductions'));const employeeCnas=Math.round(gross*.09);const taxable=Math.max(0,gross-employeeCnas);const incomeTax=irgMonthly(taxable);const employerCnas=Math.round(gross*.26);const totalDeductions=employeeCnas+incomeTax+numberValue('deductions');const net=Math.max(0,gross-employeeCnas-incomeTax);return {gross,employeeCnas,incomeTax,employerCnas,totalDeductions,net}}
-function updatePayrollPreview(){const r=payrollCalc();const m=v=>new Intl.NumberFormat('en-DZ',{maximumFractionDigits:0}).format(v)+' DZD';const pairs={'payroll-gross':r.gross,'payroll-cnas':r.employeeCnas,'payroll-irg':r.incomeTax,'payroll-employer-cnas':r.employerCnas,'payroll-net':r.net};Object.keys(pairs).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=m(pairs[id])})}
 function validateStep(step=currentStep){
   if(step==='personal'&&!value('full-name').trim()){showNotice('Full name is required before moving to the next step.','error');return false}
   if(step==='personal'&&!isValidNin(value('national-id').trim())){showNotice('National Identification Number must contain exactly 18 digits.','error');return false}
@@ -630,7 +609,7 @@ function validateStep(step=currentStep){
 }
 function goNext(){if(!validateStep(currentStep))return;const idx=steps.indexOf(currentStep);if(idx<steps.length-1)setStep(steps[idx+1])}
 function goPrev(){const idx=steps.indexOf(currentStep);if(idx>0)setStep(steps[idx-1])}
-function corePayload(){return {company_id:companyId,employee_number:value('employee-number')||('EMP-'+String(employeeCount+1).padStart(3,'0')),full_name:value('full-name'),email:value('email'),phone:value('phone')||null,national_id:value('national-id')||null,hire_date:value('hire-date')||null,birth_date:value('birth-date')||null,contract_type:value('contract-type')||'cdi',department_id:value('department-id')||null,position_id:value('position-id')||null,manager_id:value('manager-id')||null,status:value('status')||'active',base_salary:numberValue('base-salary'),currency:'DZD',bank_name:value('bank-name')||null,bank_account:value('bank-account')||null,diplomas:value('diplomas')||null,academic_background:value('academic-background')||null,profile_photo_url:null,social_security_number:value('social-security-number')||null,gender:value('gender')||null,marital_status:value('marital-status')||null,secondary_phone:value('secondary-phone')||null,address:value('address')||null,city:value('city')||null,state_region:value('state-region')||null,postal_code:value('postal-code')||null,country:value('country')||null,contract_end_date:value('contract-end-date')||null,workplace:value('workplace')||null,payment_method:value('payment-method')||null,allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),deductions:numberValue('deductions'),work_system:value('work-system')||null,work_hours_per_week:numberValue('work-hours-per-week'),work_days:checkedDays(),shift_schedule:value('shift-schedule')||null,emergency_contact_name:value('emergency-contact-name')||null,emergency_contact_relationship:value('emergency-contact-relationship')||null,emergency_contact_phone:value('emergency-contact-phone')||null,languages:value('languages')||null,skills:value('skills')||null,professional_certifications:value('professional-certifications')||null,system_username:value('system-username')||null,login_email:value('login-email')||value('email')||null,system_role:value('system-role')||'employee',hr_notes:value('hr-notes')||null}}
+function corePayload(){return {company_id:companyId,employee_number:value('employee-number')||('EMP-'+String(employeeCount+1).padStart(3,'0')),full_name:value('full-name'),email:value('email'),phone:value('phone')||null,national_id:value('national-id')||null,hire_date:value('hire-date')||null,birth_date:value('birth-date')||null,contract_type:value('contract-type')||'cdi',department_id:value('department-id')||null,position_id:value('position-id')||null,manager_id:value('manager-id')||null,status:value('status')||'active',diplomas:value('diplomas')||null,academic_background:value('academic-background')||null,profile_photo_url:null,social_security_number:value('social-security-number')||null,gender:value('gender')||null,marital_status:value('marital-status')||null,secondary_phone:value('secondary-phone')||null,address:value('address')||null,city:value('city')||null,state_region:value('state-region')||null,postal_code:value('postal-code')||null,country:value('country')||null,contract_end_date:value('contract-end-date')||null,workplace:value('workplace')||null,work_system:value('work-system')||null,work_hours_per_week:numberValue('work-hours-per-week'),work_days:checkedDays(),shift_schedule:value('shift-schedule')||null,emergency_contact_name:value('emergency-contact-name')||null,emergency_contact_relationship:value('emergency-contact-relationship')||null,emergency_contact_phone:value('emergency-contact-phone')||null,languages:value('languages')||null,skills:value('skills')||null,professional_certifications:value('professional-certifications')||null,system_username:value('system-username')||null,login_email:value('login-email')||value('email')||null,system_role:value('system-role')||'employee',hr_notes:value('hr-notes')||null}}
 function isMissingColumnError(error){return /schema cache|could not find .*column|column .*does not exist/i.test(error?.message||'')}
 function fileValue(id){return document.getElementById(id)?.files?.[0]||null}
 function fileValues(id){return Array.from(document.getElementById(id)?.files||[])}
@@ -701,7 +680,7 @@ async function insertEmployeeDocumentRecord(client,row){
   throw lastError || new Error('Document could not be saved.');
 }
 async function uploadEmployeeFile(client,employeeId,type,file){if(!file)return null;const key=[companyId,employeeId,type,Date.now()+'-'+cleanFileName(file.name)].join('/');const upload=await client.storage.from('employee-files').upload(key,file,{cacheControl:'3600',upsert:false});if(upload.error)throw upload.error;const publicUrl=client.storage.from('employee-files').getPublicUrl(key)?.data?.publicUrl;return {url:publicUrl,path:key,name:file.name,size:file.size}}
-async function tryInsertEmployee(client,payload){const attempts=[payload,{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,national_id:payload.national_id,hire_date:payload.hire_date,contract_type:payload.contract_type,department_id:payload.department_id,position_id:payload.position_id,manager_id:payload.manager_id,status:payload.status,base_salary:payload.base_salary,currency:payload.currency,bank_name:payload.bank_name,bank_account:payload.bank_account},{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,hire_date:payload.hire_date,status:payload.status,base_salary:payload.base_salary,currency:payload.currency}];let last=null;for(let i=0;i<attempts.length;i++){const result=await client.from('employees').insert(attempts[i]).select('id').single();if(!result.error){if(i>0)showNotice('Employee saved with core fields. Run the updated HR SQL to enable every new tab field.');return result}last=result;if(!isMissingColumnError(result.error))return result}return last}
+async function tryInsertEmployee(client,payload){const attempts=[payload,{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,national_id:payload.national_id,hire_date:payload.hire_date,contract_type:payload.contract_type,department_id:payload.department_id,position_id:payload.position_id,manager_id:payload.manager_id,status:payload.status},{company_id:payload.company_id,employee_number:payload.employee_number,full_name:payload.full_name,email:payload.email,phone:payload.phone,hire_date:payload.hire_date,status:payload.status}];let last=null;for(let i=0;i<attempts.length;i++){const result=await client.from('employees').insert(attempts[i]).select('id').single();if(!result.error){if(i>0)showNotice('Employee saved with core fields. Run the updated HR SQL to enable every new tab field.');return result}last=result;if(!isMissingColumnError(result.error))return result}return last}
 async function insertOptionalRecords(client,employeeId){
   const photo=fileValue('profile-photo-file');
   if(photo){try{const uploaded=await uploadEmployeeFile(client,employeeId,'profile-photo',photo);if(uploaded?.url){const update=await client.from('employees').update({profile_photo_url:uploaded.url}).eq('id',employeeId);if(update.error&&!isMissingColumnError(update.error))console.warn(update.error)}}catch(error){console.warn('Profile photo upload skipped:',error.message||error)}}
@@ -730,7 +709,6 @@ async function insertOptionalRecords(client,employeeId){
   }
   if(documentErrors.length)throw new Error(documentErrors.join(' | '));
   if(value('academic-background')||value('diplomas')){try{const result=await client.from('employee_education').insert({company_id:companyId,employee_id:employeeId,degree:value('diplomas')||null,notes:value('academic-background')||null});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
-  if(numberValue('base-salary')||numberValue('allowances')||numberValue('bonuses')||numberValue('deductions')){try{const r=payrollCalc();const result=await client.from('employee_salary_history').insert({company_id:companyId,employee_id:employeeId,base_salary:numberValue('base-salary'),allowances:numberValue('allowances'),bonuses:numberValue('bonuses'),advance_deduction:numberValue('deductions'),gross_salary:r.gross,employee_cnas:r.employeeCnas,income_tax:r.incomeTax,total_deductions:r.totalDeductions,employer_contributions:r.employerCnas,net_salary:r.net,effective_date:value('hire-date')||today(),status:'draft',notes:'Created from employee onboarding form with Algerian CNAS/IRG preview'});if(result.error&&!isMissingColumnError(result.error))console.warn(result.error)}catch(error){console.warn(error)}}
 }
 let isSubmittingEmployee = false;
 function withTimeout(promise, ms, label){
@@ -777,8 +755,6 @@ async function submitEmployee(event){
   isSubmittingEmployee = true;
   if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Saving...'}
   try{
-    document.getElementById('currency').value='DZD';
-    updatePayrollPreview();
     showNotice('Saving employee profile...');
     const payload=corePayload();
     const localId='local-'+Date.now();
@@ -874,6 +850,8 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
 
 
 
