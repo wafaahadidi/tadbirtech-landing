@@ -60,7 +60,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
 @media(max-width:900px){.doc-folder-grid{grid-template-columns:1fr}}
 .edit-modal{position:fixed;inset:0;background:rgba(9,24,44,.45);display:none;align-items:center;justify-content:center;padding:24px;z-index:999}
 .edit-modal.show{display:flex}
-.edit-dialog{width:min(760px,96vw);max-height:90vh;overflow:auto;background:#fff;border:1px solid #DDE8F3;border-radius:10px;box-shadow:0 24px 70px rgba(11,34,66,.25)}
+.edit-dialog{width:min(1040px,96vw);max-height:90vh;overflow:auto;background:#fff;border:1px solid #DDE8F3;border-radius:10px;box-shadow:0 24px 70px rgba(11,34,66,.25)}
 .edit-dialog-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #E6EEF7}
 .edit-dialog-title{font-weight:900;font-size:20px;color:#001B3D}
 .edit-dialog-body{padding:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -121,6 +121,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
 .doc-actions .btn{height:34px!important;min-width:64px!important;padding:0 12px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important}
 @media(max-width:1100px){.doc-folder-grid{grid-template-columns:1fr!important}#view-documents .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:700px){#view-documents .info-grid{grid-template-columns:1fr!important}.doc-card{grid-template-columns:1fr!important}.doc-actions{justify-content:flex-start!important;flex-wrap:wrap!important}}
+.long-value{white-space:pre-line;line-height:1.55}.tag-list{display:flex;flex-wrap:wrap;gap:6px}.tag-pill{display:inline-flex;align-items:center;border:1px solid #D8E8F5;background:#F4FAFE;color:#0D1F3C;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.payroll-next-step{grid-column:1/-1;border:1px dashed #BFD6EA;background:#F8FBFE;border-radius:10px;padding:14px;color:#38536F;font-weight:700;line-height:1.5}
 </style>
 </head>
 <body>
@@ -190,7 +191,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
 </aside>
   <main class="main">
     <header class="topbar">
-      <div><div class="topbar-title">Employee Profile</div><div class="topbar-sub">Complete employee record, documents, payroll, and history.</div></div>
+      <div><div class="topbar-title">Employee Profile</div><div class="topbar-sub">Complete employee record, documents, salary summary, and history.</div></div>
       <div class="topbar-actions"><a class="btn" href="employee-list.html">Back to employees</a><button class="btn" onclick="openEditProfile()">Edit profile</button><button class="btn danger" onclick="deleteEmployee()">Delete</button></div>
     </header>
     <div class="content">
@@ -211,7 +212,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
       <nav class="tabs">
         <button class="tab active" data-tab="overview">Overview</button>
         <button class="tab" data-tab="employment">Employment</button>
-        <button class="tab" data-tab="payroll">Payroll</button>
+        <button class="tab" data-tab="payroll">Salary summary</button>
         <button class="tab" data-tab="documents">Documents</button>
         <button class="tab" data-tab="history">History</button>
       </nav>
@@ -228,7 +229,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
         </div>
       </section>
       <section class="view" id="view-payroll" hidden>
-        <div class="surface"><div class="surface-head"><div><div class="surface-title">Payroll details</div><div class="surface-sub">Salary, allowances, deductions, and bank information.</div></div></div><div class="surface-body"><div class="info-grid" id="payroll-info"></div></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Salary summary</div><div class="surface-sub">Read-only salary snapshot. Detailed allowances, bonuses, deductions, IRG, and CNAS will be managed from the standalone Payroll page.</div></div></div><div class="surface-body"><div class="info-grid" id="payroll-info"></div></div></div>
       </section>
       <section class="view" id="view-documents" hidden>
         <div class="two-grid">
@@ -249,13 +250,41 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
   <div class="edit-dialog">
     <div class="edit-dialog-head"><div class="edit-dialog-title">Edit employee profile</div><button class="btn" onclick="closeEditProfile()">Close</button></div>
     <div class="edit-dialog-body">
+      <div class="edit-field"><label>Employee ID</label><input id="edit-employee-number"></div>
       <div class="edit-field"><label>Full name</label><input id="edit-full-name"></div>
       <div class="edit-field"><label>Email</label><input id="edit-email" type="email"></div>
       <div class="edit-field"><label>Phone</label><input id="edit-phone"></div>
-      <div class="edit-field"><label>Status</label><select id="edit-status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="archived">Archived</option><option value="terminated">Terminated</option><option value="resigned">Resigned</option></select></div>
-      <div class="edit-field"><label>Base salary</label><input id="edit-base-salary" type="number" min="0" step="1"></div>
-      <div class="edit-field"><label>Bank</label><input id="edit-bank-name"></div>
+      <div class="edit-field"><label>Backup phone</label><input id="edit-secondary-phone"></div>
+      <div class="edit-field"><label>Status</label><select id="edit-status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="sick_leave">Sick leave</option><option value="vacation">Vacation</option><option value="archived">Archived</option><option value="terminated">Terminated</option><option value="resigned">Resigned</option><option value="dismissed">Dismissed</option></select></div>
+      <div class="edit-field"><label>National ID / Passport</label><input id="edit-national-id"></div>
+      <div class="edit-field"><label>CNAS number</label><input id="edit-social-security-number"></div>
+      <div class="edit-field"><label>Birth date</label><input id="edit-birth-date" type="date"></div>
+      <div class="edit-field"><label>Gender</label><select id="edit-gender"><option value="">Select</option><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div>
+      <div class="edit-field"><label>Marital status</label><select id="edit-marital-status"><option value="">Select</option><option value="single">Single</option><option value="married">Married</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div>
+      <div class="edit-field"><label>Department</label><select id="edit-department-id"></select></div>
+      <div class="edit-field"><label>Position</label><select id="edit-position-id"></select></div>
+      <div class="edit-field"><label>Direct manager</label><select id="edit-manager-id"></select></div>
+      <div class="edit-field"><label>Contract type</label><select id="edit-contract-type"><option value="cdi">CDI</option><option value="cdd">CDD</option><option value="internship">Internship</option><option value="apprenticeship">Apprenticeship</option><option value="contractor">Contractor</option><option value="permanent">Permanent</option><option value="temporary">Temporary</option></select></div>
+      <div class="edit-field"><label>Hire date</label><input id="edit-hire-date" type="date"></div>
+      <div class="edit-field"><label>Contract end date</label><input id="edit-contract-end-date" type="date"></div>
+      <div class="edit-field"><label>Workplace</label><input id="edit-workplace"></div>
+      <div class="edit-field"><label>Work system</label><select id="edit-work-system"><option value="">Select</option><option value="full_time">Full-Time</option><option value="part_time">Part-Time</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option></select></div>
+      <div class="edit-field"><label>Hours / week</label><input id="edit-work-hours-per-week" type="number" min="0" step="0.5"></div>
+      <div class="edit-field"><label>Work days</label><input id="edit-work-days" placeholder="Sun, Mon, Tue..."></div>
+      <div class="edit-field"><label>City</label><input id="edit-city"></div>
+      <div class="edit-field"><label>Wilaya</label><input id="edit-state-region"></div>
+      <div class="edit-field"><label>Postal code</label><input id="edit-postal-code"></div>
+      <div class="edit-field"><label>Country</label><input id="edit-country"></div>
       <div class="edit-field full"><label>Address</label><input id="edit-address"></div>
+      <div class="edit-field"><label>Emergency contact</label><input id="edit-emergency-contact-name"></div>
+      <div class="edit-field"><label>Relationship</label><input id="edit-emergency-contact-relationship"></div>
+      <div class="edit-field"><label>Emergency phone</label><input id="edit-emergency-contact-phone"></div>
+      <div class="edit-field"><label>Diplomas</label><input id="edit-diplomas"></div>
+      <div class="edit-field"><label>Languages</label><input id="edit-languages"></div>
+      <div class="edit-field"><label>Professional certificates</label><input id="edit-professional-certifications"></div>
+      <div class="edit-field full"><label>Skills</label><textarea id="edit-skills"></textarea></div>
+      <div class="edit-field full"><label>Academic background</label><textarea id="edit-academic-background"></textarea></div>
+      <div class="edit-field full"><label>Shift notes</label><textarea id="edit-shift-schedule"></textarea></div>
       <div class="edit-field full"><label>HR notes</label><textarea id="edit-hr-notes"></textarea></div>
     </div>
     <div class="edit-dialog-actions"><button class="btn" onclick="closeEditProfile()">Cancel</button><button class="btn primary" onclick="saveEditProfile()">Save changes</button></div>
@@ -305,6 +334,9 @@ function depName(id){return state.departments.find(d=>d.id===id)?.name||'Unassig
 function posName(id){return state.positions.find(p=>p.id===id)?.title||state.employee?.job_position_label||'Unassigned'}
 function empName(id){return state.employees.find(e=>e.id===id)?.full_name||'No manager'}
 function field(label,value){return '<div class="info"><div class="label">'+text(label)+'</div><div class="value">'+text(value||'-')+'</div></div>'}
+function longField(label,value){return '<div class="info full-info"><div class="label">'+text(label)+'</div><div class="value long-value">'+text(value||'-')+'</div></div>'}
+function splitList(value){return String(value||'').split(/[|,;\n]+/).map(x=>x.trim()).filter(Boolean)}
+function tagField(label,value){const items=splitList(value);return '<div class="info full-info"><div class="label">'+text(label)+'</div><div class="value">'+(items.length?'<div class="tag-list">'+items.map(item=>'<span class="tag-pill">'+text(item)+'</span>').join('')+'</div>':'-')+'</div></div>'}
 function metric(label,value){return '<div class="metric"><span>'+text(label)+'</span><strong>'+text(value||'-')+'</strong></div>'}
 async function safeQuery(builder){try{const r=await builder;return r.error?[]:(r.data||[])}catch(error){console.warn(error);return[]}}
 function render(){
@@ -332,10 +364,14 @@ function render(){
   ].join('');
   document.getElementById('schedule-info').innerHTML=[field('Work system',e.work_system),field('Hours / week',e.work_hours_per_week),field('Work days',Array.isArray(e.work_days)?e.work_days.join(', '):e.work_days),field('Shift notes',e.shift_schedule)].join('');
   document.getElementById('payroll-info').innerHTML=[
-    field('Base salary',money(e.base_salary,e.currency||'DZD')),field('Currency',e.currency||'DZD'),field('Allowances',money(e.allowances,e.currency||'DZD')),field('Bonuses',money(e.bonuses,e.currency||'DZD')),field('Deductions',money(e.deductions,e.currency||'DZD')),field('Payment method',e.payment_method),field('Bank',e.bank_name),field('Bank account',e.bank_account)
+    field('Current salary snapshot',e.base_salary?money(e.base_salary,e.currency||'DZD'):'Not configured yet'),
+    field('Currency',e.currency||'DZD'),
+    field('Payment method',e.payment_method),
+    field('Bank',e.bank_name),
+    '<div class="payroll-next-step">Detailed salary components belong in the standalone Payroll page: choose the employee, then enter base salary, allowances, bonuses, deductions, CNAS, IRG, and payslip data there. This profile only displays the latest payroll snapshot.</div>'
   ].join('');
   document.getElementById('qualification-info').innerHTML=[
-    field('Diplomas',e.diplomas),field('Languages',e.languages),field('Skills',e.skills),field('Academic background',e.academic_background),field('Professional certificates',e.professional_certifications),field('HR notes',e.hr_notes)
+    tagField('Diplomas',e.diplomas),tagField('Languages',e.languages),tagField('Skills',e.skills),longField('Academic background',e.academic_background),tagField('Professional certificates',e.professional_certifications),longField('HR notes',e.hr_notes)
   ].join('');
   renderDocuments();
   renderHistory();
@@ -519,15 +555,47 @@ function removeEmployeeFromCaches(employee){
 }
 function setEditValue(id,value){const el=document.getElementById(id);if(el)el.value=value??''}
 function getEditValue(id){return document.getElementById(id)?.value?.trim()||''}
+function fillEditSelect(id,rows,labelFn,emptyLabel){const el=document.getElementById(id);if(!el)return;el.innerHTML='<option value="">'+text(emptyLabel||'Select')+'</option>'+rows.map(row=>'<option value="'+text(row.id)+'">'+text(labelFn(row))+'</option>').join('')}
 function openEditProfile(){
   const e=state.employee||{};
+  fillEditSelect('edit-department-id',state.departments,d=>d.name||'Department','Unassigned');
+  fillEditSelect('edit-position-id',state.positions,p=>p.title||'Position','Unassigned');
+  fillEditSelect('edit-manager-id',state.employees.filter(x=>String(x.id)!==String(e.id)),x=>x.full_name||'Employee','No manager');
+  setEditValue('edit-employee-number',e.employee_number);
   setEditValue('edit-full-name',e.full_name);
   setEditValue('edit-email',e.email);
   setEditValue('edit-phone',e.phone);
+  setEditValue('edit-secondary-phone',e.secondary_phone);
   setEditValue('edit-status',e.status||'active');
-  setEditValue('edit-base-salary',e.base_salary||0);
-  setEditValue('edit-bank-name',e.bank_name);
+  setEditValue('edit-national-id',e.national_id);
+  setEditValue('edit-social-security-number',e.social_security_number);
+  setEditValue('edit-birth-date',e.birth_date);
+  setEditValue('edit-gender',e.gender);
+  setEditValue('edit-marital-status',e.marital_status);
+  setEditValue('edit-department-id',e.department_id);
+  setEditValue('edit-position-id',e.position_id);
+  setEditValue('edit-manager-id',e.manager_id);
+  setEditValue('edit-contract-type',e.contract_type);
+  setEditValue('edit-hire-date',e.hire_date);
+  setEditValue('edit-contract-end-date',e.contract_end_date);
+  setEditValue('edit-workplace',e.workplace);
+  setEditValue('edit-work-system',e.work_system);
+  setEditValue('edit-work-hours-per-week',e.work_hours_per_week);
+  setEditValue('edit-work-days',Array.isArray(e.work_days)?e.work_days.join(', '):e.work_days);
+  setEditValue('edit-city',e.city);
+  setEditValue('edit-state-region',e.state_region);
+  setEditValue('edit-postal-code',e.postal_code);
+  setEditValue('edit-country',e.country);
   setEditValue('edit-address',e.address);
+  setEditValue('edit-emergency-contact-name',e.emergency_contact_name);
+  setEditValue('edit-emergency-contact-relationship',e.emergency_contact_relationship);
+  setEditValue('edit-emergency-contact-phone',e.emergency_contact_phone);
+  setEditValue('edit-diplomas',e.diplomas);
+  setEditValue('edit-languages',e.languages);
+  setEditValue('edit-professional-certifications',e.professional_certifications);
+  setEditValue('edit-skills',e.skills);
+  setEditValue('edit-academic-background',e.academic_background);
+  setEditValue('edit-shift-schedule',e.shift_schedule);
   setEditValue('edit-hr-notes',e.hr_notes);
   document.getElementById('edit-profile-modal')?.classList.add('show');
 }
@@ -544,7 +612,7 @@ function updateEmployeeCaches(employee){
 }
 async function saveEditProfile(){
   const e=state.employee;if(!e)return;
-  const patch={full_name:getEditValue('edit-full-name'),email:getEditValue('edit-email')||null,phone:getEditValue('edit-phone')||null,status:getEditValue('edit-status')||'active',base_salary:Number(getEditValue('edit-base-salary')||0),bank_name:getEditValue('edit-bank-name')||null,address:getEditValue('edit-address')||null,hr_notes:getEditValue('edit-hr-notes')||null};
+  const patch={employee_number:getEditValue('edit-employee-number')||e.employee_number||null,full_name:getEditValue('edit-full-name'),email:getEditValue('edit-email')||null,phone:getEditValue('edit-phone')||null,secondary_phone:getEditValue('edit-secondary-phone')||null,status:getEditValue('edit-status')||'active',national_id:getEditValue('edit-national-id')||null,social_security_number:getEditValue('edit-social-security-number')||null,birth_date:getEditValue('edit-birth-date')||null,gender:getEditValue('edit-gender')||null,marital_status:getEditValue('edit-marital-status')||null,department_id:getEditValue('edit-department-id')||null,position_id:getEditValue('edit-position-id')||null,manager_id:getEditValue('edit-manager-id')||null,contract_type:getEditValue('edit-contract-type')||null,hire_date:getEditValue('edit-hire-date')||null,contract_end_date:getEditValue('edit-contract-end-date')||null,workplace:getEditValue('edit-workplace')||null,work_system:getEditValue('edit-work-system')||null,work_hours_per_week:getEditValue('edit-work-hours-per-week')?Number(getEditValue('edit-work-hours-per-week')):null,work_days:getEditValue('edit-work-days')?getEditValue('edit-work-days').split(',').map(x=>x.trim()).filter(Boolean):null,city:getEditValue('edit-city')||null,state_region:getEditValue('edit-state-region')||null,postal_code:getEditValue('edit-postal-code')||null,country:getEditValue('edit-country')||null,address:getEditValue('edit-address')||null,emergency_contact_name:getEditValue('edit-emergency-contact-name')||null,emergency_contact_relationship:getEditValue('edit-emergency-contact-relationship')||null,emergency_contact_phone:getEditValue('edit-emergency-contact-phone')||null,diplomas:getEditValue('edit-diplomas')||null,languages:getEditValue('edit-languages')||null,professional_certifications:getEditValue('edit-professional-certifications')||null,skills:getEditValue('edit-skills')||null,academic_background:getEditValue('edit-academic-background')||null,shift_schedule:getEditValue('edit-shift-schedule')||null,hr_notes:getEditValue('edit-hr-notes')||null};
   if(isUuid(e.id)){
     const c=client();if(c){const r=await c.from('employees').update(patch).eq('id',e.id).select('*').single();if(r.error){showNotice(r.error.message,'error');return}state.employee=r.data}
   }else{
@@ -661,4 +729,5 @@ window.addEventListener('load',load);
 </script>
 </body>
 </html>
+
 

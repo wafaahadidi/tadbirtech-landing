@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1006,7 +1006,7 @@ function renderEmployees(){
     rows.innerHTML=employees.map(e=>{
     const selected=state.selectedEmployees.has(e.id);
     const fullName=e.full_name||'Employee';
-    return '<tr class="'+(selected?'selected':'')+'" onclick="openEmployeeRecord(\''+e.id+'\',event)" ondblclick="openEmployeeRecord(\''+e.id+'\',event)"><td class="select-col"><span class="employee-select-box '+(selected?'checked':'')+'" onclick="toggleEmployeeSelection(\''+e.id+'\',event)"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn employee-full-name" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">'+text(fullName)+'</button><div class="employee-number-sub">'+text(e.employee_number||e.id||'-')+'</div></div></div></td><td hidden></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">View</button></td></tr>'
+    return '<tr class="'+(selected?'selected':'')+'" onclick="openEmployeeRecord(\''+e.id+'\',event)" ondblclick="openEmployeeRecord(\''+e.id+'\',event)"><td class="select-col"><span class="employee-select-box '+(selected?'checked':'')+'" onclick="toggleEmployeeSelection(\''+e.id+'\',event)"></span></td><td><div class="employee-identity">'+employeeAvatar(e)+'<div><button class="link-btn employee-full-name" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">'+text(fullName)+'</button></div></div></td><td hidden></td><td class="employee-id-cell">'+text(e.employee_number||e.id||'-')+'</td><td class="job-cell">'+text(employeePosition(e))+'</td><td>'+text(e.phone||'-')+'</td><td class="email-cell">'+text(e.email||'-')+'</td><td class="status-active">'+text(e.status||'Active')+'</td><td class="right"><button class="employee-menu" type="button" onclick="openEmployeeRecord(\''+e.id+'\',event)">View</button></td></tr>'
   }).join('');
 }
 function renderDepartments(){const host=document.getElementById('department-list');if(!state.departments.length){host.innerHTML='<div class="empty">Departments will appear here.</div>';return}host.innerHTML=state.departments.map(d=>{const team=state.employees.filter(e=>e.department_id===d.id);const manager=state.employees.find(e=>e.id===d.manager_id);return '<div class="calc-row"><span><strong>'+text(d.name)+'</strong><br><small style="color:#7a93ae">'+text(manager?manager.full_name:'No manager')+'</small></span><strong>'+team.length+' employee(s)</strong></div>'}).join('')}
@@ -1316,7 +1316,7 @@ async function handleLogout(){
     var job=employee.job_position_label || employee.position_title || employee.position || employee.title || 'Unassigned';
     return '<tr class="'+(selected?'selected':'')+'" onclick="window.ttOpenEmployeeProfile(\''+js(id)+'\')" style="cursor:pointer">'+
       '<td class="select-col"><span class="employee-select-box '+(selected?'checked':'')+'" onclick="window.ttToggleHardEmployeeSelection(\''+js(key)+'\',event)"></span></td>'+
-      '<td><div class="employee-identity"><span class="employee-avatar">'+photo+'</span><div><button class="link-btn employee-full-name" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+js(id)+'\')">'+esc(employee.full_name || 'Employee')+'</button><div class="employee-number-sub">'+esc(employee.employee_number || id || '-')+'</div></div></div></td>'+
+      '<td><div class="employee-identity"><span class="employee-avatar">'+photo+'</span><div><button class="link-btn employee-full-name" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+js(id)+'\')">'+esc(employee.full_name || 'Employee')+'</button></div></div></td>'+
       '<td hidden></td>'+
       '<td class="employee-id-cell">'+esc(employee.employee_number || id || '-')+'</td>'+
       '<td class="job-cell">'+esc(job)+'</td>'+
@@ -1492,6 +1492,7 @@ async function handleLogout(){
 </script>
 </body>
 </html>
+
 
 
 
