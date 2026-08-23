@@ -372,9 +372,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
     </div>
 
     <div class="sb-sec">Account</div>
-    <a class="sb-item" href="company-profile.html" data-sidebar-link="company-profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg><span class="sb-item-text">Company Profile</span></a>
     <a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
-    <a class="sb-item" href="demo-dataset.html" data-sidebar-link="demo-dataset.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M3 12h18"/><path d="m5 5 14 14"/><path d="m19 5-14 14"/></svg><span class="sb-item-text">Demo Dataset</span></a>
   </nav>
   <div class="sb-foot">
     <button class="sb-logout" onclick="handleLogout()">
@@ -455,7 +453,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
                 <div class="field"><label>Employee status</label><select id="status"><option value="active">Active</option><option value="on_leave">On leave</option><option value="sick_leave">Sick leave</option><option value="terminated">Suspended / Terminated</option><option value="resigned">Resigned</option></select></div>
                 <div class="field"><label>Hire date</label><input id="hire-date" type="date"></div>
                 <div class="field"><label>Contract end date</label><input id="contract-end-date" type="date"></div>
-                <div class="field"><label>Workplace</label><input id="workplace" placeholder="Branch, office, site..."></div>
+                <div class="field"><label>Workplace</label><input id="workplace" list="workplace-options" placeholder="Branch, office, site..."><datalist id="workplace-options"></datalist></div>
               </div>
             </section>
 
@@ -553,7 +551,7 @@ async function resolveCompany(){const client=getSupabase();let raw=localStorage.
 async function safeLoad(table,order){const client=getSupabase();if(!client||!companyId)return[];try{let q=client.from(table).select('*').eq('company_id',companyId);if(order)q=q.order(order,{ascending:true});const {data,error}=await q;if(error)throw error;return data||[]}catch(e){return[]}}
 function fillSelect(id,items,labelFn,emptyLabel='Unassigned'){const el=document.getElementById(id);if(!el)return;el.innerHTML='<option value="">'+emptyLabel+'</option>'+items.map(item=>'<option value="'+String(item.id).replace(/"/g,'&quot;')+'">'+labelFn(item)+'</option>').join('')}
 function setEmployeeNumber(){const el=document.getElementById('employee-number');if(el&&!el.value)el.value='EMP-'+String(employeeCount+1).padStart(3,'0')}
-function demoHrDropdownData(){
+function demoHrDropdownDataUnused(){
   const departments=[
     {id:'',name:'Finance & Accounting'},
     {id:'',name:'Human Resources'},
@@ -588,15 +586,30 @@ async function init(){
   let departments=await safeLoad('departments','name');
   let positions=await safeLoad('positions','title');
   let employees=await safeLoad('employees','full_name');
-  const demo=demoHrDropdownData();
-  if(!departments.length){departments=demo.departments;}
-  if(!positions.length)positions=demo.positions;
-  if(!employees.length)employees=demo.employees;
+  let workLocations=await safeLoad('work_locations','name');
+  departments=departments.filter(d=>d.is_active!==false);
+  positions=positions.filter(p=>p.is_active!==false);
+  workLocations=workLocations.filter(l=>l.is_active!==false);
+  try{
+    const archivedDepartments=JSON.parse(localStorage.getItem('tt_archived_departments')||'[]').map(String);
+    const settingsDepartments=JSON.parse(localStorage.getItem('tt_settings_departments')||'[]');
+    const settingsPositions=JSON.parse(localStorage.getItem('tt_settings_positions')||'[]');
+    const settingsLocations=JSON.parse(localStorage.getItem('tt_settings_work_locations')||'[]');
+    if(archivedDepartments.length)departments=departments.filter(d=>!archivedDepartments.includes(String(d.id)));
+    if(!departments.length&&settingsDepartments.length)departments=settingsDepartments.filter(d=>!archivedDepartments.includes(String(d.id)));
+    const activeDeptIds=new Set(departments.map(d=>String(d.id)));
+    if(!positions.length&&settingsPositions.length)positions=settingsPositions;
+    if(activeDeptIds.size)positions=positions.filter(p=>!p.department_id||activeDeptIds.has(String(p.department_id)));
+    if(!workLocations.length&&settingsLocations.length)workLocations=settingsLocations;
+    const locationList=document.getElementById('workplace-options');
+    if(locationList)locationList.innerHTML=workLocations.map(l=>'<option value="'+String(l.name||'').replace(/"/g,'&quot;')+'"></option>').join('');
+  }catch(e){}
   employeeCount=employees.length;
   setEmployeeNumber();
-  fillSelect('department-id',departments,d=>d.name||'Department','Select department');
-  fillSelect('position-id',positions,p=>p.title||'Position','Select job position');
+  fillSelect('department-id',departments,d=>d.name||'Department',departments.length?'Select department':'Create departments in Settings first');
+  fillSelect('position-id',positions,p=>p.title||'Position',positions.length?'Select job position':'Create positions in Settings first');
   fillSelect('manager-id',employees,e=>e.full_name||'Employee','No direct manager');
+  if(!departments.length||!positions.length)showNotice('Create departments and positions in Settings before adding employees. This page no longer uses demo dropdowns.');
   ['national-id','social-security-number'].forEach(id=>document.getElementById(id)?.addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'')}));
 }
 function isValidNin(v){return !v||/^\d{18}$/.test(v)}
@@ -850,6 +863,9 @@ async function handleLogout(){try{const client=window.supabase&&window.supabase.
 </script>
 </body>
 </html>
+
+
+
 
 
 
