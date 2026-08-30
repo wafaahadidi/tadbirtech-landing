@@ -260,7 +260,6 @@ td,.mini-table td{font-size:12px!important;color:#0D1F3C!important;border-bottom
         <button class="settings-tab" data-panel="accounting"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Accounting</button>
         <button class="settings-tab" data-panel="hr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Human resources</button>
         <button class="settings-tab" data-panel="inventory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0z"/></svg>Inventory</button>
-        <button class="settings-tab" data-panel="users"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users & roles</button>
         <button class="settings-tab" data-panel="templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>Documents</button>
         <button class="settings-tab" data-panel="data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg>Data & backup</button>
       </aside>
@@ -374,12 +373,6 @@ td,.mini-table td{font-size:12px!important;color:#0D1F3C!important;border-bottom
             </div>
             <div class="row"><div><div class="row-title">Warn when stock reaches minimum level</div><div class="row-sub">Inventory pages can highlight low-stock items before the business runs out.</div></div><div class="toggle on" data-toggle="stockWarning"></div></div>
           <div class="section-foot"><span class="hint">This section will drive inventory forms and reports later.</span><button class="btn primary save-section">Save inventory</button></div></div>
-        </section>
-
-        <section class="panel" id="panel-users">
-          <div class="section"><div class="section-head"><div><div class="section-title">Users and roles</div><div class="section-sub">Define what each team member can see and edit across the ERP.</div></div><span class="badge lock">Security</span></div>
-            <div class="section-body"><div class="mini-table"><table><thead><tr><th>Role</th><th>Access focus</th><th>Default permission</th></tr></thead><tbody><tr><td>Admin</td><td>All modules and settings</td><td><span class="pill green">Full access</span></td></tr><tr><td>HR Manager</td><td>Employees, payroll, leave, documents</td><td><span class="pill blue">HR access</span></td></tr><tr><td>Accountant</td><td>Accounting, budgeting, reports</td><td><span class="pill blue">Finance access</span></td></tr><tr><td>Employee</td><td>Own profile and requests</td><td><span class="pill">Limited</span></td></tr></tbody></table></div></div>
-            <div class="section-foot"><span class="hint">Later this becomes Supabase RLS and invitation management.</span><button class="btn primary save-section">Save roles</button></div></div>
         </section>
 
         <section class="panel" id="panel-templates">
