@@ -205,6 +205,20 @@ td,.mini-table td{font-size:12px!important;color:#0D1F3C!important;border-bottom
 .org-helper span{font-size:10px;color:#6C7E95}
 @media(max-width:1100px){.org-form-grid,.org-form-grid.departments,.org-form-grid.locations{grid-template-columns:1fr}.org-row,.org-row.compact{grid-template-columns:1fr}.org-row-actions{justify-content:flex-start}.manager-select{width:100%}}
 @media(max-width:900px){.content{padding:16px!important}.topbar{padding:0 16px!important}}
+
+.access-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.access-table-wrap{border:.5px solid #DDE6EF;border-radius:10px;overflow:auto;background:#fff}
+.access-table{width:100%;min-width:860px;border-collapse:collapse}
+.access-table th{height:40px;background:#FAFBFC;color:#6C7E95;text-align:left;padding:0 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;border-bottom:.5px solid #DDE6EF}
+.access-table td{height:54px;padding:9px 14px;border-bottom:.5px solid #F4F7FB;font-size:12px;color:#0D1F3C;vertical-align:middle}
+.access-table tr:last-child td{border-bottom:0}
+.access-role-name{font-weight:700;color:#0D1F3C}
+.access-role-focus{color:#5B7594;font-size:11px;line-height:1.4}
+.access-modules{width:100%;min-width:210px;border:.5px solid #DDE6EF;border-radius:8px;background:#fff;color:#0D1F3C;font-family:inherit;font-size:12px;padding:8px}
+.access-check{width:18px;height:18px;accent-color:#1a8fd1;cursor:pointer}
+.access-note{margin-top:12px;padding:10px 12px;border:.5px solid #DDE6EF;border-radius:9px;background:#F8FBFE;color:#5B7594;font-size:11px;line-height:1.55}
+@media(max-width:900px){.access-toolbar{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -260,6 +274,7 @@ td,.mini-table td{font-size:12px!important;color:#0D1F3C!important;border-bottom
         <button class="settings-tab" data-panel="accounting"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Accounting</button>
         <button class="settings-tab" data-panel="hr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Human resources</button>
         <button class="settings-tab" data-panel="inventory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0z"/></svg>Inventory</button>
+        <button class="settings-tab" data-panel="users"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users & access</button>
         <button class="settings-tab" data-panel="templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>Documents</button>
         <button class="settings-tab" data-panel="data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg>Data & backup</button>
       </aside>
@@ -375,6 +390,25 @@ td,.mini-table td{font-size:12px!important;color:#0D1F3C!important;border-bottom
           <div class="section-foot"><span class="hint">This section will drive inventory forms and reports later.</span><button class="btn primary save-section">Save inventory</button></div></div>
         </section>
 
+        <section class="panel" id="panel-users">
+          <div class="section"><div class="section-head"><div><div class="section-title">Users and access</div><div class="section-sub">Choose what each role can see and change across the ERP.</div></div><span class="badge lock">Security</span></div>
+            <div class="section-body">
+              <div class="access-toolbar">
+                <div class="field"><label>Default role for new employees</label><select class="select" data-setting="defaultEmployeeRole"><option>Employee</option><option>HR Manager</option><option>Accountant</option><option>Admin</option></select></div>
+                <div class="field"><label>Access policy</label><select class="select" data-setting="accessPolicy"><option>Managers approve access</option><option>Admin only</option><option>Open internal access</option></select></div>
+              </div>
+              <div class="access-table-wrap">
+                <table class="access-table">
+                  <thead><tr><th>Role</th><th>Focus</th><th>Modules</th><th>Read</th><th>Create</th><th>Edit</th><th>Delete</th></tr></thead>
+                  <tbody id="access-roles-body"></tbody>
+                </table>
+              </div>
+              <div class="access-note">These settings are the first version of role permissions. Later they should connect to Supabase RLS and invitations.</div>
+            </div>
+            <div class="section-foot"><span class="hint">Keep Admin limited. Give employees only self-service access.</span><button class="btn primary" onclick="saveAccessRoles()">Save access</button></div>
+          </div>
+        </section>
+
         <section class="panel" id="panel-templates">
           <div class="section"><div class="section-head"><div><div class="section-title">Document templates</div><div class="section-sub">Templates for invoices, contracts, certificates, payslips, and HR decisions.</div></div><span class="badge">Templates</span></div>
             <div class="section-body grid-2">
@@ -401,6 +435,48 @@ td,.mini-table td{font-size:12px!important;color:#0D1F3C!important;border-bottom
 <div class="toast" id="toast">Settings saved locally</div>
 <script>
 const STORAGE_KEY='tt_settings_draft';
+
+const ACCESS_ROLES_KEY='tt_access_roles';
+const defaultAccessRoles=[
+  {role:'Admin',focus:'All modules and settings',modules:'Dashboard, Accounting, HR, Inventory, Settings',read:true,create:true,edit:true,delete:true},
+  {role:'HR Manager',focus:'Employees, payroll, leave, documents',modules:'HR, Payroll, Documents',read:true,create:true,edit:true,delete:false},
+  {role:'Accountant',focus:'Invoices, expenses, budgeting, reports',modules:'Accounting, Budgeting, Reports',read:true,create:true,edit:true,delete:false},
+  {role:'Employee',focus:'Own profile, requests, certificates',modules:'Employee self-service',read:true,create:false,edit:false,delete:false}
+];
+function loadAccessRoles(){
+  try{return JSON.parse(localStorage.getItem(ACCESS_ROLES_KEY)||'null')||defaultAccessRoles.map(r=>Object.assign({},r));}
+  catch(e){return defaultAccessRoles.map(r=>Object.assign({},r));}
+}
+function renderAccessRoles(){
+  const body=document.getElementById('access-roles-body');
+  if(!body) return;
+  const roles=loadAccessRoles();
+  body.innerHTML=roles.map((item,index)=>'<tr><td><div class="access-role-name">'+orgEsc(item.role)+'</div></td><td><div class="access-role-focus">'+orgEsc(item.focus)+'</div></td><td><input class="access-modules" data-role-index="'+index+'" data-role-field="modules" value="'+orgEsc(item.modules)+'"></td><td><input class="access-check" type="checkbox" data-role-index="'+index+'" data-role-field="read" '+(item.read?'checked':'')+'></td><td><input class="access-check" type="checkbox" data-role-index="'+index+'" data-role-field="create" '+(item.create?'checked':'')+'></td><td><input class="access-check" type="checkbox" data-role-index="'+index+'" data-role-field="edit" '+(item.edit?'checked':'')+'></td><td><input class="access-check" type="checkbox" data-role-index="'+index+'" data-role-field="delete" '+(item.delete?'checked':'')+'></td></tr>').join('');
+}
+async function saveAccessRoles(){
+  const roles=loadAccessRoles();
+  document.querySelectorAll('[data-role-index]').forEach(input=>{
+    const index=Number(input.dataset.roleIndex);
+    const field=input.dataset.roleField;
+    if(!roles[index]) return;
+    roles[index][field]=input.type==='checkbox'?input.checked:input.value;
+  });
+  localStorage.setItem(ACCESS_ROLES_KEY,JSON.stringify(roles));
+  const client=typeof getOrgSupabase==='function'?getOrgSupabase():null;
+  if(client){
+    try{
+      const companyId=typeof orgResolveCompany==='function'?await orgResolveCompany():localStorage.getItem('tt_company_id');
+      if(companyId){
+        const {error}=await client.from('company_settings').upsert([{company_id:companyId,setting_group:'users',settings:{roles}}],{onConflict:'company_id,setting_group'});
+        if(error) throw error;
+        showToast('Access settings saved to Supabase');
+        return;
+      }
+    }catch(error){console.warn('access save skipped:',error.message||error)}
+  }
+  showToast('Access settings saved locally');
+}
+
 function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
 function collectSettings(){const data={};document.querySelectorAll('[data-setting]').forEach(el=>{data[el.dataset.setting]=el.value});document.querySelectorAll('[data-toggle]').forEach(el=>{data[el.dataset.toggle]=el.classList.contains('on')});return data}
 function applySettings(data){Object.entries(data||{}).forEach(([key,val])=>{const field=document.querySelector('[data-setting="'+key+'"]');if(field)field.value=val;const toggle=document.querySelector('[data-toggle="'+key+'"]');if(toggle)toggle.classList.toggle('on',!!val)})}
@@ -453,6 +529,7 @@ function setDropdown(name,open){const button=document.querySelector('[data-sideb
 document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)})
 function initSidebar(){const current=(decodeURIComponent(location.pathname.split('/').pop()||'settings.html')).toLowerCase();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);setDropdown('accounting',accountingPages.includes(current));setDropdown('transactions',transactionPages.includes(current))}
 function handleLogout(){localStorage.removeItem('tt_company_id');window.location.href='login.html'}
+renderAccessRoles();
 loadSettings();initSidebar();
 
 /* Organization structure: departments, positions, work locations */
