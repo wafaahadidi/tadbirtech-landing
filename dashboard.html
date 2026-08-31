@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TadbirTech - Accounting Dashboard</title>
+<title>TadbirTech - Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -292,6 +292,30 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
   .topbar{padding:0 16px!important}
 }
 /* End TadbirTech invoice/settings visual consistency */
+
+/* Decision-first dashboard */
+.decision-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(320px,.75fr);gap:14px;margin-bottom:20px}
+.action-zone,.ai-panel{background:#fff;border:.5px solid #DDE6EF;border-radius:12px;box-shadow:0 1px 6px rgba(13,31,60,.04);overflow:hidden}
+.decision-head{padding:16px 20px;border-bottom:.5px solid #EDF2F7;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.decision-title{font-size:14px;font-weight:600;color:#0D1F3C}
+.decision-sub{font-size:11px;color:#5B7594;margin-top:3px;line-height:1.45}
+.decision-body{padding:14px 20px}
+.action-list{display:grid;gap:10px}
+.action-item{display:grid;grid-template-columns:9px minmax(0,1fr) auto;gap:11px;align-items:center;padding:12px;border:.5px solid #E8EFF6;border-radius:10px;background:#FAFCFE}
+.action-priority{width:9px;height:42px;border-radius:999px;background:#1a8fd1}
+.action-priority.ok{background:#16a34a}.action-priority.warn{background:#f59e0b}.action-priority.bad{background:#dc2626}
+.action-name{font-size:13px;font-weight:700;color:#0D1F3C}
+.action-copy{font-size:11px;color:#5B7594;line-height:1.45;margin-top:3px}
+.action-btn{height:32px;border:.5px solid #DDE6EF;background:#fff;color:#0D1F3C;border-radius:8px;padding:0 11px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.action-btn:hover{border-color:#1a8fd1;color:#1a8fd1}
+.ai-list{display:grid;gap:10px}
+.ai-insight{display:flex;gap:10px;padding:12px;border:.5px solid #E8EFF6;border-radius:10px;background:#FAFCFE}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#1a8fd1;margin-top:5px;flex:0 0 8px}
+.ai-dot.ok{background:#16a34a}.ai-dot.warn{background:#f59e0b}.ai-dot.bad{background:#dc2626}
+.ai-text{font-size:12px;line-height:1.55;color:#0D1F3C;font-weight:600}
+.ai-muted{display:block;margin-top:3px;font-size:10px;color:#7A93AE;font-weight:500}
+@media(max-width:1100px){.decision-grid{grid-template-columns:1fr}.action-item{grid-template-columns:9px minmax(0,1fr)}.action-btn{grid-column:2;justify-self:start}}
+
 </style>
 </head>
 <body>
@@ -355,7 +379,7 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
 <div class="main">
 <div class="topbar">
 <div>
-<div class="topbar-title">Accounting Dashboard</div>
+<div class="topbar-title">Dashboard</div>
 <div class="topbar-sub" id="topbar-sub">Loading...</div>
 </div>
 <div class="topbar-right">
@@ -419,6 +443,26 @@ input:focus,select:focus,textarea:focus,.input:focus,.select:focus,.textarea:foc
 <div class="kpi-label">Net cash this month</div>
 <div class="kpi-note">Collections minus supplier payouts</div>
 </div>
+</div>
+
+<div class="decision-grid">
+<section class="action-zone">
+<div class="decision-head">
+<div><div class="decision-title">What needs attention today</div><div class="decision-sub">The dashboard should surface decisions first, then details.</div></div>
+<button class="action-btn" onclick="window.location.href='reports.html'">CFO report</button>
+</div>
+<div class="decision-body"><div class="action-list" id="dashboard-action-list">
+<div class="action-item"><div class="action-priority warn"></div><div><div class="action-name">Checking your business signals...</div><div class="action-copy">Loading invoices, expenses, cash, and budget data.</div></div></div>
+</div></div>
+</section>
+<aside class="ai-panel">
+<div class="decision-head">
+<div><div class="decision-title">AI insights</div><div class="decision-sub">Automatic short signals based on the current data.</div></div>
+</div>
+<div class="decision-body"><div class="ai-list" id="dashboard-ai-insights">
+<div class="ai-insight"><span class="ai-dot"></span><div class="ai-text">Preparing insights...<span class="ai-muted">No action needed yet.</span></div></div>
+</div></div>
+</aside>
 </div>
 <!-- - Chart + Working capital - -->
 <div class="mid-grid">
@@ -720,6 +764,52 @@ async function initDashboard(){
     setTimeout(hideDashboardLoader, 450);
   }
 }
+
+function renderDecisionCenter(){
+  const actionsHost = document.getElementById('dashboard-action-list');
+  const insightsHost = document.getElementById('dashboard-ai-insights');
+  if(!actionsHost || !insightsHost) return;
+  const invoices = liveInvoices();
+  const expenses = activeExpenses();
+  const openInvoices = invoices.filter(invoice => resolveInvoiceBalance(invoice) > 0);
+  const overdueInvoices = openInvoices.filter(invoiceIsOverdue);
+  const openExpenses = expenses.filter(expense => resolveExpenseBalance(expense) > 0);
+  const overdueExpenses = openExpenses.filter(expenseIsOverdue);
+  const currentMonth = monthKey(todayIso());
+  const invoicedMonth = invoices.filter(invoice => monthKey(invoice.issue_date || invoice.created_at) === currentMonth).reduce((sum, invoice) => sum + resolveInvoiceTotal(invoice), 0);
+  const collectionsMonth = dashboardState.payments.filter(payment => monthKey(payment.payment_date || payment.created_at) === currentMonth).reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+  const payoutsMonth = dashboardState.expensePayments.filter(payment => monthKey(payment.payment_date || payment.created_at) === currentMonth).reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+  const planned = plannedExpenseBudget();
+  const actual = actualBudgetSpending();
+  const budgetRatio = planned > 0 ? actual / planned : 0;
+  const actions = [];
+  if(overdueInvoices.length){
+    actions.push({ tone:'bad', title:'Collect overdue receivables', copy: overdueInvoices.length + ' invoice(s) are overdue. Total risk: ' + formatMoney(overdueInvoices.reduce((sum, invoice) => sum + resolveInvoiceBalance(invoice), 0)) + '.', href:'invoices.html' });
+  }
+  if(overdueExpenses.length){
+    actions.push({ tone:'warn', title:'Review urgent supplier bills', copy: overdueExpenses.length + ' supplier bill(s) need payment planning.', href:'expenses.html' });
+  }
+  if(planned > 0 && budgetRatio >= .85){
+    actions.push({ tone: budgetRatio > 1 ? 'bad' : 'warn', title: budgetRatio > 1 ? 'Budget exceeded' : 'Budget close to limit', copy: 'Actual spending is ' + Math.round(budgetRatio * 100) + '% of the planned expense budget.', href:'budgeting.html' });
+  }
+  if(!actions.length){
+    actions.push({ tone:'ok', title:'No urgent finance action', copy:'Receivables, payables, and budget signals are currently under control.', href:'reports.html' });
+  }
+  actionsHost.innerHTML = actions.slice(0,4).map(action => '<div class="action-item"><div class="action-priority ' + action.tone + '"></div><div><div class="action-name">' + escapeHtml(action.title) + '</div><div class="action-copy">' + escapeHtml(action.copy) + '</div></div><button class="action-btn" onclick="window.location.href=\'' + action.href + '\'">Open</button></div>').join('');
+  const coverage = invoicedMonth > 0 ? Math.round((collectionsMonth / invoicedMonth) * 100) : 0;
+  const netCash = collectionsMonth - payoutsMonth;
+  const insights = [
+    { tone: coverage >= 80 ? 'ok' : coverage >= 50 ? 'warn' : 'bad', text: invoicedMonth > 0 ? 'Collections reached ' + coverage + '% of monthly invoiced sales.' : 'No invoices issued this month yet.', muted:'Dashboard signal: cash collection quality.' },
+    { tone: netCash >= 0 ? 'ok' : 'bad', text: netCash >= 0 ? 'Operating cash is positive this month.' : 'Payments are higher than collections this month.', muted:'Net cash: ' + formatMoney(netCash) + '.' },
+    { tone: overdueInvoices.length ? 'bad' : 'ok', text: overdueInvoices.length ? overdueInvoices.length + ' customer invoice(s) need follow-up.' : 'No overdue customer invoice found.', muted:'Use invoices page for client-level details.' }
+  ];
+  insightsHost.innerHTML = insights.map(insight => '<div class="ai-insight"><span class="ai-dot ' + insight.tone + '"></span><div class="ai-text">' + escapeHtml(insight.text) + '<span class="ai-muted">' + escapeHtml(insight.muted) + '</span></div></div>').join('');
+}
+const _decision_renderDashboard = renderDashboard;
+renderDashboard = function(){
+  _decision_renderDashboard();
+  renderDecisionCenter();
+};
 window.addEventListener('load', initDashboard); /* - Patch: update topbar sub with date - */
 const _orig_initDashboard = initDashboard;
 initDashboard = async function() { await _orig_initDashboard(); document.getElementById('topbar-sub').textContent = formatTopbarDate();
