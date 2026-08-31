@@ -661,7 +661,7 @@ function cacheEmployeeForList(employee){
     }
   }
 }
-function documentCategoryForType(type){return {cv:'personal',contract:'employment',work_certificate:'employment',diploma:'education',certificate:'personal',other:'personal'}[type]||'personal'}
+function documentCategoryForType(type){return {cv:'experience',contract:'employment',work_certificate:'employment',diploma:'education',certificate:'personal',id_card:'personal',medical:'personal',other:'personal'}[type]||'personal'}
 function dbDocumentCategoryForSave(category){
   category=String(category||'personal').toLowerCase();
   return ['personal','education','employment'].includes(category) ? category : 'personal';
@@ -687,7 +687,7 @@ async function tryInsertEmployee(client,payload){const attempts=[payload,{compan
 async function insertOptionalRecords(client,employeeId){
   const photo=fileValue('profile-photo-file');
   if(photo){try{const uploaded=await uploadEmployeeFile(client,employeeId,'profile-photo',photo);if(uploaded?.url){const update=await client.from('employees').update({profile_photo_url:uploaded.url}).eq('id',employeeId);if(update.error&&!isMissingColumnError(update.error))console.warn(update.error)}}catch(error){console.warn('Profile photo upload skipped:',error.message||error)}}
-  const docInputs=[['cv','CV','cv-file'],['contract','Employment contract','contract-file'],['other','ID card','id-card-file'],['certificate','Medical certificate','medical-certificate-file'],['diploma','Scanned diploma paper','diploma-scan-file']];
+  const docInputs=[['cv','CV','cv-file'],['contract','Employment contract','contract-file'],['id_card','ID card','id-card-file'],['medical','Medical certificate','medical-certificate-file'],['diploma','Scanned diploma paper','diploma-scan-file']];
   const documentErrors=[];
   for(const [document_type,title,inputId] of docInputs){
     const file=fileValue(inputId);

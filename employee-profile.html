@@ -402,7 +402,7 @@ function localDocumentFallback(){
   const e=state.employee||{};
   const docs=[];
   [
-    ['cv_url','CV','personal'],
+    ['cv_url','CV','experience'],
     ['contract_url','Employment contract','employment'],
     ['id_card_url','ID card','personal'],
     ['medical_certificate_url','Medical certificate','personal'],
@@ -512,15 +512,19 @@ async function load(){
   }
   state.employee=employeeData;
   const companyId=employeeData.company_id;
+  const resolvedEmployeeId=employeeData.id || employeeId;
   if(companyId){
     state.departments=await safeQuery(c.from('departments').select('*').eq('company_id',companyId).order('name',{ascending:true}));
     state.positions=await safeQuery(c.from('positions').select('*').eq('company_id',companyId).order('title',{ascending:true}));
     state.employees=await safeQuery(c.from('employees').select('id,full_name').eq('company_id',companyId).order('full_name',{ascending:true}));
   }
-  if(isUuid(employeeId)){
-    state.documents=await safeQuery(c.from('employee_documents').select('*').eq('employee_id',employeeId));
-    state.statusEvents=await safeQuery(c.from('employee_status_events').select('*').eq('employee_id',employeeId).order('start_date',{ascending:false}));
-    state.promotions=await safeQuery(c.from('employee_promotions').select('*').eq('employee_id',employeeId).order('effective_date',{ascending:false}));
+  state.documents=[];
+  state.statusEvents=[];
+  state.promotions=[];
+  if(isUuid(resolvedEmployeeId)){
+    state.documents=await safeQuery(c.from('employee_documents').select('*').eq('employee_id',resolvedEmployeeId).order('created_at',{ascending:false}));
+    state.statusEvents=await safeQuery(c.from('employee_status_events').select('*').eq('employee_id',resolvedEmployeeId).order('start_date',{ascending:false}));
+    state.promotions=await safeQuery(c.from('employee_promotions').select('*').eq('employee_id',resolvedEmployeeId).order('effective_date',{ascending:false}));
   }
   render();
   hideNotice();

@@ -1324,16 +1324,26 @@ async function handleLogout(){
       '<td class="right"><button class="employee-menu" type="button" onclick="event.stopPropagation();window.ttOpenEmployeeProfile(\''+js(id)+'\')">View</button></td>'+
     '</tr>';
   }
+  function updateSelectAllState(visible){
+    var selectAll=document.getElementById('select-all-employees');
+    if(!selectAll)return;
+    var allSelected=visible.length&&visible.every(function(employee){return window.ttHardSelectedEmployees.has(employeeKey(employee))});
+    selectAll.classList.toggle('checked',!!allSelected);
+    selectAll.setAttribute('aria-checked',allSelected?'true':'false');
+    selectAll.setAttribute('role','checkbox');
+  }
   function showRows(employees,message){
     var rows=document.getElementById('employee-rows');
     if(!rows)return;
     window.ttHardEmployees=employees.slice();
     var visible=filterRows(employees);
+    updateSelectAllState(visible);
     if(!visible.length){
       rows.innerHTML='<tr><td colspan="9"><div class="employee-empty">'+esc(message || 'No employees match this view.')+'</div></td></tr>';
       return;
     }
     rows.innerHTML=visible.map(rowHtml).join('');
+    updateSelectAllState(visible);
     try{
       if(window.state){
         window.state.employees=employees.slice();
@@ -1467,6 +1477,7 @@ async function handleLogout(){
         event.preventDefault();
         event.stopPropagation();
         activeFilter=btn.getAttribute('data-employee-filter')||'active';
+        window.ttHardSelectedEmployees.clear();
         filterButtons.forEach(function(x){x.classList.toggle('active',x===btn)});
         showRows(window.ttHardEmployees);
       });
