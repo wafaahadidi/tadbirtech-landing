@@ -66,6 +66,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
 .edit-dialog-body{padding:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .edit-field{display:grid;gap:7px}
 .edit-field.full{grid-column:1/-1}
+.edit-section{grid-column:1/-1;margin-top:8px;padding-top:12px;border-top:1px solid #EAF0F6;font-size:11px;font-weight:900;color:#1a8fd1;text-transform:uppercase;letter-spacing:.08em}.edit-section:first-child{margin-top:0;padding-top:0;border-top:0}
 .edit-field label{font-size:12px;font-weight:900;color:#577194;text-transform:uppercase;letter-spacing:.04em}
 .edit-field input,.edit-field select,.edit-field textarea{width:100%;border:1px solid #D8E4F0;border-radius:8px;padding:11px 12px;font:inherit;color:#0D1F3C;background:#fff}
 .edit-field textarea{min-height:90px;resize:vertical}
@@ -248,8 +249,10 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
   <div class="edit-dialog">
     <div class="edit-dialog-head"><div class="edit-dialog-title">Edit employee profile</div><button class="btn" onclick="closeEditProfile()">Close</button></div>
     <div class="edit-dialog-body">
+      <div class="edit-section">Identity</div>
       <div class="edit-field"><label>Employee ID</label><input id="edit-employee-number"></div>
       <div class="edit-field"><label>Full name</label><input id="edit-full-name"></div>
+      <div class="edit-field full"><label>Profile photo</label><input id="edit-profile-photo-file" type="file" accept=".png,.jpg,.jpeg,.webp"></div>
       <div class="edit-field"><label>Email</label><input id="edit-email" type="email"></div>
       <div class="edit-field"><label>Phone</label><input id="edit-phone"></div>
       <div class="edit-field"><label>Backup phone</label><input id="edit-secondary-phone"></div>
@@ -259,6 +262,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
       <div class="edit-field"><label>Birth date</label><input id="edit-birth-date" type="date"></div>
       <div class="edit-field"><label>Gender</label><select id="edit-gender"><option value="">Select</option><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div>
       <div class="edit-field"><label>Marital status</label><select id="edit-marital-status"><option value="">Select</option><option value="single">Single</option><option value="married">Married</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div>
+      <div class="edit-section">Employment</div>
       <div class="edit-field"><label>Department</label><select id="edit-department-id"></select></div>
       <div class="edit-field"><label>Position</label><select id="edit-position-id"></select></div>
       <div class="edit-field"><label>Direct manager</label><select id="edit-manager-id"></select></div>
@@ -269,14 +273,17 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
       <div class="edit-field"><label>Work system</label><select id="edit-work-system"><option value="">Select</option><option value="full_time">Full-Time</option><option value="part_time">Part-Time</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option></select></div>
       <div class="edit-field"><label>Hours / week</label><input id="edit-work-hours-per-week" type="number" min="0" step="0.5"></div>
       <div class="edit-field"><label>Work days</label><input id="edit-work-days" placeholder="Sun, Mon, Tue..."></div>
+      <div class="edit-section">Address</div>
       <div class="edit-field"><label>City</label><input id="edit-city"></div>
-      <div class="edit-field"><label>Wilaya</label><input id="edit-state-region"></div>
+      <div class="edit-field"><label>Wilaya</label><select id="edit-state-region"><option value="">Select wilaya</option><option value="01 Adrar">01 Adrar</option><option value="02 Chlef">02 Chlef</option><option value="03 Laghouat">03 Laghouat</option><option value="04 Oum El Bouaghi">04 Oum El Bouaghi</option><option value="05 Batna">05 Batna</option><option value="06 Bejaia">06 Bejaia</option><option value="07 Biskra">07 Biskra</option><option value="08 Bechar">08 Bechar</option><option value="09 Blida">09 Blida</option><option value="10 Bouira">10 Bouira</option><option value="11 Tamanrasset">11 Tamanrasset</option><option value="12 Tebessa">12 Tebessa</option><option value="13 Tlemcen">13 Tlemcen</option><option value="14 Tiaret">14 Tiaret</option><option value="15 Tizi Ouzou">15 Tizi Ouzou</option><option value="16 Alger">16 Alger</option><option value="17 Djelfa">17 Djelfa</option><option value="18 Jijel">18 Jijel</option><option value="19 Setif">19 Setif</option><option value="20 Saida">20 Saida</option><option value="21 Skikda">21 Skikda</option><option value="22 Sidi Bel Abbes">22 Sidi Bel Abbes</option><option value="23 Annaba">23 Annaba</option><option value="24 Guelma">24 Guelma</option><option value="25 Constantine">25 Constantine</option><option value="26 Medea">26 Medea</option><option value="27 Mostaganem">27 Mostaganem</option><option value="28 MSila">28 MSila</option><option value="29 Mascara">29 Mascara</option><option value="30 Ouargla">30 Ouargla</option><option value="31 Oran">31 Oran</option><option value="32 El Bayadh">32 El Bayadh</option><option value="33 Illizi">33 Illizi</option><option value="34 Bordj Bou Arreridj">34 Bordj Bou Arreridj</option><option value="35 Boumerdes">35 Boumerdes</option><option value="36 El Tarf">36 El Tarf</option><option value="37 Tindouf">37 Tindouf</option><option value="38 Tissemsilt">38 Tissemsilt</option><option value="39 El Oued">39 El Oued</option><option value="40 Khenchela">40 Khenchela</option><option value="41 Souk Ahras">41 Souk Ahras</option><option value="42 Tipaza">42 Tipaza</option><option value="43 Mila">43 Mila</option><option value="44 Ain Defla">44 Ain Defla</option><option value="45 Naama">45 Naama</option><option value="46 Ain Temouchent">46 Ain Temouchent</option><option value="47 Ghardaia">47 Ghardaia</option><option value="48 Relizane">48 Relizane</option><option value="49 Timimoun">49 Timimoun</option><option value="50 Bordj Badji Mokhtar">50 Bordj Badji Mokhtar</option><option value="51 Ouled Djellal">51 Ouled Djellal</option><option value="52 Beni Abbes">52 Beni Abbes</option><option value="53 In Salah">53 In Salah</option><option value="54 In Guezzam">54 In Guezzam</option><option value="55 Touggourt">55 Touggourt</option><option value="56 Djanet">56 Djanet</option><option value="57 El Meghaier">57 El Meghaier</option><option value="58 El Meniaa">58 El Meniaa</option></select></div>
       <div class="edit-field"><label>Postal code</label><input id="edit-postal-code"></div>
       <div class="edit-field"><label>Country</label><input id="edit-country"></div>
       <div class="edit-field full"><label>Address</label><input id="edit-address"></div>
+      <div class="edit-section">Emergency contact</div>
       <div class="edit-field"><label>Emergency contact</label><input id="edit-emergency-contact-name"></div>
       <div class="edit-field"><label>Relationship</label><input id="edit-emergency-contact-relationship"></div>
       <div class="edit-field"><label>Emergency phone</label><input id="edit-emergency-contact-phone"></div>
+      <div class="edit-section">Qualifications</div>
       <div class="edit-field"><label>Diplomas</label><input id="edit-diplomas"></div>
       <div class="edit-field"><label>Languages</label><input id="edit-languages"></div>
       <div class="edit-field"><label>Professional certificates</label><input id="edit-professional-certifications"></div>
@@ -614,7 +621,23 @@ function updateEmployeeCaches(employee){
 }
 async function saveEditProfile(){
   const e=state.employee;if(!e)return;
-  const patch={employee_number:getEditValue('edit-employee-number')||e.employee_number||null,full_name:getEditValue('edit-full-name'),email:getEditValue('edit-email')||null,phone:getEditValue('edit-phone')||null,secondary_phone:getEditValue('edit-secondary-phone')||null,status:getEditValue('edit-status')||'active',national_id:getEditValue('edit-national-id')||null,social_security_number:getEditValue('edit-social-security-number')||null,birth_date:getEditValue('edit-birth-date')||null,gender:getEditValue('edit-gender')||null,marital_status:getEditValue('edit-marital-status')||null,department_id:getEditValue('edit-department-id')||null,position_id:getEditValue('edit-position-id')||null,manager_id:getEditValue('edit-manager-id')||null,contract_type:getEditValue('edit-contract-type')||null,hire_date:getEditValue('edit-hire-date')||null,contract_end_date:getEditValue('edit-contract-end-date')||null,workplace:getEditValue('edit-workplace')||null,work_system:getEditValue('edit-work-system')||null,work_hours_per_week:getEditValue('edit-work-hours-per-week')?Number(getEditValue('edit-work-hours-per-week')):null,work_days:getEditValue('edit-work-days')?getEditValue('edit-work-days').split(',').map(x=>x.trim()).filter(Boolean):null,city:getEditValue('edit-city')||null,state_region:getEditValue('edit-state-region')||null,postal_code:getEditValue('edit-postal-code')||null,country:getEditValue('edit-country')||null,address:getEditValue('edit-address')||null,emergency_contact_name:getEditValue('edit-emergency-contact-name')||null,emergency_contact_relationship:getEditValue('edit-emergency-contact-relationship')||null,emergency_contact_phone:getEditValue('edit-emergency-contact-phone')||null,diplomas:getEditValue('edit-diplomas')||null,languages:getEditValue('edit-languages')||null,professional_certifications:getEditValue('edit-professional-certifications')||null,skills:getEditValue('edit-skills')||null,academic_background:getEditValue('edit-academic-background')||null,shift_schedule:getEditValue('edit-shift-schedule')||null,hr_notes:getEditValue('edit-hr-notes')||null};
+  const fullName=getEditValue('edit-full-name');
+  const nationalId=getEditValue('edit-national-id');
+  const cnasNumber=getEditValue('edit-social-security-number');
+  if(!fullName){showNotice('Full name is required.','error');return}
+  if(nationalId&&!/^\d{18}$/.test(nationalId)){showNotice('Algerian NIN must contain exactly 18 digits.','error');return}
+  if(cnasNumber&&!/^\d{12}$/.test(cnasNumber)){showNotice('CNAS number must contain exactly 12 digits.','error');return}
+  const patch={employee_number:getEditValue('edit-employee-number')||e.employee_number||null,full_name:fullName,email:getEditValue('edit-email')||null,phone:getEditValue('edit-phone')||null,secondary_phone:getEditValue('edit-secondary-phone')||null,status:getEditValue('edit-status')||'active',national_id:nationalId||null,social_security_number:cnasNumber||null,birth_date:getEditValue('edit-birth-date')||null,gender:getEditValue('edit-gender')||null,marital_status:getEditValue('edit-marital-status')||null,department_id:getEditValue('edit-department-id')||null,position_id:getEditValue('edit-position-id')||null,manager_id:getEditValue('edit-manager-id')||null,contract_type:getEditValue('edit-contract-type')||null,hire_date:getEditValue('edit-hire-date')||null,contract_end_date:getEditValue('edit-contract-end-date')||null,workplace:getEditValue('edit-workplace')||null,work_system:getEditValue('edit-work-system')||null,work_hours_per_week:getEditValue('edit-work-hours-per-week')?Number(getEditValue('edit-work-hours-per-week')):null,work_days:getEditValue('edit-work-days')?getEditValue('edit-work-days').split(',').map(x=>x.trim()).filter(Boolean):null,city:getEditValue('edit-city')||null,state_region:getEditValue('edit-state-region')||null,postal_code:getEditValue('edit-postal-code')||null,country:getEditValue('edit-country')||null,address:getEditValue('edit-address')||null,emergency_contact_name:getEditValue('edit-emergency-contact-name')||null,emergency_contact_relationship:getEditValue('edit-emergency-contact-relationship')||null,emergency_contact_phone:getEditValue('edit-emergency-contact-phone')||null,diplomas:getEditValue('edit-diplomas')||null,languages:getEditValue('edit-languages')||null,professional_certifications:getEditValue('edit-professional-certifications')||null,skills:getEditValue('edit-skills')||null,academic_background:getEditValue('edit-academic-background')||null,shift_schedule:getEditValue('edit-shift-schedule')||null,hr_notes:getEditValue('edit-hr-notes')||null};
+  const profilePhoto=document.getElementById('edit-profile-photo-file')?.files?.[0]||null;
+  if(profilePhoto){
+    try{
+      const uploaded=await uploadProfileDocumentFile(profilePhoto,'profile-photo');
+      patch.profile_photo_url=uploaded.publicUrl;
+    }catch(error){
+      showNotice(error.message||'Could not upload profile photo.','error');
+      return;
+    }
+  }
   if(isUuid(e.id)){
     const c=client();if(c){const r=await c.from('employees').update(patch).eq('id',e.id).select('*').single();if(r.error){showNotice(r.error.message,'error');return}state.employee=r.data}
   }else{
