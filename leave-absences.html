@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TadbirTech - Leave & Absences</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;background:#F3F6FB;color:#0D1F3C}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.main{min-height:100vh;background:#F3F6FB}.topbar{height:62px;background:#fff;border-bottom:.5px solid #DDE6EF;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.topbar-title{font-size:16px;font-weight:900}.topbar-sub{font-size:12px;color:#7a93ae;margin-top:2px}.topbar-actions{display:flex;gap:8px}
+.content{padding:22px 28px 36px}.kpi-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:.5px solid #E2EAF2;border-radius:10px;padding:16px 18px;box-shadow:0 1px 8px rgba(13,31,60,.04)}
+.kpi-label{font-size:10px;font-weight:900;color:#7a93ae;text-transform:uppercase;letter-spacing:.08em}.kpi-value{font-size:26px;font-weight:900;margin-top:8px}.kpi-note{font-size:11px;color:#7a93ae;margin-top:4px}
+.surface{background:#fff;border:.5px solid #E2EAF2;border-radius:10px;box-shadow:0 1px 8px rgba(13,31,60,.04);overflow:hidden;margin-bottom:14px}.surface-head{padding:15px 18px;border-bottom:.5px solid #EEF3F8;background:#FAFBFD;display:flex;justify-content:space-between;gap:12px;align-items:center}.surface-title{font-size:15px;font-weight:900}.surface-sub{font-size:12px;color:#7a93ae;margin-top:3px}.surface-body{padding:16px 18px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:900;color:#577194;text-transform:uppercase;letter-spacing:.06em}.field input,.field select,.field textarea{width:100%;border:1px solid #D8E4F0;border-radius:8px;padding:11px 12px;font:inherit;color:#0D1F3C;background:#fff}.field textarea{min-height:82px;resize:vertical}
+.btn{height:38px;border-radius:8px;border:.5px solid #DDE6EF;background:#fff;color:#0D1F3C;padding:0 14px;font:800 12px inherit;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn.primary{background:#1a8fd1;color:#fff;border-color:#1a8fd1}.btn.danger{background:#FEF2F2;color:#B42318;border-color:#FECACA}.btn:hover{border-color:#1a8fd1;color:#1a8fd1}.btn.primary:hover{background:#1476b0;color:#fff}
+table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;color:#7a93ae;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:0 0 10px;border-bottom:.5px solid #EEF3F8}td{font-size:12px;padding:12px 0;border-bottom:.5px solid #F0F4F8;vertical-align:middle}.right{text-align:right}
+.pill{display:inline-flex;align-items:center;border-radius:999px;background:#EEF3F8;color:#38536F;font-size:10px;font-weight:900;padding:5px 9px;text-transform:capitalize}.pill.good{background:#DCFCE7;color:#166534}.pill.warn{background:#FEF3C7;color:#92400E}.pill.bad{background:#FEE2E2;color:#991B1B}
+.notice{display:none;margin-bottom:14px;padding:12px 14px;border-radius:10px;border:.5px solid #BFDBFE;background:#EFF6FF;color:#1E3A8A;font-size:12px;font-weight:800}.notice.show{display:block}.notice.error{border-color:#FECACA;background:#FEF2F2;color:#991B1B}.empty{padding:20px;text-align:center;color:#7a93ae;font-size:12px;background:#FAFBFD;border:.5px dashed #DDE6EF;border-radius:10px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.chip{height:34px;border-radius:8px;border:.5px solid #DDE6EF;background:#fff;color:#38536F;font:800 12px inherit;padding:0 12px;cursor:pointer}.chip.active{background:#E8F5FD;border-color:#BDE3F8;color:#0E6FA8}
+.sidebar{width:220px!important;background:#0D1F3C!important;color:#fff!important;display:flex!important;flex-direction:column!important;position:sticky!important;top:0!important;height:100vh!important;overflow:hidden!important}.sb-logo{padding:12px 8px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:76px!important;background:#0D1F3C!important;flex:0 0 auto!important}.sb-logo img,.tt-brand-logo-img{width:215px!important;max-width:100%!important;height:auto!important;display:block!important;object-fit:contain!important}.sb-user{display:flex!important;gap:10px!important;align-items:center!important;padding:14px 16px!important;border-bottom:.5px solid rgba(255,255,255,.08)!important}.sb-avatar{width:34px!important;height:34px!important;border-radius:50%!important;background:#1a8fd1!important;color:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important;font-weight:800!important}.sb-name{font-size:13px!important;font-weight:800!important;color:#fff!important}.sb-role{font-size:11px!important;color:rgba(255,255,255,.55)!important}.sb-nav{flex:1!important;padding:16px 10px!important;overflow:auto!important}.sb-sec{font-size:9px!important;font-weight:700!important;color:rgba(255,255,255,.25)!important;text-transform:uppercase!important;letter-spacing:.14em!important;margin:10px 8px 7px!important}.sb-item{display:flex!important;align-items:center!important;gap:10px!important;width:100%!important;min-height:34px!important;padding:9px 10px!important;border-radius:8px!important;color:rgba(255,255,255,.65)!important;text-decoration:none!important;border:.5px solid transparent!important;background:transparent!important;font-size:13px!important;font-weight:500!important;box-sizing:border-box!important}.sb-item:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}.sb-item.active,.sb-dropdown-toggle.active,.sb-dropdown-toggle.open{background:rgba(26,143,209,.2)!important;border:.5px solid rgba(26,143,209,.3)!important;color:#fff!important}.sb-item svg{width:15px!important;height:15px!important;flex:0 0 15px!important;opacity:.75!important}.sb-item-text{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:13px!important;color:rgba(255,255,255,.65)!important;font-weight:500!important}.sb-item.active .sb-item-text,.sb-dropdown-toggle.active .sb-item-text,.sb-dropdown-toggle.open .sb-item-text{color:#fff!important}.sb-chevron{margin-left:auto!important;width:7px!important;height:7px!important;border-right:1.5px solid currentColor!important;border-bottom:1.5px solid currentColor!important;transform:rotate(45deg)!important;opacity:.75!important}.sb-dropdown-toggle.open .sb-chevron{transform:rotate(225deg)!important}.sb-submenu{display:grid!important;gap:3px!important;margin:3px 0 5px 18px!important;padding-left:8px!important;border-left:.5px solid rgba(255,255,255,.08)!important}.sb-submenu[hidden]{display:none!important}.sb-submenu .sb-item{font-size:12px!important;min-height:30px!important;padding:7px 10px!important;background:transparent!important;border-color:transparent!important}.sb-submenu .sb-item.active{color:#fff!important}.sb-foot{padding:12px 14px!important;border-top:.5px solid rgba(255,255,255,.08)!important}.sb-logout{display:flex!important;gap:9px!important;align-items:center!important;background:transparent!important;border:0!important;color:rgba(255,255,255,.5)!important;font:inherit!important;cursor:pointer!important}
+@media(max-width:1000px){.app{grid-template-columns:1fr}.sidebar{display:none!important}.grid,.kpi-strip,.form-grid{grid-template-columns:1fr}.content{padding:16px}.topbar{padding:0 16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="sb-logo">
+    <img class="tt-brand-logo-img" src="tadbirtech-logo-sidebar.png" data-logo-fallback="tadbirtech-logo-light.png" onerror="this.onerror=null;this.src=this.dataset.logoFallback;" alt="TadbirTech" style="width:215px;max-width:100%;height:auto;display:block;object-fit:contain;">
+  </div>
+  <div class="sb-user">
+    <div class="sb-avatar" id="sb-av">T</div>
+    <div><div class="sb-name" id="sb-name">Team</div><div class="sb-role">Administrator</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Main</div>
+    <a class="sb-item" href="dashboard.html" data-sidebar-link="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span class="sb-item-text">Dashboard</span>
+    </a>
+
+    <div class="sb-sec">Modules</div>
+    <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="accounting" aria-expanded="false" aria-controls="sidebar-accounting-menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+      <span class="sb-item-text">Accounting</span>
+      <span class="sb-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="sb-submenu" id="sidebar-accounting-menu" hidden>
+      <button class="sb-item sb-dropdown-toggle sb-sub-toggle" type="button" data-sidebar-toggle="transactions" aria-expanded="false" aria-controls="sidebar-transactions-menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11"/><path d="M7 12h8"/><path d="M7 17h11"/><path d="M4 7h.01"/><path d="M4 12h.01"/><path d="M4 17h.01"/></svg>
+        <span class="sb-item-text">Transactions</span>
+        <span class="sb-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="sb-submenu sb-submenu-nested" id="sidebar-transactions-menu" hidden>
+        <a class="sb-item" href="invoices.html" data-sidebar-link="invoices.html"><span class="sb-dot"></span><span class="sb-item-text">Invoices</span></a>
+        <a class="sb-item" href="customers.html" data-sidebar-link="customers.html"><span class="sb-dot"></span><span class="sb-item-text">Customers</span></a>
+        <a class="sb-item" href="expenses.html" data-sidebar-link="expenses.html"><span class="sb-dot"></span><span class="sb-item-text">Expenses</span></a>
+        <a class="sb-item" href="suppliers.html" data-sidebar-link="suppliers.html"><span class="sb-dot"></span><span class="sb-item-text">Suppliers</span></a>
+      </div>
+      <a class="sb-item" href="cash-bank.html" data-sidebar-link="cash-bank.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg><span class="sb-item-text">Cash &amp; Bank</span></a>
+      <a class="sb-item" href="budgeting.html" data-sidebar-link="budgeting.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M13 16V8"/><path d="M18 16v-9"/></svg><span class="sb-item-text">Budgeting</span></a>
+      <a class="sb-item" href="chart-of-accounts.html" data-sidebar-link="chart-of-accounts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span class="sb-item-text">Chart of Accounts</span></a>
+      <a class="sb-item" href="journal-entries.html" data-sidebar-link="journal-entries.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="sb-item-text">Journal Entries</span></a>
+      <a class="sb-item" href="reports.html" data-sidebar-link="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="sb-item-text">Reports</span></a>
+    </div>
+
+    <a class="sb-item" href="inventory.html" data-sidebar-link="inventory.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="sb-item-text">Inventory</span></a>
+
+    <button class="sb-item sb-dropdown-toggle" type="button" data-sidebar-toggle="hrm" aria-expanded="false" aria-controls="sidebar-hrm-menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span class="sb-item-text">Human Resources Management</span>
+      <span class="sb-chevron" aria-hidden="true"></span>
+    </button>
+    <div class="sb-submenu" id="sidebar-hrm-menu" hidden>
+      <a class="sb-item hr-employee-link" href="employee-list.html" data-sidebar-link="employee-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="sb-item-text">Employees</span></a>
+      <a class="sb-item hr-leave-link" href="leave-absences.html" data-sidebar-link="leave-absences.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg><span class="sb-item-text">Leave & Absences</span></a>
+    </div>
+
+    <div class="sb-sec">Account</div>
+    <a class="sb-item" href="settings.html" data-sidebar-link="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg><span class="sb-item-text">Settings</span></a>
+  </nav>
+  <div class="sb-foot">
+    <button class="sb-logout" onclick="handleLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Log out</span>
+    </button>
+  </div>
+</aside>
+<main class="main">
+  <header class="topbar">
+    <div><div class="topbar-title">Leave & Absences</div><div class="topbar-sub">Requests, approvals, balances, and daily absence entries.</div></div>
+    <div class="topbar-actions"><button class="btn" id="refresh-btn">Refresh</button><button class="btn primary" id="new-request-top">New request</button></div>
+  </header>
+  <div class="content">
+    <div class="notice" id="notice">Loading leave data...</div>
+    <section class="kpi-strip">
+      <div class="kpi"><div class="kpi-label">Pending requests</div><div class="kpi-value" id="kpi-pending">0</div><div class="kpi-note">Need approval</div></div>
+      <div class="kpi"><div class="kpi-label">Approved this month</div><div class="kpi-value" id="kpi-approved">0</div><div class="kpi-note">Confirmed days</div></div>
+      <div class="kpi"><div class="kpi-label">Absent today</div><div class="kpi-value" id="kpi-absent">0</div><div class="kpi-note">Daily absence log</div></div>
+      <div class="kpi"><div class="kpi-label">Active employees</div><div class="kpi-value" id="kpi-employees">0</div><div class="kpi-note">Available for requests</div></div>
+    </section>
+    <div class="grid">
+      <section class="surface">
+        <div class="surface-head"><div><div class="surface-title">Leave requests</div><div class="surface-sub">Filter, approve, reject, or archive employee leave requests.</div></div></div>
+        <div class="surface-body">
+          <div class="filters">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="pending">Pending</button>
+            <button class="chip" data-filter="approved">Approved</button>
+            <button class="chip" data-filter="rejected">Rejected</button>
+          </div>
+          <table><thead><tr><th>Employee</th><th>Type</th><th>Period</th><th>Days</th><th>Status</th><th class="right">Actions</th></tr></thead><tbody id="request-rows"></tbody></table>
+        </div>
+      </section>
+      <aside>
+        <section class="surface">
+          <div class="surface-head"><div><div class="surface-title">New leave request</div><div class="surface-sub">Create a request for an employee.</div></div></div>
+          <div class="surface-body">
+            <form id="leave-form" class="form-grid">
+              <div class="field full"><label>Employee</label><select id="employee-id" required></select></div>
+              <div class="field"><label>Type</label><select id="leave-type"><option value="annual">Annual leave</option><option value="sick">Sick leave</option><option value="maternity">Maternity leave</option><option value="unpaid">Unpaid leave</option><option value="personal">Personal leave</option></select></div>
+              <div class="field"><label>Status</label><select id="request-status"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div>
+              <div class="field"><label>Start date</label><input id="start-date" type="date" required></div>
+              <div class="field"><label>End date</label><input id="end-date" type="date" required></div>
+              <div class="field full"><label>Reason / notes</label><textarea id="reason"></textarea></div>
+              <div class="field full"><button class="btn primary" type="submit">Save request</button></div>
+            </form>
+          </div>
+        </section>
+        <section class="surface">
+          <div class="surface-head"><div><div class="surface-title">Leave balances</div><div class="surface-sub">Annual entitlement, used, and remaining days.</div></div></div>
+          <div class="surface-body" id="balance-list"></div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</main>
+</div>
+<script>
+(function(){const transactionPages=['invoices.html','customers.html','expenses.html','suppliers.html'];const accountingPages=transactionPages.concat(['cash-bank.html','budgeting.html','chart-of-accounts.html','journal-entries.html','reports.html']);const hrPages=['employee-list.html','add-employee.html','employee-profile.html','leave-absences.html'];function pageName(){const raw=window.location.pathname.split('/').pop()||'dashboard.html';return decodeURIComponent(raw).toLowerCase()}function setDropdown(name,open){const button=document.querySelector('[data-sidebar-toggle="'+name+'"]');if(!button)return;const menu=document.getElementById(button.getAttribute('aria-controls'));if(!menu)return;button.classList.toggle('open',open);button.setAttribute('aria-expanded',open?'true':'false');menu.hidden=!open}function initSidebarDropdowns(){const current=pageName();document.querySelectorAll('.sb-nav a[href]').forEach(link=>{const href=(link.getAttribute('href')||'').split('?')[0].toLowerCase();link.classList.toggle('active',href===current)});const isTransaction=transactionPages.includes(current);const isAccounting=accountingPages.includes(current);const isHr=hrPages.includes(current);setDropdown('accounting',isAccounting);setDropdown('transactions',isTransaction);setDropdown('hrm',isHr);const accountingToggle=document.querySelector('[data-sidebar-toggle="accounting"]');const transactionsToggle=document.querySelector('[data-sidebar-toggle="transactions"]');if(accountingToggle)accountingToggle.classList.toggle('active',isAccounting);if(transactionsToggle)transactionsToggle.classList.toggle('active',isTransaction);const hrToggle=document.querySelector('[data-sidebar-toggle="hrm"]');if(hrToggle)hrToggle.classList.toggle('active',isHr)}document.addEventListener('click',event=>{const toggle=event.target.closest('[data-sidebar-toggle]');if(!toggle)return;event.preventDefault();const name=toggle.getAttribute('data-sidebar-toggle');const isOpen=toggle.getAttribute('aria-expanded')==='true';setDropdown(name,!isOpen);if(name==='accounting'&&isOpen)setDropdown('transactions',false)});window.addEventListener('DOMContentLoaded',initSidebarDropdowns);window.initSidebarDropdowns=initSidebarDropdowns})();
+</script>
+<script>
+const SUPABASE_URL='https://gqmpqpnboenmshuuopnp.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_QhV5R4QWgL72BO0-l2LRKg_ONjDXN2U';
+let sb=null;
+const state={employees:[],requests:[],balances:[],filter:'all'};
+function client(){if(sb)return sb;if(!window.supabase||!window.supabase.createClient)return null;sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);return sb}
+function text(v){return String(v ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function showNotice(msg,type='info'){const el=document.getElementById('notice');el.textContent=msg;el.classList.add('show');el.classList.toggle('error',type==='error')}
+function hideNotice(){document.getElementById('notice').classList.remove('show','error')}
+function statusPill(status){const s=String(status||'pending').toLowerCase();const cls=s==='approved'?'good':s==='pending'?'warn':'bad';return '<span class="pill '+cls+'">'+text(s.replaceAll('_',' '))+'</span>'}
+function empName(id){return state.employees.find(e=>String(e.id)===String(id))?.full_name||'Employee'}
+function leaveTypeLabel(value){return {annual:'Annual leave',sick:'Sick leave',maternity:'Maternity leave',unpaid:'Unpaid leave',personal:'Personal leave'}[String(value||'').toLowerCase()]||value||'Leave'}
+function daysBetween(start,end){const a=new Date(start),b=new Date(end);if(isNaN(a)||isNaN(b))return 0;return Math.max(Math.round((b-a)/86400000)+1,1)}
+function currentMonth(date){const d=new Date(date);const now=new Date();return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()}
+function visibleRequests(){return state.requests.filter(r=>state.filter==='all'||String(r.status||'pending')===state.filter)}
+function renderEmployees(){const select=document.getElementById('employee-id');select.innerHTML='<option value="">Select employee</option>'+state.employees.map(e=>'<option value="'+text(e.id)+'">'+text(e.full_name||e.employee_number||'Employee')+'</option>').join('')}
+function renderKpis(){document.getElementById('kpi-pending').textContent=state.requests.filter(r=>r.status==='pending').length;document.getElementById('kpi-approved').textContent=state.requests.filter(r=>r.status==='approved'&&currentMonth(r.start_date)).reduce((s,r)=>s+Number(r.days_count||daysBetween(r.start_date,r.end_date)),0);document.getElementById('kpi-absent').textContent=state.requests.filter(r=>r.status==='approved'&&new Date()>=new Date(r.start_date)&&new Date()<=new Date(r.end_date)).length;document.getElementById('kpi-employees').textContent=state.employees.filter(e=>!['archived','terminated','resigned','dismissed'].includes(String(e.status||'active').toLowerCase())).length}
+function renderRequests(){const rows=document.getElementById('request-rows');const list=visibleRequests();if(!list.length){rows.innerHTML='<tr><td colspan="6"><div class="empty">No leave requests in this view.</div></td></tr>';return}rows.innerHTML=list.map(r=>'<tr><td>'+text(empName(r.employee_id))+'</td><td>'+text(leaveTypeLabel(r.leave_type))+'</td><td>'+text(r.start_date||'-')+' to '+text(r.end_date||'-')+'</td><td>'+text(r.days_count||daysBetween(r.start_date,r.end_date))+'</td><td>'+statusPill(r.status)+'</td><td class="right">'+(r.status==='pending'?'<button class="btn" onclick="setRequestStatus(\''+text(r.id)+'\',\'approved\')">Approve</button> <button class="btn danger" onclick="setRequestStatus(\''+text(r.id)+'\',\'rejected\')">Reject</button>':'<button class="btn" onclick="setRequestStatus(\''+text(r.id)+'\',\'pending\')">Reopen</button>')+'</td></tr>').join('')}
+function renderBalances(){const host=document.getElementById('balance-list');if(!state.employees.length){host.innerHTML='<div class="empty">Employees will appear here after loading.</div>';return}host.innerHTML=state.employees.slice(0,8).map(e=>{const used=state.requests.filter(r=>r.employee_id===e.id&&r.status==='approved').reduce((s,r)=>s+Number(r.days_count||daysBetween(r.start_date,r.end_date)),0);const balance=state.balances.find(b=>b.employee_id===e.id);const entitled=Number(balance?.entitled_days||30);return '<div class="metric"><span>'+text(e.full_name||'Employee')+'</span><strong>'+text(entitled-used)+' / '+text(entitled)+' days</strong></div>'}).join('')}
+function renderAll(){renderEmployees();renderKpis();renderRequests();renderBalances()}
+async function loadAll(){showNotice('Loading leave data...');const c=client();if(!c){showNotice('Supabase did not load. Refresh the page.','error');return}try{const emp=await c.from('employees').select('id,company_id,full_name,employee_number,status').order('full_name',{ascending:true});if(emp.error)throw emp.error;const req=await c.from('leave_requests').select('*').order('start_date',{ascending:false});if(req.error)throw req.error;const bal=await c.from('leave_balances').select('*');if(bal.error)throw bal.error;state.employees=emp.data||[];state.requests=req.data||[];state.balances=bal.data||[];renderAll();hideNotice()}catch(error){showNotice(error.message||'Could not load leave data. Run the HR leave SQL in Supabase.','error');renderAll()}}
+async function saveRequest(event){event.preventDefault();const c=client();if(!c)return;const employeeId=document.getElementById('employee-id').value;const start=document.getElementById('start-date').value;const end=document.getElementById('end-date').value;if(!employeeId||!start||!end){showNotice('Employee, start date, and end date are required.','error');return}const employee=state.employees.find(e=>e.id===employeeId);const row={company_id:employee?.company_id||localStorage.getItem('tt_company_id')||null,employee_id:employeeId,leave_type:document.getElementById('leave-type').value,status:document.getElementById('request-status').value,start_date:start,end_date:end,days_count:daysBetween(start,end),reason:document.getElementById('reason').value||null};const res=await c.from('leave_requests').insert(row).select('*').single();if(res.error){showNotice(res.error.message,'error');return}state.requests.unshift(res.data);event.target.reset();renderAll();showNotice('Leave request saved.')}
+async function setRequestStatus(id,status){const c=client();if(!c)return;const res=await c.from('leave_requests').update({status}).eq('id',id).select('*').single();if(res.error){showNotice(res.error.message,'error');return}state.requests=state.requests.map(r=>String(r.id)===String(id)?res.data:r);renderAll();showNotice('Request updated.')}
+function handleLogout(){localStorage.removeItem('tt_company_id');location.href='login.html'}
+window.setRequestStatus=setRequestStatus;
+document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===btn));renderRequests()}));
+document.getElementById('leave-form').addEventListener('submit',saveRequest);
+document.getElementById('refresh-btn').addEventListener('click',loadAll);
+document.getElementById('new-request-top').addEventListener('click',()=>document.getElementById('employee-id').focus());
+window.addEventListener('load',loadAll);
+</script>
+</body>
+</html>
