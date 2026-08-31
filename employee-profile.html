@@ -106,11 +106,9 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
 @media(max-width:900px){.app{grid-template-columns:1fr!important}.sidebar{display:none!important}}
 
 /* Profile document vault consistency */
-#view-documents .two-grid{grid-template-columns:1fr!important;gap:14px!important}
 #view-documents .surface{margin-bottom:14px!important}
 #view-documents .surface-head{min-height:58px!important;align-items:center!important}
 #view-documents .surface-body{padding:18px 20px!important}
-#view-documents .info-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .doc-folder-grid{grid-template-columns:repeat(2,minmax(320px,1fr))!important;gap:14px!important}
 .doc-folder{min-width:0!important}
 .doc-folder-body{gap:10px!important}
@@ -120,9 +118,9 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
 .doc-meta{font-size:11px!important;line-height:1.35!important;white-space:normal!important;overflow-wrap:anywhere!important}
 .doc-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:nowrap!important}
 .doc-actions .btn{height:34px!important;min-width:64px!important;padding:0 12px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important}
-@media(max-width:1100px){.doc-folder-grid{grid-template-columns:1fr!important}#view-documents .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-@media(max-width:700px){#view-documents .info-grid{grid-template-columns:1fr!important}.doc-card{grid-template-columns:1fr!important}.doc-actions{justify-content:flex-start!important;flex-wrap:wrap!important}}
-.long-value{white-space:pre-line;line-height:1.55}.tag-list{display:flex;flex-wrap:wrap;gap:6px}.tag-pill{display:inline-flex;align-items:center;border:1px solid #D8E8F5;background:#F4FAFE;color:#0D1F3C;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.payroll-next-step{grid-column:1/-1;border:1px dashed #BFD6EA;background:#F8FBFE;border-radius:10px;padding:14px;color:#38536F;font-weight:700;line-height:1.5}
+@media(max-width:1100px){.doc-folder-grid{grid-template-columns:1fr!important}}
+@media(max-width:700px){.doc-card{grid-template-columns:1fr!important}.doc-actions{justify-content:flex-start!important;flex-wrap:wrap!important}}
+.long-value{white-space:pre-line;line-height:1.55}.tag-list{display:flex;flex-wrap:wrap;gap:6px}.tag-pill{display:inline-flex;align-items:center;border:1px solid #D8E8F5;background:#F4FAFE;color:#0D1F3C;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}
 </style>
 </head>
 <body>
@@ -213,6 +211,7 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
         <button class="tab" data-tab="employment">Employment</button>
         <button class="tab" data-tab="payroll">Salary summary</button>
         <button class="tab" data-tab="documents">Documents</button>
+        <button class="tab" data-tab="qualifications">Qualifications</button>
         <button class="tab" data-tab="history">History</button>
       </nav>
       <section class="view" id="view-overview">
@@ -228,13 +227,13 @@ table{width:100%;border-collapse:collapse}th{font-size:10px;font-weight:900;colo
         </div>
       </section>
       <section class="view" id="view-payroll" hidden>
-        <div class="surface"><div class="surface-head"><div><div class="surface-title">Salary summary</div><div class="surface-sub">Read-only salary snapshot. Detailed allowances, bonuses, deductions, IRG, and CNAS will be managed from the standalone Payroll page.</div></div></div><div class="surface-body"><div class="info-grid" id="payroll-info"></div></div></div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Salary summary</div><div class="surface-sub">Latest salary snapshot from the employee record.</div></div></div><div class="surface-body"><div class="info-grid" id="payroll-info"></div></div></div>
       </section>
       <section class="view" id="view-documents" hidden>
-        <div class="two-grid">
-          <div class="surface"><div class="surface-head"><div><div class="surface-title">Document vault</div><div class="surface-sub">Personal, education, contracts, and other documents.</div></div><button class="btn" onclick="openDocumentUpload()">Upload document</button></div><div class="surface-body" id="documents-list"></div></div>
-          <div class="surface"><div class="surface-head"><div><div class="surface-title">Qualifications</div><div class="surface-sub">Academic background, diplomas, certificates, languages, and skills.</div></div></div><div class="surface-body"><div class="info-grid" id="qualification-info"></div></div></div>
-        </div>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Document vault</div><div class="surface-sub">Personal, education, contracts, and other employee files.</div></div><button class="btn" onclick="openDocumentUpload()">Upload document</button></div><div class="surface-body" id="documents-list"></div></div>
+      </section>
+      <section class="view" id="view-qualifications" hidden>
+        <div class="surface"><div class="surface-head"><div><div class="surface-title">Qualifications</div><div class="surface-sub">Academic background, diplomas, certificates, languages, and skills.</div></div></div><div class="surface-body"><div class="info-grid" id="qualification-info"></div></div></div>
       </section>
       <section class="view" id="view-history" hidden>
         <div class="two-grid">
@@ -338,6 +337,26 @@ function initials(name){return String(name||'--').split(/\s+/).filter(Boolean).m
 function depName(id){return state.departments.find(d=>d.id===id)?.name||'Unassigned'}
 function posName(id){return state.positions.find(p=>p.id===id)?.title||state.employee?.job_position_label||'Unassigned'}
 function empName(id){return state.employees.find(e=>e.id===id)?.full_name||'No manager'}
+function formatContractType(value){
+  const raw=String(value||'').trim();
+  const key=raw.toLowerCase();
+  const labels={cdi:'CDI',cdd:'CDD',internship:'Internship',apprenticeship:'Apprenticeship',contractor:'Contractor',permanent:'Permanent',temporary:'Temporary'};
+  return labels[key]||raw||'-';
+}
+function parseWorkDays(value){
+  if(Array.isArray(value))return value.map(day=>String(day).trim()).filter(Boolean);
+  const raw=String(value||'').trim();
+  if(!raw)return [];
+  try{
+    const parsed=JSON.parse(raw);
+    if(Array.isArray(parsed))return parsed.map(day=>String(day).replace(/^["']|["']$/g,'').trim()).filter(Boolean);
+  }catch(error){}
+  return raw.replace(/[\[\]"']/g,'').split(',').map(day=>day.trim()).filter(Boolean);
+}
+function workDaysField(label,value){
+  const days=parseWorkDays(value);
+  return '<div class="info"><div class="label">'+text(label)+'</div><div class="value">'+(days.length?'<div class="tag-list">'+days.map(day=>'<span class="tag-pill">'+text(day)+'</span>').join('')+'</div>':'-')+'</div></div>';
+}
 function field(label,value){return '<div class="info"><div class="label">'+text(label)+'</div><div class="value">'+text(value||'-')+'</div></div>'}
 function longField(label,value){return '<div class="info full-info"><div class="label">'+text(label)+'</div><div class="value long-value">'+text(value||'-')+'</div></div>'}
 function splitList(value){return String(value||'').split(/[|,;\n]+/).map(x=>x.trim()).filter(Boolean)}
@@ -362,18 +381,17 @@ function render(){
     field('Emergency contact',[e.emergency_contact_name,e.emergency_contact_relationship,e.emergency_contact_phone].filter(Boolean).join(' | '))
   ].join('');
   document.getElementById('quick-summary').innerHTML=[
-    metric('Status',status.replaceAll('_',' ')),metric('Department',depName(e.department_id)),metric('Position',posName(e.position_id)),metric('Manager',empName(e.manager_id)),metric('Contract',e.contract_type),metric('Workplace',e.workplace)
+    metric('Status',status.replaceAll('_',' ')),metric('Department',depName(e.department_id)),metric('Position',posName(e.position_id)),metric('Manager',empName(e.manager_id)),metric('Contract',formatContractType(e.contract_type)),metric('Workplace',e.workplace)
   ].join('');
   document.getElementById('employment-info').innerHTML=[
-    field('Department',depName(e.department_id)),field('Position',posName(e.position_id)),field('Manager',empName(e.manager_id)),field('Contract type',e.contract_type),field('Hire date',e.hire_date),field('Contract end date',e.contract_end_date),field('Status',status.replaceAll('_',' ')),field('Workplace',e.workplace)
+    field('Department',depName(e.department_id)),field('Position',posName(e.position_id)),field('Manager',empName(e.manager_id)),field('Contract type',formatContractType(e.contract_type)),field('Hire date',e.hire_date),field('Contract end date',e.contract_end_date),field('Status',status.replaceAll('_',' ')),field('Workplace',e.workplace)
   ].join('');
-  document.getElementById('schedule-info').innerHTML=[field('Work system',e.work_system),field('Hours / week',e.work_hours_per_week),field('Work days',Array.isArray(e.work_days)?e.work_days.join(', '):e.work_days),field('Shift notes',e.shift_schedule)].join('');
+  document.getElementById('schedule-info').innerHTML=[field('Work system',e.work_system),field('Hours / week',e.work_hours_per_week),workDaysField('Work days',e.work_days),field('Shift notes',e.shift_schedule)].join('');
   document.getElementById('payroll-info').innerHTML=[
     field('Current salary snapshot',e.base_salary?money(e.base_salary,e.currency||'DZD'):'Not configured yet'),
     field('Currency',e.currency||'DZD'),
     field('Payment method',e.payment_method),
-    field('Bank',e.bank_name),
-    '<div class="payroll-next-step">Detailed salary components belong in the standalone Payroll page: choose the employee, then enter base salary, allowances, bonuses, deductions, CNAS, IRG, and payslip data there. This profile only displays the latest payroll snapshot.</div>'
+    field('Bank',e.bank_name)
   ].join('');
   document.getElementById('qualification-info').innerHTML=[
     tagField('Diplomas',e.diplomas),tagField('Languages',e.languages),tagField('Skills',e.skills),longField('Academic background',e.academic_background),tagField('Professional certificates',e.professional_certifications),longField('HR notes',e.hr_notes)
